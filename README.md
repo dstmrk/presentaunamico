@@ -202,14 +202,26 @@ Il dataset (gennaio 2025 – agosto 2026, 20 periodi) fonde tre fonti, in ordine
 di autorevolezza crescente. Ogni periodo dichiara la propria in `source`, e la
 tabella in pagina la mostra nella colonna **Fonte**.
 
+**Ordine di precedenza fra le fonti**, dal più forte:
+
+1. Condizioni ufficiali American Express
+2. Archivio pubblico Frequent Flyer Italia
+3. Forum specializzato (FinanzaOnLine)
+4. Lettura dei grafici storici in formato immagine
+
 | Periodi | Fonte | Cosa copre |
 |---|---|---|
 | 23/07 → 31/08/2026 | Condizioni ufficiali American Express | Tutto, per tutte le carte |
-| 27/11/2025 → 22/07/2026 | Archivio pubblico di terze parti | Amico presentato e spesa, 7 carte su 11 |
+| 27/11/2025 → 22/07/2026 | Archivio pubblico 2026 | Amico presentato e spesa, 7 carte su 11 |
+| 01/10 → 26/11/2025 | Archivio pubblico 2025 | Conferma 4 carte personali, aggiunge la finestra di spesa |
+| 13/02 → 26/03/2025 | Forum + archivio | Amico presentato, 5 carte Membership Rewards |
 | 16/01 → 12/02/2025 | Forum specializzato | Tutto, 5 carte Membership Rewards |
 | Restanti 2025 | Lettura dei grafici storici | Tutto, tutte le carte |
 
 Tutte le date sono reali: nessun periodo ha `datesEstimated: true`.
+
+L'archivio 2025 copre solo da luglio in poi — l'autore dichiara di aver
+iniziato a tracciare le offerte da quel mese — e solo le carte personali.
 
 ### Le finestre brevi di raccordo
 
@@ -258,26 +270,22 @@ in entrambe le direzioni (Verde −30%, Platino Business +20%), quindi non sono
 un errore di scala ricalcolabile: sono rumore di lettura vicino al fondo
 dell'asse.
 
-### Discrepanza aperta sul periodo 13/02 → 26/03/2025
+### Discrepanze risolte
 
-La fonte forum per quel periodo indica valori diversi da quelli letti dai
-grafici su tre carte:
+**13/02 → 26/03/2025.** La lettura dei grafici dava Platino 250.000, Verde
+12.500 e Italo 12.000. Archivio e forum concordano su Platino 180.000, e il
+forum completa la riga con Verde 30.000 e Italo 24.000. Due fonti contro una
+lettura di pixel: hanno vinto le fonti. Oro (100.000) ed Explora (5.000)
+combaciavano già, così come il presentatore Platino (100.000).
 
-| Carta | Dai grafici | Dal forum |
-|---|---|---|
-| Platino | 250.000 | 180.000 |
-| Verde | 12.500 | 30.000 |
-| Italo | 12.000 | 24.000 |
-| Oro | 100.000 | 100.000 ✓ |
-| Explora | 5.000 | 5.000 ✓ |
+**Spesa Platino nel periodo 27/11/2025 → 26/01/2026.** I due articoli di
+archivio si contraddicono: 3.000 € quello del 2025, 3.500 € la tabella
+retrospettiva del 2026. Prevale il primo, scritto mentre l'offerta era in
+corso. È l'unico punto in cui la fonte prioritaria contraddice sé stessa
+(`LATE_2025_PLATINO_SPEND` in `scripts/build-dataset.ts`).
 
-Due carte su cinque combaciano, tre no, e le differenze vanno in direzioni
-opposte. Non è risolvibile senza una fonte terza, quindi il dataset conserva
-per ora la lettura dei grafici e il periodo dichiara la fonte forum solo per la
-Blu, che invece combacia.
-
-Resta inoltre da confermare a campione l'associazione valore → periodo per le
-carte del 2025 diverse da Platino e Oro.
+Resta da confermare a campione l'associazione valore → periodo per le carte del
+2025 che nessuna fonte esterna copre.
 
 ### La griglia dei periodi non è uniforme per tutte le carte
 

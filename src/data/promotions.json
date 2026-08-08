@@ -400,15 +400,15 @@
       "end": "2025-03-26",
       "datesEstimated": false,
       "source": {
-        "url": "https://forum.finanzaonline.com/threads/presenta-un-amico-blu-2025-american-express-invitato-5-di-riaccredito-per-i-primi-6-mesi-max-150eur-invitante-80eur-max-12-inviti-scad-26-03-2025.2071044/",
-        "note": "Fonte per la sola Blu (5% per 6 mesi fino a 150 EUR, presentatore 80 EUR). Per le carte Membership Rewards questo periodo resta da verificare: la fonte forum indica valori diversi da quelli letti dai grafici su Platino, Verde e Italo.",
+        "url": "https://forum.finanzaonline.com/threads/amex-platino-oro-verde-italo-explora-inviti-illimitati-presentato-180k-100k-30k-24k-5k-mr-presentatore-100k-mr-scadenza-26-03-2025.2071042/",
+        "note": "Valori dell'amico presentato da forum specializzato, corroborati dall'archivio pubblico sulla Platino (180.000 punti entro il 26 marzo 2025). Sostituiscono la lettura dei grafici su Platino, Verde e Italo.",
         "capturedAt": "2026-08-08"
       },
       "offers": {
         "platino": {
           "referred": {
             "type": "bonus",
-            "amount": 250000,
+            "amount": 180000,
             "spend": {
               "amount": 6000
             }
@@ -434,7 +434,7 @@
         "verde": {
           "referred": {
             "type": "bonus",
-            "amount": 12500,
+            "amount": 30000,
             "spend": {
               "amount": 1500
             }
@@ -447,7 +447,7 @@
         "italo": {
           "referred": {
             "type": "bonus",
-            "amount": 12000,
+            "amount": 24000,
             "spend": {
               "amount": 1500
             }
@@ -1283,8 +1283,9 @@
       "end": "2025-11-26",
       "datesEstimated": false,
       "source": {
-        "capturedAt": "2026-08-08",
-        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico-2025/",
+        "note": "Archivio pubblico 2025: conferma i valori letti dai grafici per le quattro carte personali e aggiunge la finestra di spesa di 3 mesi.",
+        "capturedAt": "2026-08-08"
       },
       "offers": {
         "platino": {
@@ -1292,7 +1293,8 @@
             "type": "bonus",
             "amount": 125000,
             "spend": {
-              "amount": 6000
+              "amount": 6000,
+              "months": 3
             }
           },
           "referrer": {
@@ -1305,7 +1307,8 @@
             "type": "bonus",
             "amount": 35000,
             "spend": {
-              "amount": 2000
+              "amount": 2000,
+              "months": 3
             }
           },
           "referrer": {
@@ -1318,7 +1321,8 @@
             "type": "bonus",
             "amount": 10000,
             "spend": {
-              "amount": 1500
+              "amount": 1500,
+              "months": 3
             }
           },
           "referrer": {
@@ -1344,7 +1348,8 @@
             "type": "bonus",
             "amount": 5000,
             "spend": {
-              "amount": 1500
+              "amount": 1500,
+              "months": 3
             }
           },
           "referrer": null
@@ -1443,7 +1448,7 @@
             "type": "bonus",
             "amount": 100000,
             "spend": {
-              "amount": 3500,
+              "amount": 3000,
               "months": 3
             }
           },

@@ -280,24 +280,60 @@ const ARCHIVE_SEQUENCE: { profile: Profile; months: number }[] = [
 const ARCHIVE_SOURCE_URL =
   'https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/';
 
+const ARCHIVE_2025_SOURCE_URL =
+  'https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico-2025/';
+
 /**
- * Fonti puntuali per singoli periodi del 2025. I titoli dei thread di
- * FinanzaOnLine codificano l'offerta per esteso, scadenza compresa.
+ * CORREZIONI PUNTUALI SUL 2025 — amico presentato.
+ * Chiave: indice di periodo → id carta → [punti, spesa, mesi].
  *
- * Il periodo 1 (16/01 → 12/02/2025) e' confermato in pieno: presentato
- * 100k/35k/10k/6k/5k MR per Platino/Oro/Verde/Italo/Explora e presentatore
- * 100k MR coincidono esattamente con la lettura dei grafici, valore del
- * presentatore incluso. E' la prova che quelle letture non sono sbagliate in
- * blocco — e che il presentatore Platino valeva 100k allora contro 50k oggi.
+ * Ordine di precedenza adottato, dal piu' forte: condizioni ufficiali Amex →
+ * archivio Frequent Flyer Italia → forum specializzato → lettura dei grafici.
+ *
+ * Periodo 2 (13/02 → 26/03/2025): la lettura dei grafici dava Platino 250k,
+ * Verde 12,5k e Italo 12k. Sia l'archivio sia il forum indicano 180k per la
+ * Platino, e il forum completa la riga con Verde 30k e Italo 24k. Due fonti
+ * contro una lettura di pixel: vincono le fonti. Oro (100k) ed Explora (5k)
+ * combaciavano gia'.
+ *
+ * Periodo 8 (01/10 → 26/11/2025): l'archivio conferma tutti e quattro i valori
+ * gia' presenti e aggiunge la finestra di spesa, che i grafici non riportavano.
  */
+const CORRECTIONS_2025: Record<number, Record<string, [number, number, number | null]>> = {
+  2: {
+    platino: [180000, 6000, null],
+    verde: [30000, 1500, null],
+    italo: [24000, 1500, null],
+  },
+  8: {
+    platino: [125000, 6000, 3],
+    oro: [35000, 2000, 3],
+    verde: [10000, 1500, 3],
+    explora: [5000, 1500, 3],
+  },
+};
+
+/**
+ * L'archivio 2025 e quello 2026 si contraddicono sulla spesa della Platino nel
+ * periodo 27/11/2025 → 26/01/2026: 3.000 EUR il primo, 3.500 EUR il secondo.
+ * Prevale il 2025, scritto mentre l'offerta era in corso; quello del 2026 e'
+ * una tabella retrospettiva.
+ */
+const LATE_2025_PLATINO_SPEND = 3000;
+
+/** Fonti puntuali per singoli periodi del 2025. */
 const PERIOD_SOURCES: Record<number, { url: string; note: string }> = {
   1: {
     url: 'https://forum.finanzaonline.com/threads/amex-platino-oro-verde-italo-explora-inviti-illimitati-presentato-100k-35k-10k-6k-5k-mr-presentatore-100k-mr-scadenza-12-02-2025.2068995/',
     note: 'Offerta riportata per esteso su forum specializzato; combacia con la lettura dei grafici su tutte e cinque le carte, presentatore incluso.',
   },
   2: {
-    url: 'https://forum.finanzaonline.com/threads/presenta-un-amico-blu-2025-american-express-invitato-5-di-riaccredito-per-i-primi-6-mesi-max-150eur-invitante-80eur-max-12-inviti-scad-26-03-2025.2071044/',
-    note: 'Fonte per la sola Blu (5% per 6 mesi fino a 150 EUR, presentatore 80 EUR). Per le carte Membership Rewards questo periodo resta da verificare: la fonte forum indica valori diversi da quelli letti dai grafici su Platino, Verde e Italo.',
+    url: 'https://forum.finanzaonline.com/threads/amex-platino-oro-verde-italo-explora-inviti-illimitati-presentato-180k-100k-30k-24k-5k-mr-presentatore-100k-mr-scadenza-26-03-2025.2071042/',
+    note: 'Valori dell\'amico presentato da forum specializzato, corroborati dall\'archivio pubblico sulla Platino (180.000 punti entro il 26 marzo 2025). Sostituiscono la lettura dei grafici su Platino, Verde e Italo.',
+  },
+  8: {
+    url: ARCHIVE_2025_SOURCE_URL,
+    note: 'Archivio pubblico 2025: conferma i valori letti dai grafici per le quattro carte personali e aggiunge la finestra di spesa di 3 mesi.',
   },
 };
 
@@ -379,10 +415,20 @@ const out_periods = periods.map(([start, end], i) => {
       continue;
     }
 
+    const correction = CORRECTIONS_2025[i]?.[cardId];
     const fromArchive = archive?.profile[cardId];
-    const referred = fromArchive
-      ? bonus(fromArchive[0], fromArchive[1], archive!.months)
-      : bonus(cell[0], cell[2], cell[3]);
+
+    let referred: Side;
+    if (correction) {
+      referred = bonus(correction[0], correction[1], correction[2]);
+    } else if (fromArchive) {
+      // L'unico punto in cui i due archivi si contraddicono.
+      const spend =
+        i === ARCHIVE_FROM_INDEX && cardId === 'platino' ? LATE_2025_PLATINO_SPEND : fromArchive[1];
+      referred = bonus(fromArchive[0], spend, archive!.months);
+    } else {
+      referred = bonus(cell[0], cell[2], cell[3]);
+    }
 
     const referrerAmount = (isLast ? OFFICIAL_LAST_PERIOD_REFERRER[cardId] : undefined) ?? cell[1];
 
