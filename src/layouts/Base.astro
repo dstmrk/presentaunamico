@@ -1,0 +1,29 @@
+---
+import Seo from '../components/Seo.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  jsonLd: unknown[];
+}
+
+const { title, description, path, jsonLd } = Astro.props;
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Seo title={title} description={description} path={path} jsonLd={jsonLd} />
+  </head>
+  <body>
+    <slot />
+    <Footer />
+  </body>
+</html>

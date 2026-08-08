@@ -1,0 +1,126 @@
+---
+import type { Card } from '../lib/schema.ts';
+import { periods } from '../lib/promotions.ts';
+import { describeOffer, formatDate, formatSpend, formatValue, spendOf } from '../lib/format.ts';
+import { maxValueOf } from '../lib/schema.ts';
+import CardChip from './CardChip.astro';
+
+interface Props {
+  card: Card;
+  /**
+   * Se valorizzato, su schermi stretti restano visibili solo le prime N righe e
+   * le altre si aprono con un interruttore. Le righe non spariscono mai dal DOM.
+   *
+   * Va usato SOLO in home: l'indicizzazione di Google e' mobile-first, quindi
+   * contenuto nascosto di default su mobile pesa meno. La pagina di ogni carta
+   * mostra la tabella intera, cosi' ogni riga resta pienamente visibile almeno
+   * in un posto — ed e' la pagina che compete sulla query di quella carta.
+   */
+  collapseAfter?: number;
+}
+
+const { card, collapseAfter } = Astro.props;
+const toggleId = `mostra-tutto-${card.id}`;
+
+// Ordine decrescente: chi arriva dalla ricerca vuole prima il dato piu' recente.
+const rows = [...periods].reverse();
+
+/** Etichetta breve della fonte: il lettore deve capire quanto fidarsi, non da dove viene l'URL. */
+function sourceLabel(url: string | undefined): string {
+  if (!url) return 'rilevazione indiretta';
+  const host = new URL(url).hostname.replace(/^www\./, '');
+  if (host.endsWith('americanexpress.com')) return 'condizioni ufficiali';
+  if (host.includes('finanzaonline')) return 'forum specializzato';
+  return 'archivio pubblico';
+}
+---
+
+<!--
+  I grafici non sono leggibili da uno screen reader e non sono indicizzabili come
+  dati. Questa tabella e' la stessa informazione in forma testuale: serve
+  all'accessibilita' e ai crawler nella stessa misura.
+
+  L'interruttore e' una checkbox e non un <details>: <details> non puo'
+  contenere righe di tabella senza rompere il markup. Nessun JavaScript.
+-->
+<div class="table-block">
+{collapseAfter !== undefined && (
+  <input type="checkbox" id={toggleId} class="expand-toggle sr-only" />
+)}
+<div class="table-scroll">
+<table class="history" id={`storico-${card.id}`}>
+  <caption>
+    <!-- Il flex sta su un elemento interno: applicarlo al <caption> ne annulla
+         il display: table-caption e la didascalia finisce sotto l'intestazione. -->
+    <span class="history-caption-inner">
+      <CardChip card={card} size="sm" />
+      <span class="history-caption-text">
+        Storico delle offerte Presenta un Amico — {card.fullName}
+      </span>
+    </span>
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Periodo</th>
+      <th scope="col">Amico presentato</th>
+      <th scope="col">Spesa richiesta</th>
+      <th scope="col">Presentatore</th>
+      <th scope="col">Fonte</th>
+    </tr>
+  </thead>
+  <tbody>
+    {rows.map((period, i) => {
+      const offer = period.offers[card.id];
+      const spend = offer ? spendOf(offer.referred) : undefined;
+      const extra = collapseAfter !== undefined && i >= collapseAfter;
+      return (
+        <tr class={extra ? 'row-extra' : undefined}>
+          <th scope="row">
+            <time datetime={period.start}>{formatDate(period.start)}</time>
+            <span aria-hidden="true"> – </span>
+            <span class="sr-only">fino al</span>
+            <time datetime={period.end}>{formatDate(period.end)}</time>
+            {period.datesEstimated && (
+              <abbr class="est" title="Date ricostruite dalla fonte, non lette direttamente">stimate</abbr>
+            )}
+          </th>
+          {offer ? (
+            <>
+              <td>
+                <strong>{formatValue(maxValueOf(offer.referred), card.reward)}</strong>
+                {offer.referred.type === 'rate' && (
+                  <span class="cell-note">{describeOffer(offer.referred, card.reward)}</span>
+                )}
+              </td>
+              <td>{formatSpend(spend) ?? <span class="cell-empty">nessuna</span>}</td>
+              <td>
+                {offer.referrer
+                  ? formatValue(maxValueOf(offer.referrer), card.reward)
+                  : <span class="cell-empty">dato non rilevato</span>}
+              </td>
+            </>
+          ) : (
+            <td colspan="3" class="cell-empty">Dato non rilevato per questo periodo</td>
+          )}
+          <td class="cell-source">
+            {period.source.url ? (
+              <a href={period.source.url} rel="nofollow noopener" target="_blank" title={period.source.note}>
+                {sourceLabel(period.source.url)}
+              </a>
+            ) : (
+              <abbr title={period.source.note}>rilevazione indiretta</abbr>
+            )}
+          </td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+</div>
+{collapseAfter !== undefined && rows.length > collapseAfter && (
+  <label for={toggleId} class="expand-label">
+    <span class="expand-more">Mostra tutti i {rows.length} periodi</span>
+    <span class="expand-less">Mostra solo i più recenti</span>
+  </label>
+)}
+</div>

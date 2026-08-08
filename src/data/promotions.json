@@ -1,0 +1,3229 @@
+{
+  "$schema": "./promotions.schema.json",
+  "schemaVersion": 1,
+  "cards": [
+    {
+      "id": "platino",
+      "name": "Platino",
+      "fullName": "American Express Platino",
+      "group": "mr",
+      "reward": "mr",
+      "color": "#8A8A8E",
+      "order": 1
+    },
+    {
+      "id": "oro",
+      "name": "Oro",
+      "fullName": "American Express Oro",
+      "group": "mr",
+      "reward": "mr",
+      "color": "#B8912F",
+      "order": 2
+    },
+    {
+      "id": "verde",
+      "name": "Verde",
+      "fullName": "American Express Verde",
+      "group": "mr",
+      "reward": "mr",
+      "color": "#3F7D53",
+      "order": 3
+    },
+    {
+      "id": "italo",
+      "name": "Italo",
+      "fullName": "American Express Italo",
+      "group": "mr",
+      "reward": "mr",
+      "color": "#9B1B30",
+      "order": 4
+    },
+    {
+      "id": "explora",
+      "name": "Explora",
+      "fullName": "American Express Explora",
+      "group": "mr",
+      "reward": "mr",
+      "color": "#7C8791",
+      "order": 5
+    },
+    {
+      "id": "platino-business",
+      "name": "Platino Business",
+      "fullName": "American Express Platino Business",
+      "group": "business",
+      "reward": "mr",
+      "color": "#6E7276",
+      "order": 1
+    },
+    {
+      "id": "oro-business",
+      "name": "Oro Business",
+      "fullName": "American Express Oro Business",
+      "group": "business",
+      "reward": "mr",
+      "color": "#A07C1F",
+      "order": 2
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "fullName": "American Express Business",
+      "group": "business",
+      "reward": "mr",
+      "color": "#4A7C59",
+      "order": 3
+    },
+    {
+      "id": "payback",
+      "name": "Payback",
+      "fullName": "American Express Payback",
+      "group": "other",
+      "reward": "payback",
+      "color": "#1667B8",
+      "order": 1
+    },
+    {
+      "id": "payback-plus",
+      "name": "Payback Plus",
+      "fullName": "American Express Payback Plus",
+      "group": "other",
+      "reward": "payback",
+      "color": "#9B1B30",
+      "order": 2
+    },
+    {
+      "id": "blu",
+      "name": "Blu",
+      "fullName": "American Express Blu",
+      "group": "other",
+      "reward": "eur",
+      "color": "#1B6CA8",
+      "order": 3
+    }
+  ],
+  "periods": [
+    {
+      "start": "2025-01-01",
+      "end": "2025-01-15",
+      "datesEstimated": false,
+      "source": {
+        "capturedAt": "2026-08-08",
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 180000,
+            "spend": {
+              "amount": 4000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 100000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 75000,
+            "spend": {
+              "amount": 3500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 38000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 30000,
+            "spend": {
+              "amount": 1000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 30000,
+            "spend": {
+              "amount": 1000
+            }
+          },
+          "referrer": null
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 300
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 500000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 250000,
+            "spend": {
+              "amount": 5000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 37000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 12000,
+            "spend": {
+              "amount": 1000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 16000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-01-16",
+      "end": "2025-02-12",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://forum.finanzaonline.com/threads/amex-platino-oro-verde-italo-explora-inviti-illimitati-presentato-100k-35k-10k-6k-5k-mr-presentatore-100k-mr-scadenza-12-02-2025.2068995/",
+        "note": "Offerta riportata per esteso su forum specializzato; combacia con la lettura dei grafici su tutte e cinque le carte, presentatore incluso.",
+        "capturedAt": "2026-08-08"
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 100000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 100000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 35000,
+            "spend": {
+              "amount": 2000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 45000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 25000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 10000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 300
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 500000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 250000,
+            "spend": {
+              "amount": 5000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 37000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-02-13",
+      "end": "2025-03-26",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://forum.finanzaonline.com/threads/amex-platino-oro-verde-italo-explora-inviti-illimitati-presentato-180k-100k-30k-24k-5k-mr-presentatore-100k-mr-scadenza-26-03-2025.2071042/",
+        "note": "Valori dell'amico presentato da forum specializzato, corroborati dall'archivio pubblico sulla Platino (180.000 punti entro il 26 marzo 2025). Sostituiscono la lettura dei grafici su Platino, Verde e Italo.",
+        "capturedAt": "2026-08-08"
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 180000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 100000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 100000,
+            "spend": {
+              "amount": 3500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 30000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 24000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 250000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 75000,
+            "spend": {
+              "amount": 4000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 45000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 37000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 80
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-03-27",
+      "end": "2025-05-05",
+      "datesEstimated": false,
+      "source": {
+        "capturedAt": "2026-08-08",
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 120000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 90000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 38000,
+            "spend": {
+              "amount": 2000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 38000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 15000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 10000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 250000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 75000,
+            "spend": {
+              "amount": 4000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 45000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 32000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 15000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 80
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-05-06",
+      "end": "2025-06-18",
+      "datesEstimated": false,
+      "source": {
+        "capturedAt": "2026-08-08",
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 250000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 100000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 30000,
+            "spend": {
+              "amount": 2000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 25000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 12000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 10000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 150000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 75000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 37000,
+            "spend": {
+              "amount": 5000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 30000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 32000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-06-19",
+      "end": "2025-06-26",
+      "datesEstimated": false,
+      "source": {
+        "capturedAt": "2026-08-08",
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 100000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 35000,
+            "spend": {
+              "amount": 2000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 35000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 12000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 10000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 150000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 75000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 37000,
+            "spend": {
+              "amount": 5000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 30000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 32000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-06-27",
+      "end": "2025-07-30",
+      "datesEstimated": false,
+      "source": {
+        "capturedAt": "2026-08-08",
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 120000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 100000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 38000,
+            "spend": {
+              "amount": 2000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 38000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 12500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 10000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 150000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 75000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 40000,
+            "spend": {
+              "amount": 4000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 25000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 30000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-07-31",
+      "end": "2025-09-30",
+      "datesEstimated": false,
+      "source": {
+        "capturedAt": "2026-08-08",
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 120000,
+            "spend": {
+              "amount": 5000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 100000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 38000,
+            "spend": {
+              "amount": 2000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 38000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 12500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 10000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 150000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 75000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 40000,
+            "spend": {
+              "amount": 4000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 25000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 25000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": null
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-10-01",
+      "end": "2025-11-26",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico-2025/",
+        "note": "Archivio pubblico 2025: conferma i valori letti dai grafici per le quattro carte personali e aggiunge la finestra di spesa di 3 mesi.",
+        "capturedAt": "2026-08-08"
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 125000,
+            "spend": {
+              "amount": 6000,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 35000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 35000,
+            "spend": {
+              "amount": 2000,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 15000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 8000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 6000,
+            "spend": {
+              "amount": 1500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 10000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500,
+              "months": 3
+            }
+          },
+          "referrer": null
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 125000,
+            "spend": {
+              "amount": 6000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 75000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 30000,
+            "spend": {
+              "amount": 4000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 22000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 3000
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 22000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 500
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 6000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2025-11-27",
+      "end": "2026-01-26",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 100000,
+            "spend": {
+              "amount": 3000,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 30000,
+            "spend": {
+              "amount": 2000,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1500,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 4000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1500,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 90000,
+            "spend": {
+              "amount": 6000,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 30000,
+            "spend": {
+              "amount": 4000,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 3000,
+              "months": 3
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-01-27",
+      "end": "2026-02-05",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 50000,
+            "spend": {
+              "amount": 6000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 15000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 4000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 60000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 20000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-02-06",
+      "end": "2026-03-10",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 110000,
+            "spend": {
+              "amount": 10000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 17500,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 4000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 140000,
+            "spend": {
+              "amount": 12000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 25000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-03-11",
+      "end": "2026-03-17",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 50000,
+            "spend": {
+              "amount": 6000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 15000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 6500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 8000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 60000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 20000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 22000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 4000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-03-18",
+      "end": "2026-04-21",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 180000,
+            "spend": {
+              "amount": 12000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 35000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 6500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 8000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 210000,
+            "spend": {
+              "amount": 15000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 45000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 22000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 4000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "rate",
+            "rate": 0.05,
+            "months": 6,
+            "spendCap": 3000
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 40
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-04-22",
+      "end": "2026-04-29",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 50000,
+            "spend": {
+              "amount": 6000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 15000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 17500
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3500
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 60000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 20000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 15000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-04-30",
+      "end": "2026-06-02",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 110000,
+            "spend": {
+              "amount": 10000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 17500,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 17500
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3500
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 140000,
+            "spend": {
+              "amount": 12000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 25000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 15000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-06-03",
+      "end": "2026-06-10",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 50000,
+            "spend": {
+              "amount": 6000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 75000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 15000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 6500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 8000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 60000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 60000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 20000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 22000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 4000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-06-11",
+      "end": "2026-07-14",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 180000,
+            "spend": {
+              "amount": 12000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 75000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 35000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 6500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 8000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 210000,
+            "spend": {
+              "amount": 15000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 60000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 45000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 22000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 10000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 4000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-07-15",
+      "end": "2026-07-22",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Archivio pubblico delle offerte: valori dell'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 50000,
+            "spend": {
+              "amount": 6000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 15000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 5000
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3500
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 60000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 20000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 18000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3000
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
+      }
+    },
+    {
+      "start": "2026-07-23",
+      "end": "2026-08-31",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/",
+        "capturedAt": "2026-08-08",
+        "note": "Condizioni ufficiali American Express: valori dell'amico presentato e requisiti di spesa confermati per tutte le carte, valori del presentatore presi da qui."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 110000,
+            "spend": {
+              "amount": 10000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 50000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 17500,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 2500
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 140000,
+            "spend": {
+              "amount": 12000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 60000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 25000,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3500
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
+      }
+    }
+  ]
+}

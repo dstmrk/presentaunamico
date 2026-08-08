@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import CurrentOffers from '../components/CurrentOffers.astro';
+import CardPanel from '../components/CardPanel.astro';
+import HistoryTable from '../components/HistoryTable.astro';
+import Legend from '../components/Legend.astro';
+import { cards, groups, lastUpdated, periods } from '../lib/promotions.ts';
+import { buildSeries } from '../lib/series.ts';
+import { formatDate } from '../lib/format.ts';
+import { faq } from '../lib/faq.ts';
+import { cardPath, indexJsonLd } from '../lib/seo.ts';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../lib/site.ts';
+
+const series = new Map(cards.map((c) => [c.id, buildSeries(c)]));
+const ordered = groups.flatMap((g) => g.cards);
+const first = periods[0]!;
+const last = periods[periods.length - 1]!;
+
+// In home la tabella si ferma ai periodi recenti su schermi stretti: le righe
+// restano nel DOM, e comunque ogni carta ha la sua pagina con la tabella intera.
+const COLLAPSE_AFTER = 6;
+---
+
+<Base title={SITE_TITLE} description={SITE_DESCRIPTION} path="/" jsonLd={indexJsonLd()}>
+  <header class="site-head">
+    <div class="wrap">
+      <h1>Presenta un Amico American Express: quanti punti danno oggi</h1>
+      <p class="lede">
+        Storico delle promozioni "Presenta un Amico" (member-get-member) delle carte
+        American Express in Italia: quanti punti riceve l'amico presentato, quanti
+        il presentatore, e con quale requisito di spesa. American Express cambia le
+        offerte ogni una o due mesi e non pubblica un archivio: questo sito lo tiene.
+      </p>
+      <p class="updated">
+        {cards.length} carte · {periods.length} periodi dal
+        <time datetime={first.start}>{formatDate(first.start)}</time> al
+        <time datetime={last.end}>{formatDate(last.end)}</time> ·
+        aggiornato al <time datetime={lastUpdated}>{formatDate(lastUpdated)}</time>
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <CurrentOffers />
+
+    {groups.map((group, gi) => (
+      <section class="group" aria-labelledby={`gruppo-${group.id}`}>
+        <h2 id={`gruppo-${group.id}`}>{group.label}</h2>
+        {gi === 0 && <Legend />}
+        {group.cards.map((card, i) => (
+          <CardPanel series={series.get(card.id)!} showAxis={i === group.cards.length - 1} linkToCard />
+        ))}
+      </section>
+    ))}
+
+    <section class="tables" aria-labelledby="storico">
+      <h2 id="storico">Storico completo</h2>
+      <p class="group-note">
+        Tutti i dati in forma tabellare, dal periodo più recente al più vecchio.
+        La colonna Fonte indica da dove viene ogni riga.
+      </p>
+      {ordered.map((card) => (
+        <div class="table-entry">
+          <HistoryTable card={card} collapseAfter={COLLAPSE_AFTER} />
+          <p class="table-more">
+            <a href={cardPath(card)}>Scheda completa della carta {card.name} →</a>
+          </p>
+        </div>
+      ))}
+    </section>
+
+    <section class="faq" aria-labelledby="domande">
+      <h2 id="domande">Domande frequenti</h2>
+      {faq.map((item) => (
+        <div class="faq-item">
+          <h3>{item.question}</h3>
+          <p>{item.answer}</p>
+        </div>
+      ))}
+    </section>
+  </main>
+</Base>

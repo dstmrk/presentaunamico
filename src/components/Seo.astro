@@ -1,0 +1,40 @@
+---
+import { SITE_LOCALE, SITE_NAME, SITE_URL } from '../lib/site.ts';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Percorso assoluto dalla radice, es. "/" o "/carte/platino". */
+  path: string;
+  jsonLd: unknown[];
+}
+
+const { title, description, path, jsonLd } = Astro.props;
+
+// Canonical sempre assoluto e sempre sul dominio di produzione, a prescindere
+// dall'host che sta servendo la pagina.
+const canonical = `${SITE_URL}${path === '/' ? '' : path}`;
+const ogImage = `${SITE_URL}/og.png`;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content={SITE_LOCALE} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{jsonLd.map((block) => (
+  <script type="application/ld+json" set:html={JSON.stringify(block)} />
+))}
