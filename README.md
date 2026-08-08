@@ -141,11 +141,63 @@ npm run build
 Se la validazione fallisce, `astro build` esce con errore e **Cloudflare Pages
 non pubblica**: il sito online resta l'ultima versione valida.
 
-Su Cloudflare Pages:
+## Deploy su Cloudflare Pages
 
-- Build command: `npm run build`
-- Output directory: `dist`
-- Deploy automatico a ogni push su `main`
+### Prima configurazione
+
+1. **Workers & Pages → Create → Pages → Connect to Git**, e seleziona il repo.
+2. **Il nome del progetto deve essere `presentaunamico`**: è il nome a
+   determinare il sottodominio `presentaunamico.pages.dev`, che è il valore di
+   `PRODUCTION_HOSTNAME` in `src/lib/site.ts`. Con un nome diverso, canonical e
+   sitemap punterebbero a un dominio che non esiste — oppure va cambiata quella
+   costante.
+3. Impostazioni di build:
+
+   | Campo | Valore |
+   |---|---|
+   | Framework preset | Astro (o *None*) |
+   | Build command | `npm run build` |
+   | Build output directory | `dist` |
+   | Production branch | `main` |
+
+4. **Save and Deploy.**
+
+Non serve altro: `functions/` e `public/_headers` vengono raccolti in
+automatico da Pages, senza configurazione.
+
+### Perché non serve impostare NODE_VERSION
+
+C'è un `.nvmrc` con `22` nella radice: Pages lo legge e usa quella versione.
+Se preferisci l'esplicito, l'alternativa è una variabile d'ambiente
+`NODE_VERSION = 22` nelle impostazioni del progetto.
+
+### Dipendenze e NODE_ENV
+
+Tutto ciò che serve alla build sta in `dependencies`, non in
+`devDependencies` — Tailwind, `tsx` e `zod-to-json-schema` inclusi. Alcune
+piattaforme installano con `NODE_ENV=production`, e in quel caso le
+devDependencies vengono saltate: qui la build passa comunque. Verificato con
+`npm ci --omit=dev`.
+
+### Deploy di anteprima
+
+Ogni push su un branch diverso da `main` produce un'anteprima su
+`<branch>.presentaunamico.pages.dev`. Il middleware le marca già oggi con
+`X-Robots-Tag: noindex`, perché l'host non coincide con `PRODUCTION_HOSTNAME`:
+le anteprime non finiscono nell'indice, il dominio di produzione sì.
+
+Nota: `functions/_middleware.ts` gira su **ogni** richiesta, quindi tutte le
+richieste contano come invocazioni Functions (100.000 al giorno nel piano
+gratuito). Finché il dominio di produzione resta `pages.dev` il middleware
+serve solo a proteggere le anteprime: se preferisci azzerare le invocazioni,
+puoi rimuoverlo e rimetterlo quando aggiungi il dominio custom.
+
+### Deploy manuale, senza Git
+
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name presentaunamico
+```
 
 ---
 
