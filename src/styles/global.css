@@ -1,43 +1,96 @@
 @import 'tailwindcss';
 
+/* ==========================================================================
+   ALMANACCO — sistema visivo del sito
+   ==========================================================================
+
+   Il sito e' un archivio: conserva serie storiche, cita le fonti riga per riga
+   e vale per l'accuratezza, non per l'interfaccia. Lo stile e' scelto di
+   conseguenza — il bollettino statistico stampato:
+
+     - fondo carta avorio, inchiostro caldo, un solo accento (rosso da stampa);
+     - tipografia con grazie per il testo e le cifre, monospaziato per etichette,
+       date e intestazioni di colonna (allinea le colonne e "suona" da referto);
+     - filetti, non contenitori: nessun raggio, nessuna ombra, nessuna card.
+       La gerarchia la fanno le regole orizzontali e lo spazio bianco;
+     - sezioni, tavole e figure numerate, come in un annuario.
+
+   Tema unico chiaro: una palette sola, tarata al millimetro, invece di due
+   mezze palette. La scelta e' deliberata, non una dimenticanza.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   Caratteri — serviti dal nostro dominio, come impone la CSP del sito
+   (default-src 'self'). Vite li rinomina con hash dentro /_astro/, che e' gia'
+   marcato immutable in public/_headers.
+   -------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('../assets/fonts/source-serif-4-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* --------------------------------------------------------------------------
    Token
    -------------------------------------------------------------------------- */
 
 :root {
-  --bg: #ffffff;
-  --bg-soft: #f6f7f8;
-  --bg-card: #ffffff;
-  --fg: #16181d;
-  --fg-muted: #5b6270;
-  --fg-faint: #878e9c;
-  --border: #e3e6ea;
-  --border-strong: #c9ced6;
-  --accent: #1b4d8f;
-  --warn-bg: #fff8e6;
-  --warn-fg: #7a5a00;
-  --warn-border: #e8d08a;
-  --radius: 10px;
-  --maxw: 1120px;
+  /* Carta e inchiostro. I valori sono caldi (mai grigio neutro): e' cio' che
+     distingue una pagina stampata da una finestra di sistema. */
+  --paper: #faf7f0;
+  --paper-deep: #f3eee1;
+  --paper-tint: #efe8d8;
+  --ink: #16130f;
+  --ink-soft: #4a443b;
+  --ink-faint: #736a5c;    /* 4.97:1 su --paper: regge anche a 12px */
+  --rule: #ddd5c4;
+  --rule-bold: #b9ae98;
 
-  color-scheme: light dark;
-}
+  /* Un accento solo, su tutto il sito. Rosso da stampa: e' il colore con cui i
+     bollettini segnano cio' che conta, e non somiglia al blu di sistema. */
+  --accent: #9a2c1f;       /* 7.1:1 su --paper */
+  --accent-deep: #6f1f16;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #101216;
-    --bg-soft: #161920;
-    --bg-card: #171a21;
-    --fg: #e9ecf1;
-    --fg-muted: #a2abba;
-    --fg-faint: #79828f;
-    --border: #272c35;
-    --border-strong: #39404c;
-    --accent: #8ab4f8;
-    --warn-bg: #2a2418;
-    --warn-fg: #e8c877;
-    --warn-border: #4d411f;
-  }
+  /* Segnalazioni: dato stimato, periodo scaduto, ricostruzione d'archivio. */
+  --flag-ink: #7a5712;     /* 5.6:1 su --paper */
+  --flag-paper: #f6edd5;
+  --flag-rule: #d8c691;
+
+  --serif: 'Source Serif 4 Variable', Iowan Old Style, Palatino, Georgia, serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --maxw: 1080px;
+  --measure: 68ch;
+
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -45,16 +98,37 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  background: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.62;
+  font-variant-numeric: oldstyle-nums proportional-nums;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Le cifre di un archivio si leggono in colonna: ovunque siano un dato e non
+   una parola, tornano allineate e a larghezza fissa. */
+.now-value, .ledger-value, .history td, .history tbody th, .updated,
+.now-detail, .ledger-meta, .now-period {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+::selection { background: var(--accent); color: var(--paper); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .sr-only {
@@ -70,189 +144,295 @@ body {
 .wrap {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 22px;
 }
 
-a { color: var(--accent); }
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
 
-h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
+a:hover { color: var(--accent-deep); }
+
+h1, h2, h3 {
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+}
+
+strong { font-weight: 600; }
 
 /* --------------------------------------------------------------------------
-   Intestazione
+   Testata — impostata come la testata di un bollettino: filetto pesante in
+   alto, riga di colophon monospaziata, titolo con grazie, doppio filetto sotto.
    -------------------------------------------------------------------------- */
 
 .site-head {
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-soft);
-  padding: 40px 0 32px;
+  border-top: 7px solid var(--ink);
+  border-bottom: 5px double var(--ink);
+  padding: 26px 0 22px;
+}
+
+.masthead-meta {
+  margin: 0 0 20px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .site-head h1 {
-  margin: 0 0 12px;
-  font-size: clamp(1.6rem, 4.2vw, 2.5rem);
-  font-weight: 700;
+  margin: 0 0 16px;
+  max-width: 22ch;
+  font-size: clamp(2rem, 5.6vw, 3.35rem);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.06;
+  text-wrap: balance;
 }
 
 .lede {
   margin: 0;
-  max-width: 62ch;
-  color: var(--fg-muted);
-  font-size: 1.05rem;
+  max-width: var(--measure);
+  font-size: 1.06rem;
+  color: var(--ink-soft);
 }
 
+/* Riga di dati dell'edizione: sta fra due filetti, come il sommario in testa a
+   una tavola stampata. */
 .updated {
-  margin-top: 16px;
-  font-size: 0.85rem;
-  color: var(--fg-faint);
+  margin: 22px 0 0;
+  padding: 8px 0 7px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
 }
 
 /* --------------------------------------------------------------------------
-   Chip carta — identificazione tipografica, nessun asset grafico Amex
+   Sezioni numerate — la numerazione la fa un contatore CSS, cosi' nessuna
+   pagina deve tenere il conto a mano.
+   -------------------------------------------------------------------------- */
+
+main { counter-reset: sezione tavola figura; }
+
+main > section > h2,
+main > nav > h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.35rem, 3vw, 1.7rem);
+}
+
+main > section > h2::before,
+main > nav > h2::before {
+  counter-increment: sezione;
+  content: '§ ' counter(sezione, upper-roman);
+  display: block;
+  margin-bottom: 11px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  color: var(--accent);
+}
+
+/* Nota esplicativa sotto un titolo di sezione. */
+.group-note, .now-period {
+  margin: 0 0 20px;
+  max-width: var(--measure);
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.now-stale { color: var(--flag-ink); }
+
+/* --------------------------------------------------------------------------
+   Marca della carta — nessun asset grafico American Express: un rettangolo di
+   colore come i campioni d'inchiostro a margine di una tavola, piu' il nome.
    -------------------------------------------------------------------------- */
 
 .card-chip {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
-  padding: 5px 12px 5px 8px;
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  background: var(--bg-card);
-  font-size: 0.95rem;
-  font-weight: 650;
+  font-size: 1.02rem;
+  font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
 }
 
 .card-chip-bar {
-  width: 10px;
-  height: 16px;
-  border-radius: 3px;
+  width: 5px;
+  height: 0.82em;
   background: var(--chip);
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
   flex: none;
+  align-self: center;
 }
 
-.card-chip-sm {
-  padding: 3px 9px 3px 6px;
-  font-size: 0.82rem;
-}
+.card-chip-sm { font-size: 0.9rem; gap: 7px; }
+.card-chip-sm .card-chip-bar { width: 4px; height: 0.78em; }
 
-.card-chip-sm .card-chip-bar { width: 8px; height: 13px; }
-
-@media (prefers-color-scheme: dark) {
-  .card-chip-bar { background: var(--chip-dark); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12); }
-}
+a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px; }
 
 /* --------------------------------------------------------------------------
-   Riepilogo "oggi"
+   Prospetto delle offerte correnti — righe di registro con puntini di guida,
+   non riquadri. E' la forma in cui un indice stampato mette nome e cifra.
    -------------------------------------------------------------------------- */
 
-.now { padding: 36px 0 8px; }
-.now h2 { margin: 0 0 6px; font-size: 1.4rem; }
-.now-period { margin: 0 0 20px; color: var(--fg-muted); font-size: 0.95rem; }
-.now-stale { color: var(--warn-fg); }
+.now { padding: 40px 0 4px; }
 
-.now-grid {
+.ledger {
   list-style: none;
-  margin: 0; padding: 0;
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid var(--ink);
 }
 
-.now-card {
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--bg-card);
+@media (min-width: 880px) {
+  .ledger {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 60px;
+  }
 }
 
-@media (prefers-color-scheme: dark) {
-  .now-card { border-left-color: var(--line-dark); }
-}
+.ledger-row { border-bottom: 1px solid var(--rule); }
 
-.now-card-link {
+.ledger-link {
   display: block;
-  padding: 14px;
+  padding: 13px 0 12px;
   color: inherit;
   text-decoration: none;
 }
 
-.now-card-link:hover { background: var(--bg-soft); border-radius: var(--radius); }
-
-.now-card-value {
-  margin: 10px 0 2px;
-  font-size: 1.3rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+.ledger-head {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
 }
 
-.now-card-meta { margin: 0; font-size: 0.82rem; color: var(--fg-muted); }
-.now-card-stale { margin: 6px 0 0; font-size: 0.78rem; color: var(--warn-fg); }
+/* I puntini di guida: elemento vuoto che si allunga a riempire lo spazio fra
+   nome e cifra. Con align-items:baseline il suo bordo inferiore cade sulla
+   linea di base del testo, ed e' esattamente dove li mette la stampa. */
+.ledger-dots {
+  flex: 1 1 auto;
+  min-width: 2ch;
+  height: 0;
+  border-bottom: 1px dotted var(--rule-bold);
+  transform: translateY(-0.3em);
+}
+
+/* La cifra e' in nero: il colore della carta identifica, non quantifica.
+   Tenerlo fuori dai numeri mantiene ogni valore al massimo contrasto. */
+.ledger-value {
+  font-size: 1.32rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ledger-meta {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 0.71rem;
+  line-height: 1.5;
+  color: var(--ink-faint);
+}
+
+.ledger-flag { color: var(--flag-ink); }
+
+.ledger-link:hover { background: var(--paper-deep); }
+.ledger-link:hover .ledger-dots { border-bottom-color: var(--accent); }
 
 /* --------------------------------------------------------------------------
-   Gruppi e riquadri
+   Gruppi e riquadri delle figure
    -------------------------------------------------------------------------- */
 
-.group { padding: 34px 0 10px; }
-.group > h2 { margin: 0 0 4px; font-size: 1.4rem; }
-.group-note { margin: 0 0 18px; color: var(--fg-muted); font-size: 0.9rem; }
+.group { padding: 42px 0 10px; }
 
 .panel {
-  border-top: 1px solid var(--border);
-  padding: 14px 0 10px;
+  counter-increment: figura;
+  border-top: 1px solid var(--rule);
+  padding: 15px 0 12px;
 }
 
-/* Su mobile l'intestazione e' una riga sola: chip a sinistra, valore corrente a
+/* Su mobile l'intestazione e' una riga sola: marca a sinistra, valore corrente a
    destra. Impilare cinque righe di testo sopra un grafico da 120px farebbe
    scorrere per 4000px su undici carte, e la pagina diventerebbe inutilizzabile. */
 .panel-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
 }
 
 .panel-id { min-width: 0; }
-.panel-title { margin: 0; font-size: 1rem; }
+.panel-title { margin: 0; font-size: 1rem; font-weight: 600; }
+.panel-title-link { color: inherit; text-decoration: none; }
 .panel-unit { display: none; }
 
 .panel-now { text-align: right; flex: none; }
+
 .now-label {
   margin: 0;
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--fg-faint);
+  letter-spacing: 0.13em;
+  color: var(--ink-faint);
 }
+
 .now-value {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--line);
+  margin: 1px 0 0;
+  font-size: 1.2rem;
+  font-weight: 600;
   white-space: nowrap;
 }
-.now-detail { margin: 1px 0 0; font-size: 0.75rem; color: var(--fg-muted); }
+
+.now-detail {
+  margin: 1px 0 0;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+}
 
 @media (min-width: 720px) {
-  .panel { padding: 18px 0 12px; }
+  .panel { padding: 20px 0 14px; }
   .panel-head { align-items: flex-start; }
-  .panel-unit { display: block; margin: 5px 0 0; font-size: 0.8rem; color: var(--fg-faint); }
-  .now-label { font-size: 0.72rem; letter-spacing: 0.07em; }
-  .now-value { font-size: 1.5rem; margin-top: 2px; }
-  .now-detail { font-size: 0.8rem; margin-top: 2px; }
+
+  /* La riga d'unita' porta anche il numero di figura: numerare le tavole e i
+     grafici e' cio' che rende un archivio citabile. */
+  .panel-unit {
+    display: block;
+    margin: 7px 0 0;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .panel-unit::before {
+    content: 'Fig. ' counter(figura) ' · ';
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .now-value { font-size: 1.62rem; margin-top: 3px; }
+  .now-detail { font-size: 0.74rem; }
 }
 
-@media (prefers-color-scheme: dark) {
-  .now-value { color: var(--line-dark); }
-}
-
-.panel-chart { margin-top: 8px; }
+.panel-chart { margin-top: 10px; }
 
 /* --------------------------------------------------------------------------
-   SVG
+   Grafici — inchiostro su carta: filetti puntinati per la griglia, base piena
+   come l'asse di una tavola stampata, etichette monospaziate.
    -------------------------------------------------------------------------- */
 
 .chart { width: 100%; height: auto; display: block; overflow: visible; }
@@ -264,86 +444,215 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
   .chart-desktop { display: block; }
 }
 
-.grid { stroke: var(--border); stroke-width: 1; }
-.axis-base { stroke: var(--border-strong); stroke-width: 1; }
-.year-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 4; }
-.current-band { fill: var(--fg); opacity: 0.045; }
+.grid { stroke: var(--rule-bold); stroke-width: 1; stroke-dasharray: 1 3; }
+.axis-base { stroke: var(--ink); stroke-width: 1; }
+.year-line { stroke: var(--rule-bold); stroke-width: 1; stroke-dasharray: 1 4; }
+
+/* Il periodo in corso e' l'unica cosa che l'accento evidenzia dentro un grafico. */
+.current-band { fill: var(--accent); opacity: 0.07; }
 
 .tick-label, .axis-label, .annotation, .spend-label {
-  fill: var(--fg-faint);
-  font-family: inherit;
-  font-variant-numeric: tabular-nums;
+  fill: var(--ink-faint);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
 }
-.axis-label-major { fill: var(--fg-muted); font-weight: 650; }
-.annotation { fill: var(--fg-muted); font-weight: 600; }
+
+.axis-label-major { fill: var(--ink-soft); font-weight: 600; }
+.annotation { fill: var(--ink-soft); font-weight: 600; }
 
 .serie-referred { stroke: var(--line); stroke-linejoin: round; stroke-linecap: butt; }
-.serie-referred-area { fill: var(--line); opacity: 0.13; }
+.serie-referred-area { fill: var(--line); opacity: 0.11; }
 .serie-referrer { stroke: var(--referrer); stroke-dasharray: 5 3.5; stroke-linejoin: round; }
-.marker-current { fill: var(--bg); stroke: var(--line); stroke-width: 2; }
-.marker-capped { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
-.spend-bar { fill: var(--line); opacity: 0.3; }
-
-@media (prefers-color-scheme: dark) {
-  .serie-referred { stroke: var(--line-dark); }
-  .serie-referred-area { fill: var(--line-dark); opacity: 0.16; }
-  .serie-referrer { stroke: var(--referrer-dark); }
-  .marker-current, .marker-capped { stroke: var(--line-dark); }
-  .spend-bar { fill: var(--line-dark); opacity: 0.34; }
-  .current-band { opacity: 0.07; }
-}
+.marker-current { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
+.marker-capped { fill: var(--paper); stroke: var(--line); stroke-width: 1.5; }
+.spend-bar { fill: var(--line); opacity: 0.28; }
 
 /* --------------------------------------------------------------------------
-   Legenda
+   Legenda — chiave di lettura monospaziata fra due filetti, come sotto una
+   tavola stampata.
    -------------------------------------------------------------------------- */
 
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 9px 26px;
   margin: 0 0 18px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-soft);
-  font-size: 0.85rem;
-  color: var(--fg-muted);
+  padding: 10px 0 9px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
   list-style: none;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
 }
 
 .legend li { display: flex; align-items: center; gap: 8px; }
 .legend svg { flex: none; }
 
 /* --------------------------------------------------------------------------
-   Tabella storica
+   Tavole storiche
    -------------------------------------------------------------------------- */
 
-.tables { padding: 36px 0 0; }
-.tables > h2 { margin: 0 0 6px; font-size: 1.4rem; }
+.tables { padding: 44px 0 0; }
 
-.table-entry { margin: 0 0 40px; }
+.table-entry { margin: 0 0 46px; }
 .table-block { margin: 0; }
 .table-scroll { overflow-x: auto; }
 
-.table-more { margin: 10px 0 0; font-size: 0.88rem; }
+.history {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+  min-width: 640px;
+}
+
+.history caption {
+  text-align: left;
+  padding: 0 0 12px;
+}
+
+.history-caption-inner { display: block; }
+
+/* "Tavola n": il numero di tavola e' cio' che permette di citare una riga. */
+.tavola {
+  display: block;
+  margin-bottom: 5px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tavola::before {
+  counter-increment: tavola;
+  content: 'Tavola ' counter(tavola);
+}
+
+.history-caption-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.history-caption-text {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.history th, .history td {
+  border-bottom: 1px solid var(--rule);
+  padding: 9px 18px 9px 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.history thead th {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--ink-faint);
+}
+
+/* Le date in monospaziato incolonnano da sole: e' la prima colonna che si
+   scorre con l'occhio, e in un archivio va letta come una serie. */
+.history tbody th {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.history td strong { font-size: 1rem; font-weight: 600; }
+
+.cell-note {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+
+.cell-empty { color: var(--ink-faint); font-style: italic; }
+
+/* La provenienza e' la credibilita' di un archivio: va vista, non solo salvata.
+   Resta pero' una colonna intera: in accento diventerebbe venti righe rosse che
+   gridano piu' dei dati. Inchiostro tenue, accento solo al passaggio del mouse. */
+.cell-source {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+/* L'ultima colonna assorbe lo spazio in eccesso, cosi' le colonne dei dati
+   restano strette e affiancate invece di allontanarsi fra loro. Perche' funzioni
+   servono le celle in nowrap: senza, il browser stringe le altre colonne fino a
+   spezzare "110.000 punti" su due righe pur di allargare questa. */
+.history th:last-child, .history td:last-child { width: 100%; padding-right: 0; }
+.history thead th, .history td { white-space: nowrap; }
+/* La nota va a capo, ma con una larghezza minima: senza, la colonna la stringe
+   sulla cifra ("150 €") e la descrizione del cashback finisce su cinque righe. */
+.cell-note { white-space: normal; min-width: 30ch; }
+
+.cell-source a {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-bold);
+}
+
+.cell-source a:hover { color: var(--accent); text-decoration-color: currentColor; }
+
+.cell-source abbr {
+  color: var(--ink-faint);
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+.est {
+  margin-left: 7px;
+  padding: 1px 4px;
+  background: var(--flag-paper);
+  border-bottom: 1px solid var(--flag-rule);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--flag-ink);
+  cursor: help;
+}
+
+.table-more { margin: 12px 0 0; font-size: 0.92rem; }
 
 /* Troncamento su schermi stretti, senza JavaScript. Le righe restano sempre nel
    DOM: si nascondono, non spariscono. Su desktop c'e' spazio, quindi si mostra
    tutto e l'interruttore non serve. */
 .expand-label {
   display: inline-block;
-  margin: 10px 0 0;
-  padding: 7px 14px;
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  background: var(--bg-card);
-  color: var(--accent);
-  font-size: 0.85rem;
+  margin: 12px 0 0;
+  padding: 8px 15px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.7rem;
   font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
-.expand-label:hover { background: var(--bg-soft); }
+.expand-label:hover { background: var(--ink); color: var(--paper); }
+
 .expand-toggle:focus-visible + .table-scroll + .expand-label {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -353,135 +662,139 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
 .expand-toggle:checked ~ .expand-label .expand-more { display: none; }
 .expand-toggle:checked ~ .expand-label .expand-less { display: inline; }
 
+/* Su schermi stretti la tavola scorre comunque in orizzontale, ma non deve
+   scorrere il doppio del necessario: il monospaziato allarga le date, e una
+   colonna "Periodo" da 270px lascerebbe fuori schermo tutto il resto. Qui la
+   riga di date va a capo FRA le due date (mai dentro una), e le celle si
+   stringono. Circa 250px risparmiati, senza togliere niente. */
 @media (max-width: 719px) {
   .row-extra { display: none; }
   .expand-toggle:checked ~ .table-scroll .row-extra { display: table-row; }
+
+  .history { font-size: 0.88rem; min-width: 0; }
+  .history th, .history td { padding-right: 12px; }
+  .history thead th { font-size: 0.6rem; letter-spacing: 0.1em; }
+  .history tbody th { white-space: normal; font-size: 0.72rem; }
+  .history tbody th time { white-space: nowrap; }
+  .history td strong { font-size: 0.94rem; }
+  .cell-note { min-width: 22ch; }
 }
 
 @media (min-width: 720px) {
   .expand-label { display: none; }
 }
 
-/* Percorso e navigazione fra schede */
-.crumbs { margin: 0 0 14px; font-size: 0.85rem; color: var(--fg-muted); }
-.crumbs a { text-decoration: none; }
-.crumbs a:hover { text-decoration: underline; }
+/* --------------------------------------------------------------------------
+   Percorso e navigazione fra schede
+   -------------------------------------------------------------------------- */
 
-.panel-title-link { text-decoration: none; }
-.panel-title-link:hover .card-chip { border-color: var(--accent); }
+.crumbs {
+  margin: 0 0 20px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
 
-.siblings { padding: 34px 0 0; }
-.siblings h2 { margin: 0 0 14px; font-size: 1.1rem; }
+/* Il percorso sta sopra la riga di rubrica in accento: se fosse rosso anche lui
+   sarebbero due righe monospaziate rosse in fila, e nessuna delle due avrebbe
+   piu' il peso di un'intestazione. */
+.crumbs a { color: var(--ink-soft); text-decoration: none; }
+.crumbs a:hover { color: var(--accent); text-decoration: underline; }
+
+.siblings { padding: 44px 0 0; }
+
 .siblings-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 10px 28px;
   list-style: none;
   margin: 0;
   padding: 0;
-}
-.siblings-list a { text-decoration: none; }
-.siblings-list a:hover .card-chip { border-color: var(--accent); }
-.siblings-back { margin: 20px 0 0; font-size: 0.9rem; }
-
-.history {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-  min-width: 620px;
+  border-top: 1px solid var(--ink);
+  padding-top: 14px;
 }
 
-.history caption {
-  text-align: left;
-  padding: 0 0 10px;
+.siblings-list a { color: inherit; text-decoration: none; }
+.siblings-back { margin: 24px 0 0; font-size: 0.95rem; }
+
+/* --------------------------------------------------------------------------
+   Domande frequenti — impaginate come un questionario: D. e R. a margine.
+   -------------------------------------------------------------------------- */
+
+.faq { padding: 44px 0 0; }
+
+.faq-item {
+  border-top: 1px solid var(--rule);
+  padding: 18px 0;
 }
 
-.history-caption-inner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.faq-item h3 { margin: 0 0 6px; font-size: 1.05rem; }
+.faq-item p { margin: 0; max-width: var(--measure); color: var(--ink-soft); }
 
-.history-caption-text { font-weight: 600; color: var(--fg-muted); font-size: 0.9rem; }
+.faq-item h3, .faq-item p { padding-left: 2.2rem; }
 
-.history th, .history td {
-  border-bottom: 1px solid var(--border);
-  padding: 8px 12px 8px 0;
-  text-align: left;
-  vertical-align: top;
-}
-
-.history thead th {
-  font-size: 0.75rem;
-  text-transform: uppercase;
+.faq-item h3::before, .faq-item p::before {
+  display: inline-block;
+  width: 2.2rem;
+  margin-left: -2.2rem;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--fg-faint);
-  border-bottom: 1px solid var(--border-strong);
-  font-weight: 650;
 }
 
-.history tbody th {
-  font-weight: 500;
-  color: var(--fg-muted);
-  white-space: nowrap;
-}
-
-.history td { font-variant-numeric: tabular-nums; }
-
-.cell-note { display: block; font-size: 0.78rem; color: var(--fg-muted); font-weight: 400; }
-.cell-empty { color: var(--fg-faint); font-style: italic; }
-
-/* La provenienza e' la credibilita' di un archivio: va vista, non solo salvata. */
-.cell-source { font-size: 0.78rem; white-space: nowrap; }
-.cell-source abbr { color: var(--fg-faint); text-decoration: underline dotted; cursor: help; }
-
-.est {
-  margin-left: 6px;
-  font-size: 0.7rem;
-  text-decoration: underline dotted;
-  color: var(--warn-fg);
-  cursor: help;
-}
+.faq-item h3::before { content: 'D.'; color: var(--accent); }
+.faq-item p::before { content: 'R.'; color: var(--ink-faint); }
 
 /* --------------------------------------------------------------------------
-   Avviso sui dati stimati
-   -------------------------------------------------------------------------- */
-
-.notice {
-  margin: 24px 0 0;
-  padding: 14px 16px;
-  border: 1px solid var(--warn-border);
-  border-radius: var(--radius);
-  background: var(--warn-bg);
-  color: var(--warn-fg);
-  font-size: 0.88rem;
-}
-
-.notice p { margin: 0; }
-
-/* --------------------------------------------------------------------------
-   FAQ
-   -------------------------------------------------------------------------- */
-
-.faq { padding: 30px 0 0; }
-.faq h2 { margin: 0 0 16px; font-size: 1.4rem; }
-.faq-item { border-top: 1px solid var(--border); padding: 16px 0; }
-.faq-item h3 { margin: 0 0 6px; font-size: 1rem; }
-.faq-item p { margin: 0; color: var(--fg-muted); max-width: 76ch; }
-
-/* --------------------------------------------------------------------------
-   Piede
+   Colophon
    -------------------------------------------------------------------------- */
 
 .site-foot {
-  margin-top: 48px;
-  border-top: 1px solid var(--border);
-  background: var(--bg-soft);
-  padding: 28px 0 40px;
-  font-size: 0.85rem;
-  color: var(--fg-muted);
+  margin-top: 60px;
+  border-top: 5px double var(--ink);
+  background: var(--paper-deep);
+  padding: 30px 0 46px;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
 }
 
-.site-foot p { margin: 0 0 10px; max-width: 80ch; }
-.site-foot strong { color: var(--fg); }
+.colophon-title {
+  margin: 0 0 18px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Le note legali sono lunghe e nessuno le legge in righe da 80 caratteri: due
+   colonne le rendono scorribili, come le avvertenze in coda a un annuario. */
+.colophon-body { margin: 0; }
+
+@media (min-width: 780px) {
+  .colophon-body {
+    columns: 2;
+    column-gap: 48px;
+  }
+}
+
+/* I capoversi possono spezzarsi fra le colonne: e' come funziona una pagina
+   stampata, ed e' l'unico modo perche' le due colonne finiscano pari. */
+.colophon-body p { margin: 0 0 12px; }
+
+.site-foot strong { color: var(--ink); font-weight: 600; }
+
+.colophon-line {
+  margin: 20px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule-bold);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}

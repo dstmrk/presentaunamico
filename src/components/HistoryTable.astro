@@ -51,11 +51,18 @@ function sourceLabel(url: string | undefined): string {
 <table class="history" id={`storico-${card.id}`}>
   <caption>
     <!-- Il flex sta su un elemento interno: applicarlo al <caption> ne annulla
-         il display: table-caption e la didascalia finisce sotto l'intestazione. -->
+         il display: table-caption e la didascalia finisce sotto l'intestazione.
+
+         Il numero di tavola lo mette un contatore CSS (`counter(tavola)`): cosi'
+         nessuna pagina deve tenere il conto a mano, e una riga resta citabile
+         come "Tavola 4" invece che "quella tabella in fondo". -->
     <span class="history-caption-inner">
-      <CardChip card={card} size="sm" />
-      <span class="history-caption-text">
-        Storico delle offerte Presenta un Amico — {card.fullName}
+      <span class="tavola"></span>
+      <span class="history-caption-line">
+        <CardChip card={card} size="sm" />
+        <span class="history-caption-text">
+          Storico delle offerte Presenta un Amico — {card.fullName}
+        </span>
       </span>
     </span>
   </caption>
@@ -77,7 +84,9 @@ function sourceLabel(url: string | undefined): string {
         <tr class={extra ? 'row-extra' : undefined}>
           <th scope="row">
             <time datetime={period.start}>{formatDate(period.start)}</time>
-            <span aria-hidden="true"> – </span>
+            <!-- Spazio unificatore prima del trattino: su mobile la riga va a capo
+                 fra le due date, e il trattino deve restare appeso alla prima. -->
+            <span aria-hidden="true">&nbsp;– </span>
             <span class="sr-only">fino al</span>
             <time datetime={period.end}>{formatDate(period.end)}</time>
             {period.datesEstimated && (

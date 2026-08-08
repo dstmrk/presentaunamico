@@ -3,6 +3,13 @@ import Seo from '../components/Seo.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
+// I caratteri sono serviti dal nostro dominio (la CSP vieta host esterni) e
+// precaricati: con `font-display: swap` e senza preload il testo verrebbe
+// disegnato prima con Georgia e poi ricomposto, che e' esattamente il salto di
+// impaginazione che questo sito si vanta di non avere.
+import serifFont from '../assets/fonts/source-serif-4-latin-wght-normal.woff2?url';
+import monoFont from '../assets/fonts/ibm-plex-mono-latin-400-normal.woff2?url';
+
 interface Props {
   title: string;
   description: string;
@@ -19,7 +26,10 @@ const { title, description, path, jsonLd } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+    <meta name="theme-color" content="#faf7f0" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />
     <Seo title={title} description={description} path={path} jsonLd={jsonLd} />
   </head>
   <body>

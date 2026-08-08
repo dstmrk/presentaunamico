@@ -25,6 +25,38 @@ marchio: le carte sono identificate solo da nome e colore.
 
 ---
 
+## Lo stile: bollettino statistico
+
+Il sito è un archivio, e l'impaginazione lo dichiara. Il riferimento è
+l'**annuario statistico stampato**, non l'interfaccia di un'applicazione. Tutto
+il sistema sta in [`src/styles/global.css`](src/styles/global.css).
+
+- **Carta e inchiostro.** Fondo avorio `#faf7f0`, inchiostro caldo, un solo
+  accento (`#9a2c1f`, rosso da stampa) usato per rubriche e richiami. I grigi
+  neutri sono banditi: sono ciò che fa somigliare una pagina a una finestra di
+  sistema.
+- **Tema unico chiaro.** Una palette sola, tarata al millimetro, invece di due
+  mezze palette. È una scelta, non una dimenticanza: non aggiungere un tema
+  scuro senza rifare i conti sui contrasti dei colori delle carte.
+- **Tipografia.** Source Serif 4 per testo e cifre, IBM Plex Mono per etichette,
+  date, intestazioni di colonna e numeri di tavola. Entrambi serviti dal nostro
+  dominio (la CSP vieta host esterni) e precaricati da `Base.astro`.
+- **Filetti, non contenitori.** Nessun `border-radius`, nessuna ombra, nessuna
+  card. La gerarchia la fanno le regole orizzontali e lo spazio bianco.
+- **Numerazione.** Sezioni (`§ I`), tavole (`Tavola 3`) e figure (`Fig. 5`) sono
+  numerate da **contatori CSS**: nessuna pagina tiene il conto a mano, e una
+  riga resta citabile. Il contatore vive su `main`; una sezione nuova si numera
+  da sola purché il suo `<h2>` sia figlio diretto di `<section>` o `<nav>`.
+- **Il colore identifica, non quantifica.** La tinta della carta sta nel
+  campione accanto al nome e nel tratto del grafico. Le cifre restano nere: è
+  l'unico modo per tenerle tutte al massimo contrasto, visto che i colori
+  identitari arrivano appena sopra 3:1.
+
+L'immagine Open Graph (`src/pages/og.png.ts`) e la favicon usano gli stessi
+token: se cambi la palette, cambiali lì dentro.
+
+---
+
 ## Aggiungere una promozione
 
 Le offerte Amex hanno **lo stesso periodo per tutte le carte**, quindi l'entità
@@ -203,6 +235,8 @@ npx wrangler pages deploy dist --project-name presentaunamico
 
 ```
 src/
+  assets/fonts/                 woff2 self-hosted, con hash da Vite in /_astro/
+  styles/global.css             il sistema visivo per intero: token, filetti, tavole
   data/promotions.json          unica fonte di verità
   data/promotions.schema.json   generato — dà autocomplete e validazione nell'editor
   lib/schema.ts                 zod + regole che attraversano più record

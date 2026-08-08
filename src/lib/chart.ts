@@ -15,20 +15,20 @@ export const lighten = (h: string, amount: number) =>
 export const darken = (h: string, amount: number) => toHex(hex(h).map((v) => v * (1 - amount)));
 
 /**
- * Varianti di colore per riquadro. In chiaro il colore identitario e' gia'
- * portato sopra 3:1 su bianco nel dataset; in scuro va schiarito, altrimenti
- * bordeaux e blu spariscono sul fondo.
- * Il presentatore e' informazione secondaria e deve apparire tale: stessa tinta,
- * luminosita' diversa. Il solo tratteggio non basta su schermi piccoli.
+ * Varianti di colore per carta. Il sito ha un tema unico su fondo carta, quindi
+ * una variante sola per ruolo: il colore identitario del dataset e' gia' portato
+ * sopra 3:1 su chiaro, e la carta avorio non lo intacca in modo apprezzabile.
+ *
+ * Il colore identifica, non quantifica: sta nel campione accanto al nome e nel
+ * tratto del grafico, mai nelle cifre — quelle restano inchiostro nero, al
+ * massimo contrasto. Il presentatore e' informazione secondaria e deve apparire
+ * tale: stessa tinta, piu' chiara. Il solo tratteggio non basta su schermi piccoli.
  */
 export function palette(color: string) {
   return {
     line: color,
-    lineDark: lighten(color, 0.42),
     referrer: lighten(color, 0.42),
-    referrerDark: lighten(color, 0.18),
     chip: color,
-    chipDark: lighten(color, 0.35),
   };
 }
 
