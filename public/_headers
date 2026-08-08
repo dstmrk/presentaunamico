@@ -1,6 +1,7 @@
 # Cloudflare Pages: gli header qui dentro fanno matching sul PATH, non sull'host.
-# Il noindex per *.pages.dev NON puo' stare qui (verrebbe servito anche sul
-# dominio custom): vive in functions/_middleware.ts, che vede l'header Host.
+# Un eventuale noindex per *.pages.dev NON puo' stare qui, perche' verrebbe
+# servito anche sul dominio custom: servirebbe una Pages Function che legge
+# l'header Host (il README spiega come rimetterla).
 
 /*
   X-Content-Type-Options: nosniff
@@ -9,7 +10,8 @@
   Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
   Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'self'
 
-/assets/*
+# Astro emette gli asset con hash nel nome dentro /_astro/, non /assets/.
+/_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
 /og.png
