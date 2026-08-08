@@ -26,7 +26,7 @@ const currentOffer = currentPeriod ? currentPeriod.offers[card.id] ?? null : nul
 const fallback = currentOffer ? null : lastKnownOffer(card.id);
 ---
 
-<section class="panel" id={`carta-${card.id}`} data-card={card.id} style={`--line: ${p.line}; --line-dark: ${p.lineDark}; --referrer: ${p.referrer}; --referrer-dark: ${p.referrerDark};`}>
+<section class="panel" id={`carta-${card.id}`} data-card={card.id} style={`--line: ${p.line}; --referrer: ${p.referrer};`}>
   <header class="panel-head">
     <div class="panel-id">
       <h3 class="panel-title">

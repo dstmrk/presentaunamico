@@ -33,9 +33,10 @@ const last = periods[periods.length - 1]!;
     <div class="wrap">
       <nav class="crumbs" aria-label="Percorso">
         <a href="/">Presenta un Amico</a>
-        <span aria-hidden="true"> › </span>
+        <span aria-hidden="true"> / </span>
         <span aria-current="page">{card.name}</span>
       </nav>
+      <p class="masthead-meta">Scheda carta · Archivio indipendente</p>
       <h1>{cardHeading(card)}</h1>
       <p class="lede">{cardDescription(card)}</p>
       <p class="updated">

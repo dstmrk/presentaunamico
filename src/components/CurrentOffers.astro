@@ -1,8 +1,7 @@
 ---
 import { groups, currentPeriod, lastKnownOffer } from '../lib/promotions.ts';
-import { formatDate, formatSpend, formatValue, spendOf } from '../lib/format.ts';
+import { formatDate, formatSpendProse, formatValue, spendOf } from '../lib/format.ts';
 import { maxValueOf } from '../lib/schema.ts';
-import { palette } from '../lib/chart.ts';
 import CardChip from './CardChip.astro';
 import { cardPath } from '../lib/seo.ts';
 
@@ -26,33 +25,42 @@ const ordered = groups.flatMap((g) => g.cards);
     </p>
   )}
 
-  <ul class="now-grid">
+  <!--
+    Righe di registro con puntini di guida, non riquadri: e' la forma in cui un
+    indice stampato accosta un nome a una cifra, e regge undici voci senza
+    diventare un muro di rettangoli.
+  -->
+  <ul class="ledger">
     {ordered.map((card) => {
       const offer = currentPeriod ? currentPeriod.offers[card.id] ?? null : null;
       const fallback = offer ? null : lastKnownOffer(card.id);
       const shown = offer ?? fallback?.offer ?? null;
-      const p = palette(card.color);
       return (
-        <li class="now-card" style={`--line: ${p.line}; --line-dark: ${p.lineDark};`}>
-          <a href={cardPath(card)} class="now-card-link">
-            <CardChip card={card} size="sm" />
+        <li class="ledger-row">
+          <a href={cardPath(card)} class="ledger-link">
+            <span class="ledger-head">
+              <CardChip card={card} size="sm" />
+              <span class="ledger-dots" aria-hidden="true"></span>
+              <span class="ledger-value">
+                {shown ? formatValue(maxValueOf(shown.referred), card.reward) : 'n/d'}
+              </span>
+            </span>
             {shown ? (
-              <>
-                <p class="now-card-value">{formatValue(maxValueOf(shown.referred), card.reward)}</p>
-                <p class="now-card-meta">
-                  {formatSpend(spendOf(shown.referred)) ?? 'nessun requisito di spesa'}
-                </p>
-                <p class="now-card-meta">
-                  presentatore: {shown.referrer
-                    ? formatValue(maxValueOf(shown.referrer), card.reward)
-                    : 'non rilevato'}
-                </p>
+              <span class="ledger-meta">
+                {formatSpendProse(spendOf(shown.referred)) ?? 'nessun requisito di spesa'}
+                <span aria-hidden="true"> · </span>
+                presentatore {shown.referrer
+                  ? formatValue(maxValueOf(shown.referrer), card.reward)
+                  : 'non rilevato'}
                 {!offer && fallback && (
-                  <p class="now-card-stale">scaduta il {formatDate(fallback.period.end)}</p>
+                  <span class="ledger-flag">
+                    <span aria-hidden="true"> · </span>
+                    scaduta il {formatDate(fallback.period.end)}
+                  </span>
                 )}
-              </>
+              </span>
             ) : (
-              <p class="now-card-meta">Nessun dato disponibile</p>
+              <span class="ledger-meta">nessun dato disponibile</span>
             )}
           </a>
         </li>

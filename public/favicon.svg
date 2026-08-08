@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#101216"/>
-  <path d="M5 22 H11 V14 H17 V18 H23 V9 H27" fill="none" stroke="#8ab4f8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Stessa grammatica del sito: carta avorio, filetto pesante in testa,
+       serie a gradini in rosso da stampa. Nessun raggio, nessuna ombra. -->
+  <rect width="32" height="32" fill="#faf7f0"/>
+  <rect width="32" height="5" fill="#16130f"/>
+  <path d="M4 24 H10 V16 H16 V20 H22 V10 H28" fill="none" stroke="#9a2c1f" stroke-width="3" stroke-linejoin="miter" stroke-linecap="butt"/>
+  <rect y="29" width="32" height="1" fill="#b9ae98"/>
 </svg>

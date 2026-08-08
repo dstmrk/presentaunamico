@@ -15,10 +15,13 @@ const p = palette(card.color);
   Identificazione tipografica della carta: nessun asset grafico American Express,
   solo testo e colore. Il colore fa il riconoscimento a colpo d'occhio, il nome
   fa l'identificazione: e' l'uso nominativo del marchio, non la riproduzione.
+
+  La marca e' un campione d'inchiostro pieno accanto al nome, come a margine di
+  una tavola stampata: nessuna pastiglia, nessun bordo, nessun raggio.
 -->
 <span
   class:list={['card-chip', size === 'sm' && 'card-chip-sm']}
-  style={`--chip: ${p.chip}; --chip-dark: ${p.chipDark};`}
+  style={`--chip: ${p.chip};`}
 >
   <span class="card-chip-bar" aria-hidden="true"></span>
   <span class="card-chip-name">{card.name}</span>
