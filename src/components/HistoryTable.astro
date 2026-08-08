@@ -25,14 +25,8 @@ const toggleId = `mostra-tutto-${card.id}`;
 // Ordine decrescente: chi arriva dalla ricerca vuole prima il dato piu' recente.
 const rows = [...periods].reverse();
 
-/** Etichetta breve della fonte: il lettore deve capire quanto fidarsi, non da dove viene l'URL. */
-function sourceLabel(url: string | undefined): string {
-  if (!url) return 'rilevazione indiretta';
-  const host = new URL(url).hostname.replace(/^www\./, '');
-  if (host.endsWith('americanexpress.com')) return 'condizioni ufficiali';
-  if (host.includes('finanzaonline')) return 'forum specializzato';
-  return 'archivio pubblico';
-}
+// La provenienza non e' piu' una colonna: `source` e' del periodo e non della
+// carta, quindi vive una volta sola per pagina in <SourceNote />.
 ---
 
 <!--
@@ -72,7 +66,6 @@ function sourceLabel(url: string | undefined): string {
       <th scope="col">Amico presentato</th>
       <th scope="col">Spesa richiesta</th>
       <th scope="col">Presentatore</th>
-      <th scope="col">Fonte</th>
     </tr>
   </thead>
   <tbody>
@@ -111,15 +104,6 @@ function sourceLabel(url: string | undefined): string {
           ) : (
             <td colspan="3" class="cell-empty">Dato non rilevato per questo periodo</td>
           )}
-          <td class="cell-source">
-            {period.source.url ? (
-              <a href={period.source.url} rel="nofollow noopener" target="_blank" title={period.source.note}>
-                {sourceLabel(period.source.url)}
-              </a>
-            ) : (
-              <abbr title={period.source.note}>rilevazione indiretta</abbr>
-            )}
-          </td>
         </tr>
       );
     })}

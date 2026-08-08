@@ -85,6 +85,19 @@ export function periodAt(date: string) {
 export const today = new Date().toISOString().slice(0, 10);
 export const currentPeriod = periodAt(today);
 
+/**
+ * Quanti periodi promozionali sono terminati (o sono in corso) negli ultimi
+ * dodici mesi. Serve a dire "ogni quanto cambiano le offerte" senza scriverlo
+ * a mano: la cadenza si legge dai dati e si aggiorna da sola, cosi' aggiornare
+ * il sito resta una questione di numeri e mai di frasi.
+ */
+export function periodsLastYear(at: string = today): number {
+  const from = new Date(`${at}T00:00:00Z`);
+  from.setUTCFullYear(from.getUTCFullYear() - 1);
+  const since = from.toISOString().slice(0, 10);
+  return periods.filter((p) => p.end >= since && p.start <= at).length;
+}
+
 /** Ultimo periodo per cui esiste un dato su quella carta. */
 export function lastKnownOffer(cardId: string) {
   for (let i = periods.length - 1; i >= 0; i--) {

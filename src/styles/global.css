@@ -505,7 +505,7 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
   width: 100%;
   border-collapse: collapse;
   font-size: 0.94rem;
-  min-width: 640px;
+  min-width: 520px;
 }
 
 .history caption {
@@ -585,15 +585,6 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
 
 .cell-empty { color: var(--ink-faint); font-style: italic; }
 
-/* La provenienza e' la credibilita' di un archivio: va vista, non solo salvata.
-   Resta pero' una colonna intera: in accento diventerebbe venti righe rosse che
-   gridano piu' dei dati. Inchiostro tenue, accento solo al passaggio del mouse. */
-.cell-source {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  white-space: nowrap;
-}
-
 /* L'ultima colonna assorbe lo spazio in eccesso, cosi' le colonne dei dati
    restano strette e affiancate invece di allontanarsi fra loro. Perche' funzioni
    servono le celle in nowrap: senza, il browser stringe le altre colonne fino a
@@ -604,19 +595,24 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
    sulla cifra ("150 €") e la descrizione del cashback finisce su cinque righe. */
 .cell-note { white-space: normal; min-width: 30ch; }
 
-.cell-source a {
+/* La provenienza e' la credibilita' di un archivio: va vista, non solo salvata.
+   Sta pero' in una riga sola sotto il titolo di sezione, non in una colonna
+   ripetuta su ogni riga di ogni tavola: e' un dato del periodo, uguale per tutte
+   le carte, e cambia tre volte in tutto l'archivio. */
+.table-sources {
+  margin: -10px 0 26px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+}
+
+.table-sources a {
   color: var(--ink-soft);
   text-decoration: underline;
   text-decoration-color: var(--rule-bold);
 }
 
-.cell-source a:hover { color: var(--accent); text-decoration-color: currentColor; }
-
-.cell-source abbr {
-  color: var(--ink-faint);
-  text-decoration: underline dotted;
-  cursor: help;
-}
+.table-sources a:hover { color: var(--accent); text-decoration-color: currentColor; }
 
 .est {
   margin-left: 7px;
@@ -653,7 +649,7 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
 
 .expand-label:hover { background: var(--ink); color: var(--paper); }
 
-.expand-toggle:focus-visible + .table-scroll + .expand-label {
+.expand-toggle:focus-visible ~ .expand-label {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }

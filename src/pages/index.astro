@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import CurrentOffers from '../components/CurrentOffers.astro';
 import CardPanel from '../components/CardPanel.astro';
 import HistoryTable from '../components/HistoryTable.astro';
+import SourceNote from '../components/SourceNote.astro';
 import Legend from '../components/Legend.astro';
 import { cards, groups, lastUpdated, periods } from '../lib/promotions.ts';
 import { buildSeries } from '../lib/series.ts';
@@ -26,11 +27,13 @@ const COLLAPSE_AFTER = 6;
     <div class="wrap">
       <p class="masthead-meta">Archivio indipendente · Italia</p>
       <h1>Presenta un Amico American Express: quanti punti danno oggi</h1>
+      <!-- Il sommario non cita cifre ne' cadenze: sono cose che cambiano a ogni
+           promozione, e una frase rimasta indietro vale meno di nessuna frase. -->
       <p class="lede">
         Storico delle promozioni "Presenta un Amico" (member-get-member) delle carte
-        American Express in Italia: quanti punti riceve l'amico presentato, quanti
-        il presentatore, e con quale requisito di spesa. American Express cambia le
-        offerte ogni una o due mesi e non pubblica un archivio: questo sito lo tiene.
+        American Express in Italia: quanti punti riceve l'amico presentato, quanti il
+        presentatore, con quale requisito di spesa. American Express non pubblica un
+        archivio delle offerte passate: questo sito lo tiene.
       </p>
       <p class="updated">
         {cards.length} carte · {periods.length} periodi dal
@@ -56,10 +59,8 @@ const COLLAPSE_AFTER = 6;
 
     <section class="tables" aria-labelledby="storico">
       <h2 id="storico">Storico completo</h2>
-      <p class="group-note">
-        Tutti i dati in forma tabellare, dal periodo più recente al più vecchio.
-        La colonna Fonte indica da dove viene ogni riga.
-      </p>
+      <p class="group-note">Dal periodo più recente al più vecchio.</p>
+      <SourceNote />
       {ordered.map((card) => (
         <div class="table-entry">
           <HistoryTable card={card} collapseAfter={COLLAPSE_AFTER} />

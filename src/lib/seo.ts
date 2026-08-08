@@ -97,7 +97,7 @@ export function cardFaq(card: Card): FaqEntry[] {
 
   entries.push({
     question: `Ogni quanto cambia l'offerta della ${card.fullName}?`,
-    answer: `Spesso. Dal ${formatDate(domain.start)} a oggi questo archivio ha registrato ${periods.length} periodi promozionali distinti, e l'importo per l'amico presentato e' cambiato ${changes} volte. American Express non pubblica uno storico delle offerte passate: conviene confrontare l'offerta in corso con quelle precedenti prima di richiedere la carta.`,
+    answer: `Spesso. Dal ${formatDate(domain.start)} a oggi questo archivio ha registrato ${periods.length} periodi promozionali distinti, e l'importo per l'amico presentato e' cambiato ${changes} volte.`,
   });
 
   return entries;
