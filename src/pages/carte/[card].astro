@@ -1,0 +1,90 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import CardPanel from '../../components/CardPanel.astro';
+import HistoryTable from '../../components/HistoryTable.astro';
+import CardChip from '../../components/CardChip.astro';
+import { cards, groups, periods, lastUpdated, GROUP_LABELS } from '../../lib/promotions.ts';
+import { buildSeries } from '../../lib/series.ts';
+import { formatDate } from '../../lib/format.ts';
+import {
+  cardDescription, cardFaq, cardHeading, cardJsonLd, cardPath, cardTitle,
+} from '../../lib/seo.ts';
+
+export const getStaticPaths = (() =>
+  cards.map((card) => ({ params: { card: card.id }, props: { card } }))) satisfies GetStaticPaths;
+
+const { card } = Astro.props;
+
+const series = buildSeries(card);
+const faq = cardFaq(card);
+const siblings = groups.find((g) => g.id === card.group)!.cards.filter((c) => c.id !== card.id);
+const first = periods[0]!;
+const last = periods[periods.length - 1]!;
+---
+
+<Base
+  title={cardTitle(card)}
+  description={cardDescription(card)}
+  path={cardPath(card)}
+  jsonLd={cardJsonLd(card, faq)}
+>
+  <header class="site-head">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Percorso">
+        <a href="/">Presenta un Amico</a>
+        <span aria-hidden="true"> › </span>
+        <span aria-current="page">{card.name}</span>
+      </nav>
+      <h1>{cardHeading(card)}</h1>
+      <p class="lede">{cardDescription(card)}</p>
+      <p class="updated">
+        {periods.length} periodi dal
+        <time datetime={first.start}>{formatDate(first.start)}</time> al
+        <time datetime={last.end}>{formatDate(last.end)}</time> ·
+        aggiornato al <time datetime={lastUpdated}>{formatDate(lastUpdated)}</time>
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="group" aria-label={`Andamento delle offerte — ${card.fullName}`}>
+      <CardPanel series={series} showAxis={true} />
+    </section>
+
+    <section class="tables" aria-labelledby="storico">
+      <h2 id="storico">Storico completo delle offerte</h2>
+      <p class="group-note">
+        Tutti i periodi registrati, dal più recente al più vecchio. La colonna
+        Fonte indica da dove viene ogni riga.
+      </p>
+      <!-- Nessun troncamento qui: e' la pagina che compete sulla query di questa
+           carta, quindi ogni riga dev'essere visibile senza interazione. -->
+      <HistoryTable card={card} />
+    </section>
+
+    <section class="faq" aria-labelledby="domande">
+      <h2 id="domande">Domande frequenti sulla {card.fullName}</h2>
+      {faq.map((item) => (
+        <div class="faq-item">
+          <h3>{item.question}</h3>
+          <p>{item.answer}</p>
+        </div>
+      ))}
+    </section>
+
+    <nav class="siblings" aria-labelledby="altre">
+      <h2 id="altre">Altre {GROUP_LABELS[card.group].toLowerCase()}</h2>
+      <ul class="siblings-list">
+        {siblings.map((other) => (
+          <li>
+            <a href={cardPath(other)}><CardChip card={other} size="sm" /></a>
+          </li>
+        ))}
+      </ul>
+      <p class="siblings-back">
+        <a href="/">← Torna al confronto fra tutte le {cards.length} carte</a>
+      </p>
+    </nav>
+  </main>
+</Base>

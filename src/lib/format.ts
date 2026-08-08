@@ -54,6 +54,17 @@ export function formatSpend(spend: { amount: number; months?: number } | undefin
   return spend.months ? `${amount} · ${spend.months} mesi` : amount;
 }
 
+/**
+ * Variante discorsiva: "10.000 € in 6 mesi".
+ * Il puntino separatore funziona in una cella di tabella, dove i due dati sono
+ * affiancati; dentro una frase va letto, e "10.000 € · 6 mesi di spesa" inciampa.
+ */
+export function formatSpendProse(spend: { amount: number; months?: number } | undefined): string | null {
+  if (!spend) return null;
+  const amount = `${nf.format(spend.amount)} €`;
+  return spend.months ? `${amount} in ${spend.months} mesi` : amount;
+}
+
 /** Etichetta compatta per la striscia della spesa: "12k€ · 6m". */
 export function formatSpendCompact(spend: { amount: number; months?: number } | undefined): string | null {
   if (!spend) return null;
@@ -74,8 +85,8 @@ export function spendOf(side: OfferSide) {
 export function describeOffer(side: OfferSide, reward: RewardKind): string {
   if (side.type === 'bonus') {
     const base = formatValue(side.amount, reward);
-    const spend = formatSpend(side.spend);
-    return spend ? `${base} con ${spend} di spesa` : base;
+    const spend = formatSpendProse(side.spend);
+    return spend ? `${base} spendendo ${spend}` : base;
   }
   const pct = `${Number((side.rate * 100).toFixed(2))}%`.replace('.', ',');
   const max = formatValue(maxValueOf(side), reward);

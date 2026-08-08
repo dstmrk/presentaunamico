@@ -161,8 +161,10 @@ src/
   lib/chart.ts                  scale, percorsi SVG, palette
   lib/format.ts                 formattazione numeri, date, requisiti di spesa
   lib/faq.ts                    sorgente unica per FAQ visibili e JSON-LD
+  lib/seo.ts                    titoli, descrizioni, FAQ per carta, JSON-LD
   components/                   riquadri, tabelle, chip, SEO, piede
-  pages/index.astro             la pagina
+  pages/index.astro             home: confronto fra tutte le carte
+  pages/carte/[card].astro      una scheda per carta (11 pagine generate)
   pages/og.png.ts               immagine Open Graph generata a build time
   pages/sitemap.xml.ts          sitemap con lastmod dai dati, non dalla build
 public/
@@ -172,6 +174,39 @@ functions/
 ```
 
 ---
+
+## Le pagine
+
+Il sito genera **12 pagine**: la home più una scheda per carta, su
+`/carte/<id>`. Non serve toccare nulla per aggiungerne una: le rotte, la
+navigazione e la sitemap si derivano tutte dall'elenco delle carte nel dataset.
+
+Le due pagine hanno ruoli diversi e non sono duplicati:
+
+|  | Home | Scheda carta |
+|---|---|---|
+| Serve a | Confrontare le carte fra loro | Rispondere alla query di *quella* carta |
+| Grafici | Tutti e 11, small multiples | Solo quello della carta |
+| Tabella | Troncata a 6 periodi su mobile | Sempre completa |
+| FAQ | Generali sul programma | Calcolate sui dati della carta |
+
+Titoli, descrizioni e FAQ delle schede sono **generati dai dati**, quindi si
+aggiornano da soli a ogni nuovo periodo e sono diversi carta per carta. Undici
+copie della stessa FAQ generica sarebbero contenuto duplicato.
+
+### Il troncamento su mobile
+
+In home, su schermi sotto i 720px, ogni tabella si ferma ai 6 periodi più
+recenti con un interruttore per aprire il resto — checkbox e CSS, nessun
+JavaScript. Le righe non lasciano mai il DOM: vengono nascoste, non rimosse.
+
+Il troncamento vale **solo in home**. L'indicizzazione di Google è mobile-first,
+quindi contenuto nascosto di default su mobile conta meno: la scheda di ogni
+carta mostra sempre la tabella intera, ed è proprio la pagina che compete sulla
+query di quella carta. Così ogni riga resta pienamente visibile almeno in un
+posto.
+
+Il valore è in `COLLAPSE_AFTER` dentro `src/pages/index.astro`.
 
 ## Dominio e indicizzazione
 

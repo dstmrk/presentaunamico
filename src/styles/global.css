@@ -321,7 +321,68 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
 .tables { padding: 36px 0 0; }
 .tables > h2 { margin: 0 0 6px; font-size: 1.4rem; }
 
-.table-scroll { overflow-x: auto; margin: 0 0 34px; }
+.table-entry { margin: 0 0 40px; }
+.table-block { margin: 0; }
+.table-scroll { overflow-x: auto; }
+
+.table-more { margin: 10px 0 0; font-size: 0.88rem; }
+
+/* Troncamento su schermi stretti, senza JavaScript. Le righe restano sempre nel
+   DOM: si nascondono, non spariscono. Su desktop c'e' spazio, quindi si mostra
+   tutto e l'interruttore non serve. */
+.expand-label {
+  display: inline-block;
+  margin: 10px 0 0;
+  padding: 7px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.expand-label:hover { background: var(--bg-soft); }
+.expand-toggle:focus-visible + .table-scroll + .expand-label {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.expand-less { display: none; }
+.expand-toggle:checked ~ .expand-label .expand-more { display: none; }
+.expand-toggle:checked ~ .expand-label .expand-less { display: inline; }
+
+@media (max-width: 719px) {
+  .row-extra { display: none; }
+  .expand-toggle:checked ~ .table-scroll .row-extra { display: table-row; }
+}
+
+@media (min-width: 720px) {
+  .expand-label { display: none; }
+}
+
+/* Percorso e navigazione fra schede */
+.crumbs { margin: 0 0 14px; font-size: 0.85rem; color: var(--fg-muted); }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; }
+
+.panel-title-link { text-decoration: none; }
+.panel-title-link:hover .card-chip { border-color: var(--accent); }
+
+.siblings { padding: 34px 0 0; }
+.siblings h2 { margin: 0 0 14px; font-size: 1.1rem; }
+.siblings-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.siblings-list a { text-decoration: none; }
+.siblings-list a:hover .card-chip { border-color: var(--accent); }
+.siblings-back { margin: 20px 0 0; font-size: 0.9rem; }
 
 .history {
   width: 100%;

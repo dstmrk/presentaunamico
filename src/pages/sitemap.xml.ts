@@ -1,21 +1,24 @@
-import { SITE_URL } from '../lib/site.ts';
-import { lastUpdated } from '../lib/promotions.ts';
+import { cards, lastUpdated } from '../lib/promotions.ts';
+import { absolute, cardPath } from '../lib/seo.ts';
 
 export const prerender = true;
 
 /**
- * Sitemap scritta a mano invece che con @astrojs/sitemap: con una manciata di
- * URL l'integrazione aggiunge una dipendenza per generare quattro righe, e
- * qui serve il controllo esatto su lastmod (che deve riflettere l'ultimo
- * aggiornamento dei DATI, non della build).
+ * Sitemap scritta a mano invece che con @astrojs/sitemap: serve il controllo
+ * esatto su lastmod, che deve riflettere l'ultimo aggiornamento dei DATI e non
+ * della build. Le pagine si derivano dal dataset, quindi aggiungere una carta
+ * aggiorna la sitemap da solo.
  */
-const pages = [{ path: '/', priority: '1.0', changefreq: 'weekly' }];
-
 export function GET() {
+  const pages = [
+    { path: '/', priority: '1.0', changefreq: 'weekly' },
+    ...cards.map((card) => ({ path: cardPath(card), priority: '0.8', changefreq: 'weekly' })),
+  ];
+
   const urls = pages
     .map(
       ({ path, priority, changefreq }) => `  <url>
-    <loc>${SITE_URL}${path === '/' ? '' : path}</loc>
+    <loc>${absolute(path)}</loc>
     <lastmod>${lastUpdated}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>

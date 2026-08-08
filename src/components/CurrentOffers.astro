@@ -4,6 +4,7 @@ import { formatDate, formatSpend, formatValue, spendOf } from '../lib/format.ts'
 import { maxValueOf } from '../lib/schema.ts';
 import { palette } from '../lib/chart.ts';
 import CardChip from './CardChip.astro';
+import { cardPath } from '../lib/seo.ts';
 
 // Stesso ordine dei grafici piu' sotto: consumer, business, altre. Ordinare per
 // il solo `order` mescolerebbe i gruppi, visto che ognuno riparte da 1.
@@ -33,7 +34,7 @@ const ordered = groups.flatMap((g) => g.cards);
       const p = palette(card.color);
       return (
         <li class="now-card" style={`--line: ${p.line}; --line-dark: ${p.lineDark};`}>
-          <a href={`#carta-${card.id}`} class="now-card-link">
+          <a href={cardPath(card)} class="now-card-link">
             <CardChip card={card} size="sm" />
             {shown ? (
               <>

@@ -1,75 +1,40 @@
 ---
-import { SITE_DESCRIPTION, SITE_LOCALE, SITE_NAME, SITE_TITLE, SITE_URL } from '../lib/site.ts';
-import { cards, domain, lastUpdated, periods } from '../lib/promotions.ts';
-import { faq } from '../lib/faq.ts';
+import { SITE_LOCALE, SITE_NAME, SITE_URL } from '../lib/site.ts';
 
-const canonical = new URL(Astro.url.pathname, SITE_URL).href.replace(/\/$/, '') || SITE_URL;
-const ogImage = new URL('/og.png', SITE_URL).href;
+interface Props {
+  title: string;
+  description: string;
+  /** Percorso assoluto dalla radice, es. "/" o "/carte/platino". */
+  path: string;
+  jsonLd: unknown[];
+}
 
-const dataset = {
-  '@context': 'https://schema.org',
-  '@type': 'Dataset',
-  name: 'Storico delle promozioni Presenta un Amico American Express Italia',
-  description:
-    'Serie storica dei punti Membership Rewards, punti Payback e cashback offerti dalle promozioni member-get-member American Express in Italia, con i requisiti di spesa associati.',
-  url: canonical,
-  license: 'https://creativecommons.org/licenses/by/4.0/',
-  isAccessibleForFree: true,
-  inLanguage: 'it-IT',
-  dateModified: lastUpdated,
-  temporalCoverage: `${domain.start}/${domain.end}`,
-  keywords: [
-    'presenta un amico',
-    'American Express',
-    'Membership Rewards',
-    'member get member',
-    'referral',
-    'punti',
-  ],
-  variableMeasured: cards.map((c) => c.fullName),
-  creator: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-};
+const { title, description, path, jsonLd } = Astro.props;
 
-const faqPage = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faq.map((f) => ({
-    '@type': 'Question',
-    name: f.question,
-    acceptedAnswer: { '@type': 'Answer', text: f.answer },
-  })),
-};
-
-const webPage = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: SITE_TITLE,
-  description: SITE_DESCRIPTION,
-  url: canonical,
-  inLanguage: 'it-IT',
-  dateModified: lastUpdated,
-  isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
-};
+// Canonical sempre assoluto e sempre sul dominio di produzione, a prescindere
+// dall'host che sta servendo la pagina.
+const canonical = `${SITE_URL}${path === '/' ? '' : path}`;
+const ogImage = `${SITE_URL}/og.png`;
 ---
 
-<title>{SITE_TITLE}</title>
-<meta name="description" content={SITE_DESCRIPTION} />
+<title>{title}</title>
+<meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={SITE_NAME} />
 <meta property="og:locale" content={SITE_LOCALE} />
-<meta property="og:title" content={SITE_TITLE} />
-<meta property="og:description" content={SITE_DESCRIPTION} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImage} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={SITE_TITLE} />
-<meta name="twitter:description" content={SITE_DESCRIPTION} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 
-<script type="application/ld+json" set:html={JSON.stringify(webPage)} />
-<script type="application/ld+json" set:html={JSON.stringify(dataset)} />
-<script type="application/ld+json" set:html={JSON.stringify(faqPage)} />
+{jsonLd.map((block) => (
+  <script type="application/ld+json" set:html={JSON.stringify(block)} />
+))}
