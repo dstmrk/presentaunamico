@@ -105,11 +105,11 @@
   "periods": [
     {
       "start": "2025-01-01",
-      "end": "2025-01-31",
-      "datesEstimated": true,
+      "end": "2025-01-15",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -248,12 +248,12 @@
       }
     },
     {
-      "start": "2025-02-01",
-      "end": "2025-02-28",
-      "datesEstimated": true,
+      "start": "2025-01-16",
+      "end": "2025-02-12",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -395,12 +395,12 @@
       }
     },
     {
-      "start": "2025-03-01",
-      "end": "2025-03-31",
-      "datesEstimated": true,
+      "start": "2025-02-13",
+      "end": "2025-03-26",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -542,12 +542,12 @@
       }
     },
     {
-      "start": "2025-04-01",
-      "end": "2025-04-30",
-      "datesEstimated": true,
+      "start": "2025-03-27",
+      "end": "2025-05-05",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -689,12 +689,12 @@
       }
     },
     {
-      "start": "2025-05-01",
-      "end": "2025-05-31",
-      "datesEstimated": true,
+      "start": "2025-05-06",
+      "end": "2025-06-18",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -836,12 +836,12 @@
       }
     },
     {
-      "start": "2025-06-01",
-      "end": "2025-06-30",
-      "datesEstimated": true,
+      "start": "2025-06-19",
+      "end": "2025-06-26",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -935,14 +935,14 @@
         "business": {
           "referred": {
             "type": "bonus",
-            "amount": 10000,
+            "amount": 32000,
             "spend": {
               "amount": 3000
             }
           },
           "referrer": {
             "type": "bonus",
-            "amount": 30000
+            "amount": 50000
           }
         },
         "payback": {
@@ -983,12 +983,12 @@
       }
     },
     {
-      "start": "2025-07-01",
-      "end": "2025-08-31",
-      "datesEstimated": true,
+      "start": "2025-06-27",
+      "end": "2025-07-30",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -1089,7 +1089,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 25000
+            "amount": 30000
           }
         },
         "payback": {
@@ -1130,12 +1130,12 @@
       }
     },
     {
-      "start": "2025-09-01",
-      "end": "2025-10-31",
-      "datesEstimated": true,
+      "start": "2025-07-31",
+      "end": "2025-09-30",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -1236,7 +1236,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 22000
+            "amount": 25000
           }
         },
         "payback": {
@@ -1277,12 +1277,12 @@
       }
     },
     {
-      "start": "2025-11-01",
-      "end": "2025-12-31",
-      "datesEstimated": true,
+      "start": "2025-10-01",
+      "end": "2025-11-26",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -1383,7 +1383,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 20000
+            "amount": 22000
           }
         },
         "payback": {
@@ -1427,12 +1427,12 @@
       }
     },
     {
-      "start": "2026-01-01",
-      "end": "2026-02-28",
-      "datesEstimated": true,
+      "start": "2025-11-27",
+      "end": "2026-03-10",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -1590,12 +1590,12 @@
       }
     },
     {
-      "start": "2026-03-01",
-      "end": "2026-04-30",
-      "datesEstimated": true,
+      "start": "2026-03-11",
+      "end": "2026-04-21",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -1753,12 +1753,12 @@
       }
     },
     {
-      "start": "2026-05-01",
-      "end": "2026-06-30",
-      "datesEstimated": true,
+      "start": "2026-04-22",
+      "end": "2026-06-02",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -1914,12 +1914,12 @@
       }
     },
     {
-      "start": "2026-07-01",
-      "end": "2026-07-31",
-      "datesEstimated": true,
+      "start": "2026-06-03",
+      "end": "2026-07-14",
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {
@@ -2075,12 +2075,12 @@
       }
     },
     {
-      "start": "2026-08-01",
+      "start": "2026-07-15",
       "end": "2026-08-31",
-      "datesEstimated": true,
+      "datesEstimated": false,
       "source": {
         "capturedAt": "2026-08-08",
-        "note": "Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese."
+        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
       },
       "offers": {
         "platino": {

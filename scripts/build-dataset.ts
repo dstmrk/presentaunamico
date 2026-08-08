@@ -41,26 +41,44 @@ const cards = [
 ] as const;
 
 /**
- * Confini dei periodi. RICOSTRUITI: i grafici di origine hanno tick trimestrali,
- * quindi la posizione dei punti da' il mese ma non il giorno. Assunti confini di
- * mese e contiguita' (un'offerta c'e' sempre, quindi non esistono buchi reali).
+ * Confini dei periodi: date di scadenza REALI delle promozioni, fornite
+ * direttamente. `end` e' la scadenza, `start` il giorno dopo la precedente.
+ *
+ * NOTA SULLA GRIGLIA. Non tutte le scadenze valgono per tutte le carte: il
+ * 26/06/2025 e' una scadenza "solo Oro e Platino". La griglia dei periodi e'
+ * quindi l'UNIONE di tutti i confini; le carte che in quella data non hanno
+ * cambiato offerta ripetono semplicemente lo stesso valore su due periodi
+ * consecutivi. Il grafico a gradini lo rende senza artefatti — due valori
+ * uguali di fila sono una linea orizzontale continua, senza scalino.
+ *
+ * Il dataset parte dal 01/01/2025; le scadenze del 2024 (29/05, 25/07 solo
+ * business, 03/09, 09/10, 07/11 e 31/12 solo Blu) restano fuori copertura.
  */
 const periods = [
-  ['2025-01-01', '2025-01-31'],
-  ['2025-02-01', '2025-02-28'],
-  ['2025-03-01', '2025-03-31'],
-  ['2025-04-01', '2025-04-30'],
-  ['2025-05-01', '2025-05-31'],
-  ['2025-06-01', '2025-06-30'],
-  ['2025-07-01', '2025-08-31'],
-  ['2025-09-01', '2025-10-31'],
-  ['2025-11-01', '2025-12-31'],
-  ['2026-01-01', '2026-02-28'],
-  ['2026-03-01', '2026-04-30'],
-  ['2026-05-01', '2026-06-30'],
-  ['2026-07-01', '2026-07-31'],
-  ['2026-08-01', '2026-08-31'],
+  ['2025-01-01', '2025-01-15'],
+  ['2025-01-16', '2025-02-12'],
+  ['2025-02-13', '2025-03-26'],
+  ['2025-03-27', '2025-05-05'],
+  ['2025-05-06', '2025-06-18'],
+  ['2025-06-19', '2025-06-26'], // scadenza solo Oro e Platino
+  ['2025-06-27', '2025-07-30'],
+  ['2025-07-31', '2025-09-30'],
+  ['2025-10-01', '2025-11-26'],
+  ['2025-11-27', '2026-03-10'],
+  ['2026-03-11', '2026-04-21'],
+  ['2026-04-22', '2026-06-02'],
+  ['2026-06-03', '2026-07-14'],
+  ['2026-07-15', '2026-08-31'],
 ] as const;
+
+/**
+ * Indice (0-based) del periodo che scade il 26/06/2025 e le uniche carte per
+ * cui quella scadenza esiste. Per tutte le altre, il valore del periodo 5 e'
+ * per forza identico a quello del periodo 4: l'offerta in corso attraversava
+ * quella data senza interruzioni.
+ */
+const ORO_PLATINO_ONLY_INDEX = 5;
+const ORO_PLATINO_ONLY_CARDS = new Set(['oro', 'platino']);
 
 /**
  * Una riga per carta, una colonna per periodo.
@@ -119,10 +137,13 @@ const bonusRows: Record<string, Cell[]> = {
     [ 25000,  20000,  4000, 6],    [ 45000,  22000,  8000, 6],    [ 22000,  15000,  4000, 6],
     [ 47000,  22000,  8000, 6],    [ 25000,  18000,  4000, 6],
   ],
+  // Il calo da 32k a 10k era stato letto sul periodo 5, ma quella scadenza
+  // (26/06/2025) vale solo per Oro e Platino: per Business e' spostato al
+  // periodo 6. E' l'unica riga corretta dal vincolo invece che dall'immagine.
   business: [
     [ 37000,  50000,  3000, null], [ 37000,  50000,  3000, null], [ 37000,  50000,  3000, null],
-    [ 32000,  50000,  3000, null], [ 32000,  50000,  3000, null], [ 10000,  30000,  3000, null],
-    [ 10000,  25000,  3000, null], [ 10000,  22000,  3000, null], [ 10000,  20000,  3000, null],
+    [ 32000,  50000,  3000, null], [ 32000,  50000,  3000, null], [ 32000,  50000,  3000, null],
+    [ 10000,  30000,  3000, null], [ 10000,  25000,  3000, null], [ 10000,  22000,  3000, null],
     [  5000,   3000,  2000, 6],    [ 10000,   4000,  2000, 6],    [  5000,   3000,  2000, 6],
     [ 10000,   4000,  2000, 6],    [  5000,   3000,  2000, 6],
   ],
@@ -169,6 +190,23 @@ function bonus(amount: number, spend: number | null, months: number | null): Sid
   return side;
 }
 
+// Il vincolo strutturale sulla scadenza "solo Oro e Platino": per ogni altra
+// carta l'offerta attraversava quel confine, quindi i due periodi devono per
+// forza portare gli stessi numeri. Verificarlo qui evita che una lettura
+// sbagliata dell'immagine entri nel dataset senza che nessuno se ne accorga.
+for (const [cardId, row] of Object.entries(bonusRows)) {
+  if (ORO_PLATINO_ONLY_CARDS.has(cardId)) continue;
+  const before = JSON.stringify(row[ORO_PLATINO_ONLY_INDEX - 1]);
+  const after = JSON.stringify(row[ORO_PLATINO_ONLY_INDEX]);
+  if (before !== after) {
+    throw new Error(
+      `"${cardId}": il 26/06/2025 e' una scadenza solo per Oro e Platino, ` +
+        `ma i periodi ${ORO_PLATINO_ONLY_INDEX - 1} e ${ORO_PLATINO_ONLY_INDEX} ` +
+        `hanno valori diversi (${before} vs ${after}).`,
+    );
+  }
+}
+
 const out_periods = periods.map(([start, end], i) => {
   const offers: Record<string, unknown> = {};
 
@@ -192,13 +230,14 @@ const out_periods = periods.map(([start, end], i) => {
   return {
     start,
     end,
-    datesEstimated: true,
+    // Le date sono quelle reali di scadenza delle promozioni, non piu' stimate.
+    datesEstimated: false,
     source: {
       // Data di lettura degli screenshot. I grafici di origine dichiarano dati
       // "fino al 31 Aug 2026", ma quella e' la fine del periodo in corso, non
       // la data in cui sono stati letti: capturedAt non puo' stare nel futuro.
       capturedAt: '2026-08-08',
-      note: 'Ricostruito dai grafici storici in formato immagine. Valori leggibili con buona confidenza; date dei periodi stimate assumendo confini di mese.',
+      note: 'Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito.',
     },
     offers,
   };

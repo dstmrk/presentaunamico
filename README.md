@@ -198,23 +198,42 @@ non risponde non ha bisogno di essere deindicizzato.
 
 ## Stato dei dati
 
-Il dataset iniziale (gennaio 2025 – agosto 2026) è stato **ricostruito da
-grafici in formato immagine**, l'unica fonte disponibile:
+Il dataset iniziale (gennaio 2025 – agosto 2026) ha due provenienze diverse,
+con affidabilità diverse:
 
-- **Gli importi** sono leggibili con buona confidenza.
-- **Le date dei periodi sono stimate**, assumendo confini di mese. Tutti i
-  periodi iniziali hanno `datesEstimated: true`, la pagina lo dichiara in un
-  avviso e le righe interessate sono marcate nelle tabelle.
+- **Le date di scadenza dei periodi sono reali**, da elenco fornito. Tutti i
+  periodi hanno `datesEstimated: false`.
+- **Gli importi sono letti da grafici in formato immagine.** Sono attendibili,
+  ma l'associazione valore → periodo per le carte diverse da Platino e Oro può
+  essere sfasata di un periodo in qualche punto: va confermata a campione
+  contro le immagini di origine.
 
-Man mano che emergono le date reali: correggerle nel JSON e portare
-`datesEstimated` a `false`. I periodi aggiunti da fonti dirette nascono già
-con `false`.
+### La griglia dei periodi non è uniforme per tutte le carte
 
-Buchi noti nel dataset (la build li segnala a ogni esecuzione):
+Non tutte le scadenze valgono per tutte le carte: il 26/06/2025 è una scadenza
+**solo per Oro e Platino** (nel 2024, fuori copertura, ce ne sono altre "solo
+Business" e "solo Blu").
 
-- `explora`: dato del presentatore assente per i periodi del 2025
-- `payback-plus`: dato del presentatore assente per gran parte del 2025
-- `italo`: dato del presentatore assente per gennaio 2025
+La griglia è quindi l'**unione di tutti i confini**. Le carte che in una certa
+data non hanno cambiato offerta ripetono lo stesso valore su due periodi
+consecutivi — cosa che il grafico a gradini rende senza artefatti, perché due
+valori uguali di fila sono una linea orizzontale continua.
+
+`scripts/build-dataset.ts` verifica questo vincolo e fallisce se una carta
+diversa da Oro o Platino cambia valore sul confine del 26/06/2025.
+
+### Dati del presentatore mancanti
+
+I grafici di origine hanno **assi Y troncati**: dove la serie del presentatore
+scendeva sotto il minimo dell'asse, veniva tagliata via e il valore non è
+recuperabile. Non è "nessuna offerta": è un dato che la fonte non mostra, quindi
+è registrato come `null`.
+
+La build lo segnala a ogni esecuzione:
+
+- `explora`: presentatore assente per i periodi del 2025
+- `payback-plus`: presentatore assente per gran parte del 2025
+- `italo`: presentatore assente per il primo periodo del 2025
 
 ---
 
