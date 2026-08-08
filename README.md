@@ -278,6 +278,19 @@ Titoli, descrizioni e FAQ delle schede sono **generati dai dati**, quindi si
 aggiornano da soli a ogni nuovo periodo e sono diversi carta per carta. Undici
 copie della stessa FAQ generica sarebbero contenuto duplicato.
 
+### Il testo non contiene numeri scritti a mano
+
+Regola valida per tutti i testi del sito, FAQ comprese: **nessuna cifra e
+nessuna affermazione che dipenda dalle cifre** («la Platino è la più generosa»,
+«le offerte cambiano ogni due mesi», «nel 2026 gli importi sono calati») va
+scritta in un file di copy. Tutto ciò che cambia con una promozione nuova si
+calcola dai dati — la carta più alta del periodo in corso, la cadenza dei
+periodi, i nomi delle carte per tipo di premio.
+
+Il motivo è pratico: aggiornare il sito deve restare un lavoro su
+`promotions.json`. Una frase rimasta indietro non è solo brutta, è un archivio
+che si contraddice da solo — e la credibilità è tutto ciò che questo sito ha.
+
 ### Il troncamento su mobile
 
 In home, su schermi sotto i 720px, ogni tabella si ferma ai 6 periodi più
@@ -356,8 +369,13 @@ c'è: finché il dominio di produzione è `pages.dev` non serve a niente.
 ## Stato dei dati
 
 Il dataset (gennaio 2025 – agosto 2026, 20 periodi) fonde tre fonti, in ordine
-di autorevolezza crescente. Ogni periodo dichiara la propria in `source`, e la
-tabella in pagina la mostra nella colonna **Fonte**.
+di autorevolezza crescente. Ogni periodo dichiara la propria in `source`; in
+pagina le fonti distinte sono raccolte una volta sola, in `SourceNote.astro`,
+sotto il titolo della sezione storica, ognuna col link all'occorrenza più
+recente. Non è una colonna della tavola: `source` è un dato del **periodo**,
+quindi identico per tutte e undici le carte: in colonna occupava metà della
+larghezza di ogni tabella, ripetuto venti volte per undici tavole. Il dettaglio
+periodo per periodo, note comprese, resta in `promotions.json`.
 
 **Ordine di precedenza fra le fonti**, dal più forte:
 

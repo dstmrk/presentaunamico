@@ -1,5 +1,5 @@
-import { cards, currentPeriod, periods } from './promotions.ts';
-import { describeOffer, formatDate, formatValue } from './format.ts';
+import { cards, currentPeriod, periods, periodsLastYear } from './promotions.ts';
+import { formatDate, formatValue } from './format.ts';
 import { maxValueOf } from './schema.ts';
 
 /**
@@ -7,75 +7,109 @@ import { maxValueOf } from './schema.ts';
  * Tenerle separate significherebbe, prima o poi, markup strutturato che dice una
  * cosa e pagina che ne dice un'altra: e' una violazione delle linee guida sui
  * dati strutturati, oltre che un modo per mentire senza accorgersene.
+ *
+ * REGOLA DI SCRITTURA. Qui non si scrivono cifre a mano, e nemmeno affermazioni
+ * che dipendono dalle cifre ("la Platino e' la piu' generosa", "le offerte sono
+ * calate nel 2026"). Tutto cio' che cambia con una promozione nuova si calcola
+ * dai dati: aggiornare il sito deve restare un lavoro su promotions.json, mai
+ * una caccia alle frasi rimaste indietro.
  */
 export interface FaqEntry {
   question: string;
   answer: string;
 }
 
-function currentTop(): string {
-  const period = currentPeriod;
-  if (!period) {
-    const last = periods[periods.length - 1]!;
-    return `L'ultimo periodo rilevato si e' chiuso il ${formatDate(last.end)} e il periodo successivo non e' ancora stato registrato su questo sito.`;
+/** Carta con l'offerta piu' alta del periodo in corso dentro un gruppo. */
+function topOffer(group: 'mr' | 'business') {
+  if (!currentPeriod) return null;
+  let best: { name: string; value: number } | null = null;
+  for (const card of cards) {
+    // Confronto solo a parita' di unita': punti Payback ed euro di cashback non
+    // stanno sulla stessa scala dei Membership Rewards, e "la piu' generosa"
+    // sarebbe una classifica fra grandezze diverse.
+    if (card.group !== group || card.reward !== 'mr') continue;
+    const offer = currentPeriod.offers[card.id];
+    if (!offer) continue;
+    const value = maxValueOf(offer.referred);
+    // `name` e non `fullName`: la frase dice gia' "American Express", e "la
+    // American Express Platino" e' un inciampo che nessuno pronuncerebbe.
+    if (!best || value > best.value) best = { name: card.name, value };
   }
-  const rows = cards
-    .map((c) => {
-      const offer = period.offers[c.id];
-      if (!offer) return null;
-      return `${c.name}: ${formatValue(maxValueOf(offer.referred), c.reward)}`;
-    })
-    .filter(Boolean);
-  return `Nel periodo in corso (${formatDate(period.start)} – ${formatDate(period.end)}): ${rows.join('; ')}.`;
+  return best ? `${best.name} (${formatValue(best.value, 'mr')} all'amico presentato)` : null;
+}
+
+/** Elenco in prosa: "Payback, Payback Plus e Blu". */
+function nameList(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? '';
+  return `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}`;
+}
+
+function cadence(): string {
+  const recent = periodsLastYear();
+  return recent >= 2
+    ? `negli ultimi dodici mesi questo archivio ha registrato ${recent} periodi promozionali distinti`
+    : `dal ${formatDate(periods[0]!.start)} questo archivio ha registrato ${periods.length} periodi promozionali distinti`;
 }
 
 export function buildFaq(): FaqEntry[] {
-  const platino = cards.find((c) => c.id === 'platino');
-  const platinoOffer = currentPeriod && platino ? currentPeriod.offers[platino.id] : null;
+  const entries: FaqEntry[] = [];
+  const period = currentPeriod;
 
-  return [
-    {
-      question: 'Quanti punti da il Presenta un Amico American Express?',
-      answer:
-        `Dipende dalla carta e dal periodo: le offerte cambiano ogni una o due mesi. ${currentTop()}`,
-    },
-    {
-      question: 'Quanti punti prende chi presenta e quanti chi viene presentato?',
-      answer:
-        'Sono due importi distinti. L\'amico presentato riceve un bonus di benvenuto subordinato a un requisito di spesa da completare entro un numero di mesi; il presentatore riceve un accredito separato, di norma senza requisito di spesa a suo carico. Su questo sito le due cifre sono sempre mostrate separate: la linea piena e\' l\'amico presentato, quella tratteggiata il presentatore.',
-    },
-    {
+  entries.push({
+    question: 'Quanti punti da il Presenta un Amico American Express?',
+    answer: period
+      ? `Dipende dalla carta e dal periodo: American Express rivede le offerte di frequente e ${cadence()}. Gli importi del periodo in corso (${formatDate(period.start)} – ${formatDate(period.end)}) sono elencati carta per carta in cima a questa pagina; quelli dei periodi precedenti nelle tavole storiche.`
+      : `Dipende dalla carta e dal periodo: ${cadence()}. Il periodo attualmente in corso non e' ancora stato rilevato su questo sito: l'ultimo registrato si e' chiuso il ${formatDate(periods[periods.length - 1]!.end)}.`,
+  });
+
+  const topMr = topOffer('mr');
+  const topBusiness = topOffer('business');
+  if (topMr) {
+    entries.push({
       question: 'Qual e\' la carta che oggi da piu\' punti con il Presenta un Amico?',
-      answer: platinoOffer
-        ? `Fra le carte consumer con Membership Rewards la Platino e\' storicamente la piu\' generosa: nel periodo in corso offre ${describeOffer(platinoOffer.referred, 'mr')} all'amico presentato. Le carte Business arrivano a importi piu\' alti ma richiedono una partita IVA e soglie di spesa maggiori.`
-        : 'Storicamente la Platino e le carte Business offrono gli importi piu\' alti, a fronte pero\' di requisiti di spesa proporzionalmente maggiori. Il confronto periodo per periodo e\' nei grafici e nella tabella storica.',
-    },
-    {
-      question: 'Quanti amici posso presentare? C\'e\' un limite ai punti che posso accumulare?',
-      answer:
-        'Si. Le condizioni ufficiali American Express fissano un tetto per anno solare e per titolare, non per singola carta: 300.000 punti Membership Rewards e 120.000 punti PAYBACK. Il numero di amici presentabili non e\' quindi fisso, dipende da quanto vale l\'offerta della tua carta: con un accredito da 50.000 punti si arriva al tetto Membership Rewards con sei presentazioni andate a buon fine, con uno da 3.500 punti ne servono molte di piu\'. Questo dato non fa parte della serie storica del sito ed e\' aggiornato alla data indicata nel piede della pagina: verificalo sulle condizioni ufficiali.',
-    },
-    {
-      question: 'Le offerte Presenta un Amico cambiano nel tempo?',
-      answer:
-        'Si, e spesso: American Express rivede le offerte ogni una o due mesi e non pubblica un archivio delle promozioni passate. Questo sito esiste per conservare quello storico. Nel 2026 si osserva un movimento doppio: gli importi in punti sono calati e contemporaneamente i requisiti di spesa sono saliti, con finestre di 6 mesi.',
-    },
-    {
-      question: 'Il requisito di spesa vale anche per chi presenta?',
-      answer:
-        'No. La soglia di spesa e\' a carico dell\'amico presentato, che deve raggiungerla entro la finestra prevista per ottenere il bonus di benvenuto. Il presentatore riceve il proprio accredito senza dover spendere nulla di aggiuntivo.',
-    },
-    {
+      answer: `Nel periodo in corso, fra le carte consumer con Membership Rewards, e\' la ${topMr}.${topBusiness ? ` Fra le Business e\' la ${topBusiness}, che pero\' richiede una partita IVA e soglie di spesa maggiori.` : ''} La classifica cambia a ogni periodo.`,
+    });
+  }
+
+  entries.push({
+    question: 'Quanti punti prende chi presenta e quanti chi viene presentato?',
+    answer:
+      'Sono due importi distinti. L\'amico presentato riceve un bonus di benvenuto legato a un requisito di spesa da completare entro una finestra di mesi; il presentatore riceve un accredito separato, di norma senza spesa a suo carico. Nei grafici la linea piena e\' l\'amico presentato, quella tratteggiata il presentatore.',
+  });
+
+  entries.push({
+    question: 'Quanti amici posso presentare? C\'e\' un limite ai punti che posso accumulare?',
+    answer:
+      'Si. Le condizioni ufficiali American Express fissano un tetto per anno solare e per titolare, non per singola carta: 300.000 punti Membership Rewards e 120.000 punti PAYBACK. Quanti amici servano per arrivarci dipende quindi da quanto vale l\'offerta della tua carta. Questo dato non fa parte della serie storica del sito: verificalo sulle condizioni ufficiali.',
+  });
+
+  const payback = cards.filter((c) => c.reward === 'payback');
+  const cashback = cards.filter((c) => c.reward === 'eur');
+  if (payback.length > 0 || cashback.length > 0) {
+    const parts: string[] = [];
+    if (payback.length > 0) {
+      parts.push(
+        `${nameList(payback.map((c) => c.name))} accredit${payback.length > 1 ? 'ano' : 'a'} punti Payback anziche' Membership Rewards: i due programmi non sono confrontabili e su questo sito hanno grafici separati.`,
+      );
+    }
+    if (cashback.length > 0) {
+      parts.push(
+        `${nameList(cashback.map((c) => c.name))} riconosc${cashback.length > 1 ? 'ono' : 'e'} invece una percentuale di cashback per un periodo limitato e fino a un tetto di spesa: il valore indicato e' quindi un massimo, non un importo garantito.`,
+      );
+    }
+    entries.push({
       question: 'Come funziona il Presenta un Amico sulle carte che non danno Membership Rewards?',
-      answer:
-        'Payback e Payback Plus accreditano punti Payback anziche\' Membership Rewards: i due programmi non sono confrontabili e su questo sito hanno grafici separati con la loro unita\'. La Blu funziona ancora diversamente: all\'amico presentato riconosce una percentuale di cashback per un periodo limitato e fino a un tetto di spesa, quindi il valore indicato e\' un massimo ottenibile e non un importo garantito.',
-    },
-    {
-      question: 'I dati di questo sito sono ufficiali?',
-      answer:
-        'No. Questo e\' un sito indipendente, non affiliato ad American Express. I dati sono raccolti manualmente e possono contenere errori, ritardi o imprecisioni: le date dei periodi piu\' vecchi sono in parte ricostruite. Prima di aderire a una promozione verifica sempre le condizioni sul sito ufficiale American Express o nella tua area riservata.',
-    },
-  ];
+      answer: parts.join(' '),
+    });
+  }
+
+  entries.push({
+    question: 'I dati di questo sito sono ufficiali?',
+    answer:
+      'No. Questo e\' un sito indipendente, non affiliato ad American Express: i dati sono raccolti manualmente e possono contenere errori o ritardi. Prima di aderire a una promozione verifica sempre le condizioni sul sito ufficiale American Express o nella tua area riservata.',
+  });
+
+  return entries;
 }
 
 export const faq = buildFaq();
