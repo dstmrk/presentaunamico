@@ -1,0 +1,156 @@
+---
+import type { CardSeries } from '../lib/series.ts';
+import { quarterTicks } from '../lib/series.ts';
+import {
+  scales, runsOf, stepPath, stepArea, annotations, spendChanges,
+  yearLines, type Layout,
+} from '../lib/chart.ts';
+import { annotateOffer, formatCompact, formatSpendCompact } from '../lib/format.ts';
+
+interface Props {
+  series: CardSeries;
+  layout: Layout;
+  /** L'asse X con le etichette si disegna una volta sola, in fondo al gruppo. */
+  showAxis?: boolean;
+  class?: string;
+}
+
+const { series, layout: l, showAxis = false, class: className } = Astro.props;
+const s = scales(series, l);
+const { card } = series;
+const reward = card.reward;
+
+const referredRuns = runsOf(series.referred);
+const referrerRuns = runsOf(series.referrer);
+
+const maxSpend = Math.max(
+  1,
+  ...series.referred.map((x) => x.spend?.amount ?? 0),
+);
+
+const notes = annotations(series, s, (seg) => annotateOffer(seg.side!, reward));
+
+// Le etichette di spesa si scrivono solo dove il valore cambia, ma nel 2026 i
+// cambi sono ravvicinati e si sovrapporrebbero. Si tiene la prima di ogni
+// gruppo troppo fitto: meglio un'etichetta in meno che due illeggibili.
+const minLabelGap = l.fontSizeSmall * 5.2;
+let lastLabelX = -Infinity;
+const spendMarks = spendChanges(series.referred).filter(({ seg }) => {
+  const x = s.x(seg.x0);
+  if (x - lastLabelX < minLabelGap) return false;
+  lastLabelX = x;
+  return true;
+});
+
+const axisHeight = showAxis ? 20 : 0;
+const totalHeight = s.height + axisHeight;
+
+// Il valore corrente sta nell'intestazione del riquadro, non sul grafico: qui
+// resta solo il pallino terminale che lo ancora visivamente alla curva.
+const latest = series.latest;
+
+const yTicks = [0, s.yMax / 2, s.yMax];
+---
+
+<svg
+  class={className}
+  viewBox={`0 0 ${l.width} ${totalHeight}`}
+  width={l.width}
+  height={totalHeight}
+  role="img"
+  aria-hidden="true"
+  preserveAspectRatio="xMidYMid meet"
+>
+  <!-- griglia orizzontale -->
+  {yTicks.map((v) => (
+    <line
+      x1={s.plotLeft} x2={s.plotRight}
+      y1={s.y(v)} y2={s.y(v)}
+      class={v === 0 ? 'axis-base' : 'grid'}
+    />
+  ))}
+  {yTicks.map((v) => (
+    <text
+      x={s.plotLeft - 6} y={s.y(v)}
+      class="tick-label" text-anchor="end" dominant-baseline="middle"
+      font-size={l.fontSizeSmall}
+    >{formatCompact(v, reward)}</text>
+  ))}
+
+  <!-- separatori d'anno -->
+  {yearLines().map((t) => (
+    <line x1={s.x(t.time)} x2={s.x(t.time)} y1={s.plotTop - 4} y2={s.stripBottom} class="year-line" />
+  ))}
+
+  <!-- periodo corrente -->
+  {latest && (
+    <rect
+      x={s.x(latest.x0)} y={s.plotTop - 4}
+      width={Math.max(2, s.x(latest.x1) - s.x(latest.x0))}
+      height={s.stripBottom - s.plotTop + 4}
+      class="current-band"
+    />
+  )}
+
+  <!-- presentatore: subordinato, tratteggiato, senza area -->
+  {referrerRuns.map((run) => (
+    <path d={stepPath(run, s)} class="serie-referrer" fill="none" stroke-width={l.width > 500 ? 1.75 : 1.5} />
+  ))}
+
+  <!-- amico presentato: pieno, con area -->
+  {referredRuns.map((run) => (
+    <path d={stepArea(run, s)} class="serie-referred-area" stroke="none" />
+  ))}
+  {referredRuns.map((run) => (
+    <path d={stepPath(run, s)} class="serie-referred" fill="none" stroke-width={l.width > 500 ? 2.25 : 1.9} />
+  ))}
+
+  <!-- il cashback percentuale e' un massimo, non un importo certo: marcatore vuoto -->
+  {series.referred.filter((x) => x.capped).map((seg) => (
+    <circle cx={(s.x(seg.x0) + s.x(seg.x1)) / 2} cy={s.y(seg.value!)} r={l.width > 500 ? 3 : 2.2} class="marker-capped" />
+  ))}
+
+  {latest && (
+    <circle cx={s.x(latest.x1)} cy={s.y(latest.value!)} r={l.width > 500 ? 3.5 : 2.6} class="marker-current" />
+  )}
+
+  {l.showAnnotations && notes.map((n) => (
+    <text
+      x={n.x} y={n.kind === 'min' ? n.y + 13 : n.y - 7}
+      class="annotation" text-anchor="middle" font-size={l.fontSizeSmall}
+    >{n.text}</text>
+  ))}
+
+  <!-- striscia del requisito di spesa: separata dai punti, stesso asse X.
+       Serve a leggere in un colpo d'occhio il movimento che i punti da soli
+       nascondono (i punti calano mentre la spesa richiesta sale). -->
+  {series.referred.map((seg) => seg.spend && (
+    <rect
+      x={s.x(seg.x0)}
+      y={s.stripBottom - Math.max(3, (seg.spend.amount / maxSpend) * l.stripHeight)}
+      width={Math.max(1, s.x(seg.x1) - s.x(seg.x0) - 0.5)}
+      height={Math.max(3, (seg.spend.amount / maxSpend) * l.stripHeight)}
+      class="spend-bar"
+    />
+  ))}
+  <line x1={s.plotLeft} x2={s.plotRight} y1={s.stripBottom} y2={s.stripBottom} class="axis-base" />
+  <text
+    x={s.plotLeft - 6} y={s.stripTop + l.stripHeight / 2}
+    class="tick-label" text-anchor="end" dominant-baseline="middle" font-size={l.fontSizeSmall}
+  >spesa</text>
+
+  {l.showSpendLabels && spendMarks.map(({ seg }) => (
+    <text
+      x={s.x(seg.x0) + 2} y={s.stripTop - 1}
+      class="spend-label" text-anchor="start" font-size={l.fontSizeSmall}
+    >{formatSpendCompact(seg.spend)}</text>
+  ))}
+
+  {showAxis && quarterTicks().map((t) => (
+    <text
+      x={s.x(t.time)} y={s.stripBottom + 14}
+      class={t.major ? 'axis-label axis-label-major' : 'axis-label'}
+      text-anchor="middle" font-size={l.fontSizeSmall}
+    >{t.label}</text>
+  ))}
+</svg>

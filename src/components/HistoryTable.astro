@@ -1,0 +1,75 @@
+---
+import type { Card } from '../lib/schema.ts';
+import { periods } from '../lib/promotions.ts';
+import { describeOffer, formatDate, formatSpend, formatValue, spendOf } from '../lib/format.ts';
+import { maxValueOf } from '../lib/schema.ts';
+import CardChip from './CardChip.astro';
+
+interface Props {
+  card: Card;
+}
+
+const { card } = Astro.props;
+
+// Ordine decrescente: chi arriva dalla ricerca vuole prima il dato piu' recente.
+const rows = [...periods].reverse();
+---
+
+<!--
+  I grafici non sono leggibili da uno screen reader e non sono indicizzabili come
+  dati. Questa tabella e' la stessa informazione in forma testuale: serve
+  all'accessibilita' e ai crawler nella stessa misura.
+-->
+<table class="history" id={`storico-${card.id}`}>
+  <caption>
+    <CardChip card={card} size="sm" />
+    <span class="history-caption-text">
+      Storico delle offerte Presenta un Amico — {card.fullName}
+    </span>
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Periodo</th>
+      <th scope="col">Amico presentato</th>
+      <th scope="col">Spesa richiesta</th>
+      <th scope="col">Presentatore</th>
+    </tr>
+  </thead>
+  <tbody>
+    {rows.map((period) => {
+      const offer = period.offers[card.id];
+      const spend = offer ? spendOf(offer.referred) : undefined;
+      return (
+        <tr>
+          <th scope="row">
+            <time datetime={period.start}>{formatDate(period.start)}</time>
+            <span aria-hidden="true"> – </span>
+            <span class="sr-only">fino al</span>
+            <time datetime={period.end}>{formatDate(period.end)}</time>
+            {period.datesEstimated && (
+              <abbr class="est" title="Date ricostruite dalla fonte, non lette direttamente">stimate</abbr>
+            )}
+          </th>
+          {offer ? (
+            <>
+              <td>
+                <strong>{formatValue(maxValueOf(offer.referred), card.reward)}</strong>
+                {offer.referred.type === 'rate' && (
+                  <span class="cell-note">{describeOffer(offer.referred, card.reward)}</span>
+                )}
+              </td>
+              <td>{formatSpend(spend) ?? <span class="cell-empty">nessuna</span>}</td>
+              <td>
+                {offer.referrer
+                  ? formatValue(maxValueOf(offer.referrer), card.reward)
+                  : <span class="cell-empty">dato non rilevato</span>}
+              </td>
+            </>
+          ) : (
+            <td colspan="3" class="cell-empty">Dato non rilevato per questo periodo</td>
+          )}
+        </tr>
+      );
+    })}
+  </tbody>
+</table>

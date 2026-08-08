@@ -1,0 +1,301 @@
+{
+  "$ref": "#/definitions/PromotionsDataset",
+  "definitions": {
+    "PromotionsDataset": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fullName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "group": {
+                "type": "string",
+                "enum": [
+                  "mr",
+                  "business",
+                  "other"
+                ]
+              },
+              "reward": {
+                "type": "string",
+                "enum": [
+                  "mr",
+                  "payback",
+                  "eur"
+                ]
+              },
+              "color": {
+                "type": "string",
+                "pattern": "^#[0-9a-fA-F]{6}$"
+              },
+              "order": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "fullName",
+              "group",
+              "reward",
+              "color",
+              "order"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "periods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "end": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "datesEstimated": {
+                "type": "boolean",
+                "default": false
+              },
+              "source": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "archived": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "capturedAt": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "capturedAt"
+                ],
+                "additionalProperties": false
+              },
+              "offers": {
+                "type": "object",
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "referred": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "bonus"
+                                },
+                                "amount": {
+                                  "type": "integer",
+                                  "minimum": 0
+                                },
+                                "spend": {
+                                  "type": "object",
+                                  "properties": {
+                                    "amount": {
+                                      "type": "number",
+                                      "exclusiveMinimum": 0
+                                    },
+                                    "months": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 24
+                                    }
+                                  },
+                                  "required": [
+                                    "amount"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "amount"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "rate"
+                                },
+                                "rate": {
+                                  "type": "number",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 1
+                                },
+                                "months": {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 24
+                                },
+                                "spendCap": {
+                                  "type": "number",
+                                  "exclusiveMinimum": 0
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "rate",
+                                "months",
+                                "spendCap"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "referrer": {
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "bonus"
+                                    },
+                                    "amount": {
+                                      "type": "integer",
+                                      "minimum": 0
+                                    },
+                                    "spend": {
+                                      "type": "object",
+                                      "properties": {
+                                        "amount": {
+                                          "type": "number",
+                                          "exclusiveMinimum": 0
+                                        },
+                                        "months": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 24
+                                        }
+                                      },
+                                      "required": [
+                                        "amount"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "required": [
+                                    "type",
+                                    "amount"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "rate"
+                                    },
+                                    "rate": {
+                                      "type": "number",
+                                      "exclusiveMinimum": 0,
+                                      "maximum": 1
+                                    },
+                                    "months": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 24
+                                    },
+                                    "spendCap": {
+                                      "type": "number",
+                                      "exclusiveMinimum": 0
+                                    }
+                                  },
+                                  "required": [
+                                    "type",
+                                    "rate",
+                                    "months",
+                                    "spendCap"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "referred",
+                        "referrer"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "propertyNames": {
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                }
+              }
+            },
+            "required": [
+              "start",
+              "end",
+              "source",
+              "offers"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "cards",
+        "periods"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

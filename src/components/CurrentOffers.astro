@@ -1,0 +1,61 @@
+---
+import { groups, currentPeriod, lastKnownOffer } from '../lib/promotions.ts';
+import { formatDate, formatSpend, formatValue, spendOf } from '../lib/format.ts';
+import { maxValueOf } from '../lib/schema.ts';
+import { palette } from '../lib/chart.ts';
+import CardChip from './CardChip.astro';
+
+// Stesso ordine dei grafici piu' sotto: consumer, business, altre. Ordinare per
+// il solo `order` mescolerebbe i gruppi, visto che ognuno riparte da 1.
+const ordered = groups.flatMap((g) => g.cards);
+---
+
+<section class="now" aria-labelledby="oggi">
+  <h2 id="oggi">Le offerte di oggi</h2>
+
+  {currentPeriod ? (
+    <p class="now-period">
+      Periodo in corso: <time datetime={currentPeriod.start}>{formatDate(currentPeriod.start)}</time>
+      – <time datetime={currentPeriod.end}>{formatDate(currentPeriod.end)}</time>.
+    </p>
+  ) : (
+    <p class="now-period now-stale">
+      Il periodo attualmente in corso non e' ancora stato rilevato: qui sotto sono
+      indicati gli ultimi dati registrati, con la data in cui sono scaduti.
+    </p>
+  )}
+
+  <ul class="now-grid">
+    {ordered.map((card) => {
+      const offer = currentPeriod ? currentPeriod.offers[card.id] ?? null : null;
+      const fallback = offer ? null : lastKnownOffer(card.id);
+      const shown = offer ?? fallback?.offer ?? null;
+      const p = palette(card.color);
+      return (
+        <li class="now-card" style={`--line: ${p.line}; --line-dark: ${p.lineDark};`}>
+          <a href={`#carta-${card.id}`} class="now-card-link">
+            <CardChip card={card} size="sm" />
+            {shown ? (
+              <>
+                <p class="now-card-value">{formatValue(maxValueOf(shown.referred), card.reward)}</p>
+                <p class="now-card-meta">
+                  {formatSpend(spendOf(shown.referred)) ?? 'nessun requisito di spesa'}
+                </p>
+                <p class="now-card-meta">
+                  presentatore: {shown.referrer
+                    ? formatValue(maxValueOf(shown.referrer), card.reward)
+                    : 'non rilevato'}
+                </p>
+                {!offer && fallback && (
+                  <p class="now-card-stale">scaduta il {formatDate(fallback.period.end)}</p>
+                )}
+              </>
+            ) : (
+              <p class="now-card-meta">Nessun dato disponibile</p>
+            )}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</section>

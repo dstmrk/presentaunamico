@@ -1,0 +1,72 @@
+---
+import type { CardSeries } from '../lib/series.ts';
+import { DESKTOP, MOBILE, palette } from '../lib/chart.ts';
+import { REWARD_UNIT, describeOffer, formatValue, formatDate } from '../lib/format.ts';
+import { maxValueOf } from '../lib/schema.ts';
+import { currentPeriod, lastKnownOffer } from '../lib/promotions.ts';
+import CardChartSvg from './CardChartSvg.astro';
+import CardChip from './CardChip.astro';
+
+interface Props {
+  series: CardSeries;
+  showAxis?: boolean;
+}
+
+const { series, showAxis = false } = Astro.props;
+const { card } = series;
+const p = palette(card.color);
+
+// L'offerta corrente e' quella del periodo che contiene oggi. Se oggi cade oltre
+// l'ultimo periodo noto, non c'e' offerta corrente: mostrare l'ultima registrata
+// come se fosse in vigore sarebbe l'unica bugia capace di bruciare il sito.
+const currentOffer = currentPeriod ? currentPeriod.offers[card.id] ?? null : null;
+const fallback = currentOffer ? null : lastKnownOffer(card.id);
+---
+
+<section class="panel" id={`carta-${card.id}`} data-card={card.id} style={`--line: ${p.line}; --line-dark: ${p.lineDark}; --referrer: ${p.referrer}; --referrer-dark: ${p.referrerDark};`}>
+  <header class="panel-head">
+    <div class="panel-id">
+      <h3 class="panel-title">
+        <CardChip card={card} />
+      </h3>
+      <p class="panel-unit">{REWARD_UNIT[card.reward]}</p>
+    </div>
+
+    <div class="panel-now">
+      {currentOffer ? (
+        <>
+          <p class="now-label">Amico presentato, oggi</p>
+          <p class="now-value">{formatValue(maxValueOf(currentOffer.referred), card.reward)}</p>
+          <p class="now-detail">
+            {currentOffer.referrer
+              ? <>presentatore: <strong>{formatValue(maxValueOf(currentOffer.referrer), card.reward)}</strong></>
+              : 'presentatore: non rilevato'}
+          </p>
+        </>
+      ) : (
+        <>
+          <p class="now-label now-stale">Periodo non ancora rilevato</p>
+          {fallback && (
+            <p class="now-detail">
+              Ultimo dato: <strong>{formatValue(maxValueOf(fallback.offer.referred), card.reward)}</strong>,
+              periodo chiuso il {formatDate(fallback.period.end)}.
+            </p>
+          )}
+        </>
+      )}
+    </div>
+  </header>
+
+  <div class="panel-chart">
+    <CardChartSvg series={series} layout={DESKTOP} showAxis={showAxis} class="chart chart-desktop" />
+    <CardChartSvg series={series} layout={MOBILE} showAxis={showAxis} class="chart chart-mobile" />
+  </div>
+
+  <p class="sr-only">
+    {card.fullName}: storico delle offerte Presenta un Amico.
+    {currentOffer
+      ? `Offerta in corso: ${describeOffer(currentOffer.referred, card.reward)} all'amico presentato.`
+      : 'Nessuna offerta rilevata per il periodo corrente.'}
+    I dati completi sono nella tabella storica in fondo alla pagina.
+  </p>
+</section>
