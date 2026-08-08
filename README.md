@@ -182,15 +182,13 @@ devDependencies vengono saltate: qui la build passa comunque. Verificato con
 ### Deploy di anteprima
 
 Ogni push su un branch diverso da `main` produce un'anteprima su
-`<branch>.presentaunamico.pages.dev`. Il middleware le marca già oggi con
-`X-Robots-Tag: noindex`, perché l'host non coincide con `PRODUCTION_HOSTNAME`:
-le anteprime non finiscono nell'indice, il dominio di produzione sì.
+`<branch>.presentaunamico.pages.dev`. A tenerle fuori dall'indice è il
+**canonical assoluto**: ogni pagina dichiara come URL canonico quello sul
+dominio di produzione, quindi un'anteprima non compete con la produzione, la
+indica.
 
-Nota: `functions/_middleware.ts` gira su **ogni** richiesta, quindi tutte le
-richieste contano come invocazioni Functions (100.000 al giorno nel piano
-gratuito). Finché il dominio di produzione resta `pages.dev` il middleware
-serve solo a proteggere le anteprime: se preferisci azzerare le invocazioni,
-puoi rimuoverlo e rimetterlo quando aggiungi il dominio custom.
+Il sito è puramente statico: nessuna Pages Function, quindi zero invocazioni
+Functions e zero cold start.
 
 ### Deploy manuale, senza Git
 
@@ -221,9 +219,9 @@ src/
   pages/sitemap.xml.ts          sitemap con lastmod dai dati, non dalla build
 public/
   robots.txt  _headers  favicon.svg
-functions/
-  _middleware.ts                noindex su *.pages.dev (vedi sotto)
 ```
+
+Nessuna Pages Function: il sito è interamente statico.
 
 ---
 
@@ -268,18 +266,56 @@ Tutto il dominio vive in [`src/lib/site.ts`](src/lib/site.ts):
 export const PRODUCTION_HOSTNAME = 'presentaunamico.pages.dev';
 ```
 
-Quando arriva un dominio custom, cambia **solo quella riga**. Da quel momento
-`functions/_middleware.ts` inizia da solo a servire `X-Robots-Tag: noindex` sul
-sottodominio tecnico `*.pages.dev`, mentre il canonical continua a puntare al
-dominio di produzione.
+Quando arriva un dominio custom, cambia **solo quella riga**: canonical,
+sitemap, Open Graph e URL nel JSON-LD si spostano tutti di conseguenza.
 
-`public/_headers` **non può** fare questo lavoro: fa matching sul path e non
-sull'host, quindi lo stesso header verrebbe servito su entrambi i domini. Per
-questo il noindex vive in una Pages Function, che vede l'header `Host`.
+### Quando aggiungerai il dominio custom
 
-Consigliato in aggiunta: attivato il dominio custom, disabilitare l'accesso al
-sottodominio `*.pages.dev` dalle impostazioni del progetto Pages. Un alias che
-non risponde non ha bisogno di essere deindicizzato.
+A quel punto `presentaunamico.pages.dev` diventa un doppione indicizzabile del
+sito vero. Due mosse, in ordine di efficacia:
+
+**1. Disabilita l'accesso al sottodominio `*.pages.dev`** dalle impostazioni del
+progetto Pages. Un alias che non risponde non ha bisogno di essere
+deindicizzato: è la soluzione più pulita e non costa nulla.
+
+**2. Oppure servi `X-Robots-Tag: noindex` solo su quell'host.**
+`public/_headers` **non può** farlo — fa matching sul path e non sull'host,
+quindi lo stesso header finirebbe anche sul dominio custom. Serve una Pages
+Function, che l'header `Host` lo vede. Ricrea `functions/_middleware.ts` nella
+radice del repo:
+
+```ts
+// Tenere allineato a PRODUCTION_HOSTNAME in src/lib/site.ts: le Pages
+// Functions sono compilate a parte e non condividono i moduli del sito.
+const PRODUCTION_HOSTNAME = 'esempio.it';
+
+interface PagesContext {
+  request: Request;
+  next: () => Promise<Response>;
+}
+
+export const onRequest = async (context: PagesContext): Promise<Response> => {
+  const response = await context.next();
+  const host = new URL(context.request.url).hostname;
+
+  if (host !== PRODUCTION_HOSTNAME && host.endsWith('.pages.dev')) {
+    const headers = new Headers(response.headers);
+    headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+
+  return response;
+};
+```
+
+Attenzione: una funzione in `functions/_middleware.ts` gira su **ogni**
+richiesta, comprese quelle agli asset statici, e ognuna conta come invocazione
+Functions (100.000 al giorno nel piano gratuito). È il motivo per cui oggi non
+c'è: finché il dominio di produzione è `pages.dev` non serve a niente.
 
 ---
 

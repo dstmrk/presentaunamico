@@ -2,9 +2,13 @@
  * Configurazione di dominio e identita' del sito.
  *
  * PRODUCTION_HOSTNAME e' l'unico posto da cambiare il giorno in cui si passa a
- * un dominio custom. Da quel momento il middleware in functions/_middleware.ts
- * inizia da solo a servire X-Robots-Tag: noindex su *.pages.dev, e il canonical
- * continua a puntare qui.
+ * un dominio custom: canonical, sitemap, Open Graph e URL nel JSON-LD si
+ * spostano tutti di conseguenza.
+ *
+ * Nota: il canonical e' sempre ASSOLUTO e sempre su questo host, a prescindere
+ * da dove la pagina viene servita. E' quello che tiene fuori dall'indice i
+ * deploy di anteprima su *.pages.dev, che dichiarano la produzione come URL
+ * canonico invece di competerci.
  */
 export const PRODUCTION_HOSTNAME = 'presentaunamico.pages.dev';
 
