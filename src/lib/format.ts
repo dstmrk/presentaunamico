@@ -1,6 +1,9 @@
 import { maxValueOf, type OfferSide, type RewardKind } from './schema.ts';
 
-const nf = new Intl.NumberFormat('it-IT');
+// useGrouping: 'always' scavalca la regola CLDR italiana che NON raggruppa i
+// numeri a quattro cifre. In prosa "6000" va bene, ma in una colonna dove sopra
+// c'e' "10.000 €" la disomogeneita' rende i valori piu' lenti da confrontare.
+const nf = new Intl.NumberFormat('it-IT', { useGrouping: 'always' });
 const dateFmt = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 const shortDateFmt = new Intl.DateTimeFormat('it-IT', { month: 'short', year: 'numeric' });
 

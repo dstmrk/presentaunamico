@@ -198,15 +198,37 @@ non risponde non ha bisogno di essere deindicizzato.
 
 ## Stato dei dati
 
-Il dataset iniziale (gennaio 2025 – agosto 2026) ha due provenienze diverse,
-con affidabilità diverse:
+Il dataset (gennaio 2025 – agosto 2026, 20 periodi) fonde tre fonti, in ordine
+di autorevolezza crescente. Ogni periodo dichiara la propria in `source`, e la
+tabella in pagina la mostra nella colonna **Fonte**.
 
-- **Le date di scadenza dei periodi sono reali**, da elenco fornito. Tutti i
-  periodi hanno `datesEstimated: false`.
-- **L'ultimo periodo (15/07 → 31/08/2026) viene dalle condizioni ufficiali**
-  American Express, linkate in `source.url`.
-- **Gli altri periodi sono letti da grafici in formato immagine**, con
-  affidabilità diversa fra le due serie (vedi sotto).
+| Periodi | Fonte | Cosa copre |
+|---|---|---|
+| 23/07 → 31/08/2026 | Condizioni ufficiali American Express | Tutto, per tutte le carte |
+| 27/11/2025 → 22/07/2026 | Archivio pubblico di terze parti | Amico presentato e spesa, 7 carte su 11 |
+| 16/01 → 12/02/2025 | Forum specializzato | Tutto, 5 carte Membership Rewards |
+| Restanti 2025 | Lettura dei grafici storici | Tutto, tutte le carte |
+
+Tutte le date sono reali: nessun periodo ha `datesEstimated: true`.
+
+### Le finestre brevi di raccordo
+
+L'archivio pubblico ha rivelato cinque finestre di 7–10 giorni (27/1–5/2,
+11–17/3, 22–29/4, 3–10/6, 15–22/7 del 2026) in cui l'offerta scende a un
+livello base fra una promozione forte e la successiva. Né i grafici storici né
+l'elenco delle scadenze le contenevano, perché registrano solo le promozioni
+principali.
+
+Sono quelle finestre a spiegare perché le condizioni ufficiali datano l'offerta
+in corso al **23 luglio** e non al 15: il 15–22 luglio è una finestra di
+raccordo a sé.
+
+Per le quattro carte che l'archivio non copre (Italo, Payback, Payback Plus,
+Blu) e per tutti i valori del presentatore, i periodi nati da questa
+suddivisione ereditano la lettura del grafico che copriva l'intero intervallo.
+È un'osservazione reale su tutto lo span, ma **non risolve le finestre brevi**:
+se anche quelle carte scendevano a un livello base per una settimana, qui non
+si vede.
 
 ### Quanto sono affidabili le due serie
 
@@ -222,14 +244,40 @@ Gli errori sono tutti sulle serie che nei grafici di origine stavano schiacciate
 contro il fondo di un asse Y troncato. Le correzioni per l'ultimo periodo sono
 in `OFFICIAL_LAST_PERIOD_REFERRER` dentro `scripts/build-dataset.ts`.
 
-**Per i periodi precedenti non esiste una fonte equivalente**, quindi i valori
-del presentatore restano quelli letti dai grafici e vanno considerati
-approssimativi con lo stesso margine. Se emergono condizioni ufficiali
-archiviate per i periodi passati, sono la prima cosa da usare per correggerli.
+**Nessuna fonte trovata copre il presentatore nei periodi passati**: né
+l'archivio pubblico né le condizioni ufficiali archiviate (web.archive.org non
+è raggiungibile dall'ambiente di build). Quei valori restano quelli letti dai
+grafici.
+
+Non vanno però riscritti in blocco con i valori di oggi. Il forum documenta il
+presentatore Platino a **100.000 punti** per i periodi con scadenza 12/02/2025
+e 26/03/2025, contro i **50.000** attuali: la serie del presentatore è
+realmente cambiata nel tempo, e la lettura dei grafici la coglieva
+correttamente in quei punti. Gli errori riscontrati sull'ultimo periodo vanno
+in entrambe le direzioni (Verde −30%, Platino Business +20%), quindi non sono
+un errore di scala ricalcolabile: sono rumore di lettura vicino al fondo
+dell'asse.
+
+### Discrepanza aperta sul periodo 13/02 → 26/03/2025
+
+La fonte forum per quel periodo indica valori diversi da quelli letti dai
+grafici su tre carte:
+
+| Carta | Dai grafici | Dal forum |
+|---|---|---|
+| Platino | 250.000 | 180.000 |
+| Verde | 12.500 | 30.000 |
+| Italo | 12.000 | 24.000 |
+| Oro | 100.000 | 100.000 ✓ |
+| Explora | 5.000 | 5.000 ✓ |
+
+Due carte su cinque combaciano, tre no, e le differenze vanno in direzioni
+opposte. Non è risolvibile senza una fonte terza, quindi il dataset conserva
+per ora la lettura dei grafici e il periodo dichiara la fonte forum solo per la
+Blu, che invece combacia.
 
 Resta inoltre da confermare a campione l'associazione valore → periodo per le
-carte diverse da Platino e Oro: è stata dedotta dalla posizione dei punti e può
-essere sfasata di un periodo in qualche punto.
+carte del 2025 diverse da Platino e Oro.
 
 ### La griglia dei periodi non è uniforme per tutte le carte
 

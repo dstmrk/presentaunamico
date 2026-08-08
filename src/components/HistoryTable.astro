@@ -13,6 +13,15 @@ const { card } = Astro.props;
 
 // Ordine decrescente: chi arriva dalla ricerca vuole prima il dato piu' recente.
 const rows = [...periods].reverse();
+
+/** Etichetta breve della fonte: il lettore deve capire quanto fidarsi, non da dove viene l'URL. */
+function sourceLabel(url: string | undefined): string {
+  if (!url) return 'rilevazione indiretta';
+  const host = new URL(url).hostname.replace(/^www\./, '');
+  if (host.endsWith('americanexpress.com')) return 'condizioni ufficiali';
+  if (host.includes('finanzaonline')) return 'forum specializzato';
+  return 'archivio pubblico';
+}
 ---
 
 <!--
@@ -76,7 +85,7 @@ const rows = [...periods].reverse();
           <td class="cell-source">
             {period.source.url ? (
               <a href={period.source.url} rel="nofollow noopener" target="_blank" title={period.source.note}>
-                condizioni ufficiali
+                {sourceLabel(period.source.url)}
               </a>
             ) : (
               <abbr title={period.source.note}>rilevazione indiretta</abbr>

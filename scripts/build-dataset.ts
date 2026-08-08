@@ -54,7 +54,11 @@ const cards = [
  * Il dataset parte dal 01/01/2025; le scadenze del 2024 (29/05, 25/07 solo
  * business, 03/09, 09/10, 07/11 e 31/12 solo Blu) restano fuori copertura.
  */
-const periods = [
+/**
+ * Griglia "grossolana": una colonna per ogni valore leggibile nei grafici.
+ * Resta la base per le carte e le serie che nessuna fonte esterna copre.
+ */
+const chartPeriods = [
   ['2025-01-01', '2025-01-15'],
   ['2025-01-16', '2025-02-12'],
   ['2025-02-13', '2025-03-26'],
@@ -70,6 +74,57 @@ const periods = [
   ['2026-06-03', '2026-07-14'],
   ['2026-07-15', '2026-08-31'],
 ] as const;
+
+/**
+ * Griglia definitiva. Dal 27/11/2025 in poi arriva da un archivio pubblico di
+ * terze parti che documenta anche le FINESTRE BREVI di raccordo — quelle in cui
+ * l'offerta scende a un livello base per 7-10 giorni fra una promozione forte e
+ * la successiva. I grafici di origine non le risolvono e l'elenco di scadenze
+ * fornito non le contiene, perche' registrano solo le promozioni principali.
+ *
+ * Sono cinque finestre (27/1-5/2, 11-17/3, 22-29/4, 3-10/6, 15-22/7) e
+ * spiegano anche la discrepanza vista sulle condizioni ufficiali, che datano
+ * l'offerta in corso al 23 luglio e non al 15.
+ */
+const periods = [
+  ['2025-01-01', '2025-01-15'],
+  ['2025-01-16', '2025-02-12'],
+  ['2025-02-13', '2025-03-26'],
+  ['2025-03-27', '2025-05-05'],
+  ['2025-05-06', '2025-06-18'],
+  ['2025-06-19', '2025-06-26'],
+  ['2025-06-27', '2025-07-30'],
+  ['2025-07-31', '2025-09-30'],
+  ['2025-10-01', '2025-11-26'],
+  ['2025-11-27', '2026-01-26'],
+  ['2026-01-27', '2026-02-05'],
+  ['2026-02-06', '2026-03-10'],
+  ['2026-03-11', '2026-03-17'],
+  ['2026-03-18', '2026-04-21'],
+  ['2026-04-22', '2026-04-29'],
+  ['2026-04-30', '2026-06-02'],
+  ['2026-06-03', '2026-06-10'],
+  ['2026-06-11', '2026-07-14'],
+  ['2026-07-15', '2026-07-22'],
+  ['2026-07-23', '2026-08-31'],
+] as const;
+
+/**
+ * Da quale colonna dei grafici attinge ogni periodo definitivo.
+ * I periodi 2026 nati dalla suddivisione ereditano la lettura del grafico che
+ * copriva l'intero intervallo: per le serie che l'archivio non documenta (Italo,
+ * Payback, Payback Plus, Blu e tutti i valori del presentatore) quella lettura
+ * resta l'unica osservazione disponibile, ed e' un'osservazione che copriva
+ * davvero tutto lo span.
+ */
+const CHART_COLUMN_OF: readonly number[] = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, // 2025: corrispondenza uno a uno
+  9, 9, 9,                   // 27/11-26/1, 27/1-5/2, 6/2-10/3
+  10, 10,                    // 11-17/3, 18/3-21/4
+  11, 11,                    // 22-29/4, 30/4-2/6
+  12, 12,                    // 3-10/6, 11/6-14/7
+  13, 13,                    // 15-22/7, 23/7-31/8
+];
 
 /**
  * Indice (0-based) del periodo che scade il 26/06/2025 e le uniche carte per
@@ -177,7 +232,77 @@ const bluRow: Array<[number, number, number, number]> = [
 ];
 
 /**
- * CORREZIONI DA FONTE UFFICIALE — ultimo periodo (15/07 → 31/08/2026).
+ * ARCHIVIO PUBBLICO 2026 — valori dell'AMICO PRESENTATO e requisiti di spesa.
+ *
+ * Fonte di terze parti che si e' rivelata affidabile: sull'ultimo periodo
+ * combacia esattamente con le condizioni ufficiali American Express. Copre
+ * pero' solo sette carte (niente Italo, Payback, Payback Plus, Blu) e solo la
+ * serie dell'amico presentato: sul presentatore non dice nulla.
+ *
+ * Le offerte ruotano fra tre livelli ricorrenti piu' quello di fine 2025.
+ * Tupla per carta: [punti, spesa richiesta].
+ */
+type Profile = Record<string, [number, number]>;
+
+const P_BASE: Profile = {
+  platino: [50000, 6000], oro: [15000, 2000], verde: [5000, 1000], explora: [2000, 1000],
+  'platino-business': [60000, 8000], 'oro-business': [20000, 4000], business: [5000, 2000],
+};
+const P_MID: Profile = {
+  platino: [110000, 10000], oro: [17500, 2000], verde: [5000, 1000], explora: [2000, 1000],
+  'platino-business': [140000, 12000], 'oro-business': [25000, 4000], business: [5000, 2000],
+};
+const P_HIGH: Profile = {
+  platino: [180000, 12000], oro: [35000, 4000], verde: [10000, 1000], explora: [2000, 1000],
+  'platino-business': [210000, 15000], 'oro-business': [45000, 8000], business: [10000, 2000],
+};
+const P_LATE_2025: Profile = {
+  platino: [100000, 3500], oro: [30000, 2000], verde: [10000, 1500], explora: [5000, 1500],
+  'platino-business': [90000, 6000], 'oro-business': [30000, 4000], business: [10000, 3000],
+};
+
+/** Profilo e finestra di spesa per ogni periodo dal 27/11/2025 (indice 9) in poi. */
+const ARCHIVE_FROM_INDEX = 9;
+const ARCHIVE_SEQUENCE: { profile: Profile; months: number }[] = [
+  { profile: P_LATE_2025, months: 3 }, // 27/11/2025 – 26/01/2026: unica con 3 mesi
+  { profile: P_BASE, months: 6 },      // 27/01 – 05/02
+  { profile: P_MID, months: 6 },       // 06/02 – 10/03
+  { profile: P_BASE, months: 6 },      // 11/03 – 17/03
+  { profile: P_HIGH, months: 6 },      // 18/03 – 21/04
+  { profile: P_BASE, months: 6 },      // 22/04 – 29/04
+  { profile: P_MID, months: 6 },       // 30/04 – 02/06
+  { profile: P_BASE, months: 6 },      // 03/06 – 10/06
+  { profile: P_HIGH, months: 6 },      // 11/06 – 14/07
+  { profile: P_BASE, months: 6 },      // 15/07 – 22/07
+  { profile: P_MID, months: 6 },       // 23/07 – 31/08
+];
+
+const ARCHIVE_SOURCE_URL =
+  'https://www.frequentflyeritalia.com/american-express-promozioni-presenta-un-amico/';
+
+/**
+ * Fonti puntuali per singoli periodi del 2025. I titoli dei thread di
+ * FinanzaOnLine codificano l'offerta per esteso, scadenza compresa.
+ *
+ * Il periodo 1 (16/01 → 12/02/2025) e' confermato in pieno: presentato
+ * 100k/35k/10k/6k/5k MR per Platino/Oro/Verde/Italo/Explora e presentatore
+ * 100k MR coincidono esattamente con la lettura dei grafici, valore del
+ * presentatore incluso. E' la prova che quelle letture non sono sbagliate in
+ * blocco — e che il presentatore Platino valeva 100k allora contro 50k oggi.
+ */
+const PERIOD_SOURCES: Record<number, { url: string; note: string }> = {
+  1: {
+    url: 'https://forum.finanzaonline.com/threads/amex-platino-oro-verde-italo-explora-inviti-illimitati-presentato-100k-35k-10k-6k-5k-mr-presentatore-100k-mr-scadenza-12-02-2025.2068995/',
+    note: 'Offerta riportata per esteso su forum specializzato; combacia con la lettura dei grafici su tutte e cinque le carte, presentatore incluso.',
+  },
+  2: {
+    url: 'https://forum.finanzaonline.com/threads/presenta-un-amico-blu-2025-american-express-invitato-5-di-riaccredito-per-i-primi-6-mesi-max-150eur-invitante-80eur-max-12-inviti-scad-26-03-2025.2071044/',
+    note: 'Fonte per la sola Blu (5% per 6 mesi fino a 150 EUR, presentatore 80 EUR). Per le carte Membership Rewards questo periodo resta da verificare: la fonte forum indica valori diversi da quelli letti dai grafici su Platino, Verde e Italo.',
+  },
+};
+
+/**
+ * CORREZIONI DA FONTE UFFICIALE — ultimo periodo (23/07 → 31/08/2026).
  *
  * Il confronto con le condizioni pubblicate da American Express ha confermato
  * TUTTI i valori dell'amico presentato e TUTTI i requisiti di spesa, dieci
@@ -235,24 +360,39 @@ for (const [cardId, row] of Object.entries(bonusRows)) {
   }
 }
 
+/**
+ * Fusione delle tre fonti, in ordine di autorevolezza crescente:
+ *   1. lettura dei grafici          — copre tutto, ma e' la piu' debole
+ *   2. archivio pubblico 2026       — sovrascrive l'amico presentato dal 27/11/2025
+ *   3. condizioni ufficiali Amex    — sovrascrivono il presentatore nell'ultimo periodo
+ */
 const out_periods = periods.map(([start, end], i) => {
   const offers: Record<string, unknown> = {};
-
+  const col = CHART_COLUMN_OF[i]!;
   const isLast = i === periods.length - 1;
+  const archive = i >= ARCHIVE_FROM_INDEX ? ARCHIVE_SEQUENCE[i - ARCHIVE_FROM_INDEX] : undefined;
 
   for (const [cardId, row] of Object.entries(bonusRows)) {
-    const cell = row[i];
-    const official = isLast ? OFFICIAL_LAST_PERIOD_REFERRER[cardId] : undefined;
-    const referrerAmount = official ?? cell?.[1] ?? null;
-    offers[cardId] = cell === null || cell === undefined
-      ? null
-      : {
-          referred: bonus(cell[0], cell[2], cell[3]),
-          referrer: referrerAmount === null ? null : bonus(referrerAmount, null, null),
-        };
+    const cell = row[col];
+    if (cell === null || cell === undefined) {
+      offers[cardId] = null;
+      continue;
+    }
+
+    const fromArchive = archive?.profile[cardId];
+    const referred = fromArchive
+      ? bonus(fromArchive[0], fromArchive[1], archive!.months)
+      : bonus(cell[0], cell[2], cell[3]);
+
+    const referrerAmount = (isLast ? OFFICIAL_LAST_PERIOD_REFERRER[cardId] : undefined) ?? cell[1];
+
+    offers[cardId] = {
+      referred,
+      referrer: referrerAmount === null ? null : bonus(referrerAmount, null, null),
+    };
   }
 
-  const [rate, months, cap, referrerEur] = bluRow[i]!;
+  const [rate, months, cap, referrerEur] = bluRow[col]!;
   offers['blu'] = {
     // Cashback azzerato: l'offerta esiste comunque, a valore nullo.
     referred: rate > 0 ? { type: 'rate', rate, months, spendCap: cap } : { type: 'bonus', amount: 0 },
@@ -268,15 +408,23 @@ const out_periods = periods.map(([start, end], i) => {
       ? {
           url: OFFICIAL_SOURCE_URL,
           capturedAt: '2026-08-08',
-          note: 'Condizioni ufficiali American Express. Valori dell\'amico presentato e requisiti di spesa confermati per tutte le carte; valori del presentatore presi da qui.',
+          note: 'Condizioni ufficiali American Express: valori dell\'amico presentato e requisiti di spesa confermati per tutte le carte, valori del presentatore presi da qui.',
         }
-      : {
-          // Data di lettura degli screenshot. I grafici di origine dichiarano
-          // dati "fino al 31 Aug 2026", ma quella e' la fine del periodo in
-          // corso, non la data di lettura: capturedAt non puo' stare nel futuro.
-          capturedAt: '2026-08-08',
-          note: 'Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito.',
-        },
+      : archive
+        ? {
+            url: ARCHIVE_SOURCE_URL,
+            capturedAt: '2026-08-08',
+            note: 'Archivio pubblico delle offerte: valori dell\'amico presentato e requisiti di spesa. I valori del presentatore restano quelli letti dai grafici.',
+          }
+      : PERIOD_SOURCES[i]
+        ? { ...PERIOD_SOURCES[i]!, capturedAt: '2026-08-08' }
+        : {
+            // Data di lettura degli screenshot. I grafici di origine dichiarano
+            // dati "fino al 31 Aug 2026", ma quella e' la fine del periodo in
+            // corso, non la data di lettura: capturedAt non puo' stare nel futuro.
+            capturedAt: '2026-08-08',
+            note: 'Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito.',
+          },
     offers,
   };
 });
