@@ -2079,8 +2079,9 @@
       "end": "2026-08-31",
       "datesEstimated": false,
       "source": {
+        "url": "https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/",
         "capturedAt": "2026-08-08",
-        "note": "Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito."
+        "note": "Condizioni ufficiali American Express. Valori dell'amico presentato e requisiti di spesa confermati per tutte le carte; valori del presentatore presi da qui."
       },
       "offers": {
         "platino": {
@@ -2122,7 +2123,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 5000
+            "amount": 3500
           }
         },
         "italo": {
@@ -2136,7 +2137,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 3500
+            "amount": 2500
           }
         },
         "explora": {
@@ -2164,7 +2165,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 50000
+            "amount": 60000
           }
         },
         "oro-business": {
@@ -2178,7 +2179,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 18000
+            "amount": 20000
           }
         },
         "business": {
@@ -2192,7 +2193,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 3000
+            "amount": 3500
           }
         },
         "payback": {

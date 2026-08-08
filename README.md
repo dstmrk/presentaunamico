@@ -203,10 +203,33 @@ con affidabilità diverse:
 
 - **Le date di scadenza dei periodi sono reali**, da elenco fornito. Tutti i
   periodi hanno `datesEstimated: false`.
-- **Gli importi sono letti da grafici in formato immagine.** Sono attendibili,
-  ma l'associazione valore → periodo per le carte diverse da Platino e Oro può
-  essere sfasata di un periodo in qualche punto: va confermata a campione
-  contro le immagini di origine.
+- **L'ultimo periodo (15/07 → 31/08/2026) viene dalle condizioni ufficiali**
+  American Express, linkate in `source.url`.
+- **Gli altri periodi sono letti da grafici in formato immagine**, con
+  affidabilità diversa fra le due serie (vedi sotto).
+
+### Quanto sono affidabili le due serie
+
+Il confronto dell'ultimo periodo con la fonte ufficiale è servito da controllo
+in cieco sulla lettura dei grafici, e dà un verdetto netto:
+
+| Serie | Esito del controllo |
+|---|---|
+| Amico presentato + requisito di spesa | **10 carte su 10 corrette.** La lettura dei grafici è affidabile |
+| Presentatore | **5 valori su 10 sbagliati**, di un 20–30% |
+
+Gli errori sono tutti sulle serie che nei grafici di origine stavano schiacciate
+contro il fondo di un asse Y troncato. Le correzioni per l'ultimo periodo sono
+in `OFFICIAL_LAST_PERIOD_REFERRER` dentro `scripts/build-dataset.ts`.
+
+**Per i periodi precedenti non esiste una fonte equivalente**, quindi i valori
+del presentatore restano quelli letti dai grafici e vanno considerati
+approssimativi con lo stesso margine. Se emergono condizioni ufficiali
+archiviate per i periodi passati, sono la prima cosa da usare per correggerli.
+
+Resta inoltre da confermare a campione l'associazione valore → periodo per le
+carte diverse da Platino e Oro: è stata dedotta dalla posizione dei punti e può
+essere sfasata di un periodo in qualche punto.
 
 ### La griglia dei periodi non è uniforme per tutte le carte
 

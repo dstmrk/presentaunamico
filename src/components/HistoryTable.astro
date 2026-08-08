@@ -22,9 +22,13 @@ const rows = [...periods].reverse();
 -->
 <table class="history" id={`storico-${card.id}`}>
   <caption>
-    <CardChip card={card} size="sm" />
-    <span class="history-caption-text">
-      Storico delle offerte Presenta un Amico — {card.fullName}
+    <!-- Il flex sta su un elemento interno: applicarlo al <caption> ne annulla
+         il display: table-caption e la didascalia finisce sotto l'intestazione. -->
+    <span class="history-caption-inner">
+      <CardChip card={card} size="sm" />
+      <span class="history-caption-text">
+        Storico delle offerte Presenta un Amico — {card.fullName}
+      </span>
     </span>
   </caption>
   <thead>
@@ -33,6 +37,7 @@ const rows = [...periods].reverse();
       <th scope="col">Amico presentato</th>
       <th scope="col">Spesa richiesta</th>
       <th scope="col">Presentatore</th>
+      <th scope="col">Fonte</th>
     </tr>
   </thead>
   <tbody>
@@ -68,6 +73,15 @@ const rows = [...periods].reverse();
           ) : (
             <td colspan="3" class="cell-empty">Dato non rilevato per questo periodo</td>
           )}
+          <td class="cell-source">
+            {period.source.url ? (
+              <a href={period.source.url} rel="nofollow noopener" target="_blank" title={period.source.note}>
+                condizioni ufficiali
+              </a>
+            ) : (
+              <abbr title={period.source.note}>rilevazione indiretta</abbr>
+            )}
+          </td>
         </tr>
       );
     })}

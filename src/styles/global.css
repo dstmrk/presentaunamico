@@ -333,6 +333,9 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
 .history caption {
   text-align: left;
   padding: 0 0 10px;
+}
+
+.history-caption-inner {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -367,6 +370,10 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
 
 .cell-note { display: block; font-size: 0.78rem; color: var(--fg-muted); font-weight: 400; }
 .cell-empty { color: var(--fg-faint); font-style: italic; }
+
+/* La provenienza e' la credibilita' di un archivio: va vista, non solo salvata. */
+.cell-source { font-size: 0.78rem; white-space: nowrap; }
+.cell-source abbr { color: var(--fg-faint); text-decoration: underline dotted; cursor: help; }
 
 .est {
   margin-left: 6px;

@@ -51,6 +51,11 @@ export function buildFaq(): FaqEntry[] {
         : 'Storicamente la Platino e le carte Business offrono gli importi piu\' alti, a fronte pero\' di requisiti di spesa proporzionalmente maggiori. Il confronto periodo per periodo e\' nei grafici e nella tabella storica.',
     },
     {
+      question: 'Quanti amici posso presentare? C\'e\' un limite ai punti che posso accumulare?',
+      answer:
+        'Si. Le condizioni ufficiali American Express fissano un tetto per anno solare e per titolare, non per singola carta: 300.000 punti Membership Rewards e 120.000 punti PAYBACK. Il numero di amici presentabili non e\' quindi fisso, dipende da quanto vale l\'offerta della tua carta: con un accredito da 50.000 punti si arriva al tetto Membership Rewards con sei presentazioni andate a buon fine, con uno da 3.500 punti ne servono molte di piu\'. Questo dato non fa parte della serie storica del sito ed e\' aggiornato alla data indicata nel piede della pagina: verificalo sulle condizioni ufficiali.',
+    },
+    {
       question: 'Le offerte Presenta un Amico cambiano nel tempo?',
       answer:
         'Si, e spesso: American Express rivede le offerte ogni una o due mesi e non pubblica un archivio delle promozioni passate. Questo sito esiste per conservare quello storico. Nel 2026 si osserva un movimento doppio: gli importi in punti sono calati e contemporaneamente i requisiti di spesa sono saliti, con finestre di 6 mesi.',

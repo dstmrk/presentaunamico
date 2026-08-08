@@ -176,6 +176,34 @@ const bluRow: Array<[number, number, number, number]> = [
   [0,    6, 3000,   0], [0,    6, 3000,   0],
 ];
 
+/**
+ * CORREZIONI DA FONTE UFFICIALE — ultimo periodo (15/07 → 31/08/2026).
+ *
+ * Il confronto con le condizioni pubblicate da American Express ha confermato
+ * TUTTI i valori dell'amico presentato e TUTTI i requisiti di spesa, dieci
+ * carte su dieci: la lettura dei grafici e' affidabile su quelle serie.
+ *
+ * Ha invece smentito cinque valori del presentatore — proprio le serie che nei
+ * grafici di origine stavano schiacciate contro il fondo di un asse troncato.
+ * Qui la fonte ufficiale sostituisce la lettura dell'immagine.
+ *
+ * Vale solo per l'ultimo periodo: per i precedenti non esiste una fonte
+ * equivalente, quindi i valori del presentatore restano quelli letti dai
+ * grafici, con la stessa incertezza.
+ */
+const OFFICIAL_LAST_PERIOD_REFERRER: Record<string, number> = {
+  verde: 3500,
+  italo: 2500,
+  business: 3500,
+  'oro-business': 20000,
+  'platino-business': 60000,
+  // Confermati senza modifiche: platino 50000, oro 20000, explora 1000,
+  // payback 1000, payback-plus 1000.
+};
+
+const OFFICIAL_SOURCE_URL =
+  'https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/';
+
 /* -------------------------------------------------------------------------- */
 
 type Side =
@@ -210,13 +238,17 @@ for (const [cardId, row] of Object.entries(bonusRows)) {
 const out_periods = periods.map(([start, end], i) => {
   const offers: Record<string, unknown> = {};
 
+  const isLast = i === periods.length - 1;
+
   for (const [cardId, row] of Object.entries(bonusRows)) {
     const cell = row[i];
+    const official = isLast ? OFFICIAL_LAST_PERIOD_REFERRER[cardId] : undefined;
+    const referrerAmount = official ?? cell?.[1] ?? null;
     offers[cardId] = cell === null || cell === undefined
       ? null
       : {
           referred: bonus(cell[0], cell[2], cell[3]),
-          referrer: cell[1] === null ? null : bonus(cell[1], null, null),
+          referrer: referrerAmount === null ? null : bonus(referrerAmount, null, null),
         };
   }
 
@@ -232,13 +264,19 @@ const out_periods = periods.map(([start, end], i) => {
     end,
     // Le date sono quelle reali di scadenza delle promozioni, non piu' stimate.
     datesEstimated: false,
-    source: {
-      // Data di lettura degli screenshot. I grafici di origine dichiarano dati
-      // "fino al 31 Aug 2026", ma quella e' la fine del periodo in corso, non
-      // la data in cui sono stati letti: capturedAt non puo' stare nel futuro.
-      capturedAt: '2026-08-08',
-      note: 'Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito.',
-    },
+    source: isLast
+      ? {
+          url: OFFICIAL_SOURCE_URL,
+          capturedAt: '2026-08-08',
+          note: 'Condizioni ufficiali American Express. Valori dell\'amico presentato e requisiti di spesa confermati per tutte le carte; valori del presentatore presi da qui.',
+        }
+      : {
+          // Data di lettura degli screenshot. I grafici di origine dichiarano
+          // dati "fino al 31 Aug 2026", ma quella e' la fine del periodo in
+          // corso, non la data di lettura: capturedAt non puo' stare nel futuro.
+          capturedAt: '2026-08-08',
+          note: 'Importi letti dai grafici storici in formato immagine; date di scadenza dei periodi da elenco fornito.',
+        },
     offers,
   };
 });
