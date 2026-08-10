@@ -19,9 +19,12 @@ marchio: le carte sono identificate solo da nome e colore.
 - **Zero JavaScript nel browser.** I grafici sono SVG generati a build time: il
   contenuto è nel DOM al primo byte, senza idratazione e senza CLS.
 - **Unica fonte di verità:** [`src/data/promotions.json`](src/data/promotions.json),
-  versionato nel repo e aggiornato a mano.
+  versionato nel repo.
 - **Validazione a build time con zod.** Dati incoerenti fanno fallire la build,
   quindi non possono arrivare online.
+- **Aggiornamento semiautomatico.** Un'azione legge ogni giorno le condizioni
+  ufficiali Amex e apre una PR quando cambiano
+  ([come funziona](#aggiornamento-automatico)). Il merge resta a un umano.
 
 ---
 
@@ -129,6 +132,87 @@ git push           # Cloudflare Pages fa il deploy da solo
 
 ---
 
+## Aggiornamento automatico
+
+Amex pubblica l'offerta in corso su una pagina sola, in HTML servito dal server:
+due tabelle (presentatore e presentato) e una nota che dà le date, del tipo
+*«Offerta valida per le richieste effettuate dal 23 luglio al 31 agosto 2026»*.
+È tutto ciò che serve, quindi il controllo è un `fetch` e qualche espressione
+regolare: niente browser headless, nessuna dipendenza in più.
+
+**Fonte:** <https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/>
+
+### Come gira
+
+[`.github/workflows/amex-watch.yml`](.github/workflows/amex-watch.yml) parte ogni
+giorno alle **13:00 UTC** — le 15:00 in ora legale, le 14:00 in ora solare — e si
+può lanciare a mano da *Actions → Condizioni Amex → Run workflow*. Il cron di
+GitHub non conosce i fusi orari e viene servito con ritardo variabile quando la
+coda è carica: per una pagina che cambia ogni sei settimane è più che sufficiente.
+
+L'azione lancia [`scripts/watch-amex.ts`](scripts/watch-amex.ts), che confronta la
+pagina con l'ultimo periodo del dataset. Se cambia qualcosa scrive il JSON, lo
+rivalida e **apre una pull request**; il merge fa il deploy come qualsiasi altro
+push su `main`.
+
+### Perché una PR e non un commit diretto
+
+Perché il parser può leggere benissimo una pagina che nel frattempo ha cambiato
+significato: una proroga scritta in un modo nuovo, una finestra breve di raccordo
+mai osservata, una carta spostata su un regolamento separato. La PR costa dieci
+secondi di lettura e tiene un umano fra la pagina di Amex e ciò che il sito
+dichiara come storico — che è poi l'unica cosa che questo sito vende.
+
+Il corpo della PR è una checklist e il riepilogo del job contiene il dettaglio
+della lettura, avvisi compresi.
+
+### Cosa fa lo script, in concreto
+
+| Situazione in pagina | Cosa propone |
+|---|---|
+| Stesse date, stessi valori | Niente, esce in silenzio |
+| Stesse date, valori diversi | Corregge il periodo corrente e avvisa che il cambio è avvenuto *dentro* un periodo già registrato |
+| Date nuove, contigue alle nostre | Aggiunge un periodo |
+| Date nuove, con un buco prima | Aggiunge il periodo **e segnala l'intervallo scoperto**: in mezzo è esistita un'offerta che nessuno ha osservato |
+| Offerta iniziata prima della fine che avevamo registrato | Accorcia il periodo precedente e lo dichiara: quella fine era una previsione, la pagina è un'osservazione |
+| Pagina più vecchia dell'ultimo periodo noto | Niente: quasi sempre è una copia in cache del CDN |
+
+Due regole che valgono più di tutto il resto:
+
+- **Meglio rompersi che indovinare.** Riga non riconosciuta, valore non
+  interpretabile, nota con le date sparita, meccanica nuova (un cashback
+  percentuale al posto dei punti): lo script si ferma con un errore che dice
+  cosa è cambiato, il job fallisce e apre un'issue. Un parser che tira a
+  indovinare produce dati sbagliati senza che nessuno se ne accorga, ed è il
+  guasto peggiore possibile per un archivio.
+- **Ciò che la pagina non copre resta `null`.** Blu ha un regolamento separato
+  (`americanexpress.it/regolamento-amicoblu`) e non compare nelle tabelle:
+  finisce a `null`, cioè "non rilevato", e la PR lo dice. Trascinare il valore
+  del periodo precedente su un periodo nuovo sarebbe inventare un dato.
+
+L'asterisco delle tabelle (le date valgono per Oro, Platino e le due Business;
+le altre carte hanno un'offerta base senza scadenza dichiarata) viene letto ma
+non modellato: nel dataset il periodo resta uno per tutte le carte, come è
+sempre stato.
+
+### In locale
+
+```bash
+npm run watch                      # legge la pagina e dice cosa cambierebbe
+npm run watch -- --apply           # scrive le modifiche nel JSON
+npm run watch -- --html pagina.html  # legge un file salvato, utile per i test
+```
+
+### Quando si romperà
+
+Prima o poi Amex cambierà la pagina. Il job fallisce, apre un'issue e da quel
+momento il dataset **non si aggiorna più da solo**: va aggiornato a mano finché
+[`scripts/amex-terms.ts`](scripts/amex-terms.ts) non è stato adeguato. I punti
+da guardare per primi sono `CARD_BY_LABEL` (nomi dei prodotti) e `parseValidity`
+(la nota con le date).
+
+---
+
 ## Comandi
 
 | Comando | Cosa fa |
@@ -138,6 +222,7 @@ git push           # Cloudflare Pages fa il deploy da solo
 | `npm run preview` | Serve `dist/` in locale, come lo vedrà l'utente |
 | `npm run validate` | Valida `promotions.json` e stampa copertura e periodo corrente |
 | `npm run check` | Controllo dei tipi TypeScript |
+| `npm run watch` | Legge le condizioni ufficiali Amex e dice cosa cambierebbe nel dataset. Con `-- --apply` scrive |
 | `npm run data` | ⚠️ **Rigenera `promotions.json` da zero, sovrascrivendolo.** Serve solo a ricostruire il dataset iniziale, non ad aggiungere promozioni |
 
 ## Verificare in locale
