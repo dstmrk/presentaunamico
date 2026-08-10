@@ -1,0 +1,169 @@
+# Controllo giornaliero delle condizioni ufficiali Amex.
+#
+# Legge la pagina, la confronta con src/data/promotions.json e, quando c'e'
+# davvero qualcosa di nuovo, sceglie fra due strade.
+#
+# LA REGOLA: L'AUTOMAZIONE PUO' AGGIUNGERE ALLO STORICO, MAI RISCRIVERLO.
+#
+#   Lettura di routine — un periodo nuovo in coda, contiguo al precedente, senza
+#   anomalie: va su main da sola. E' un fatto che la pagina afferma per intero e
+#   che nessun dato gia' pubblicato contraddice, quindi la revisione umana
+#   sarebbe un timbro e basta.
+#
+#   Tutto il resto — un buco fra i periodi, uno storico da accorciare, valori
+#   cambiati dentro un periodo gia' pubblicato, le due date della pagina in
+#   disaccordo, una carta sparita dalle tabelle: PULL REQUEST, e aspetta. Sono i
+#   casi in cui il parser puo' aver letto benissimo una pagina che nel frattempo
+#   ha cambiato significato, e in cui pubblicare vuol dire dire che quanto il
+#   sito mostrava finora era sbagliato. Quella frase la pronuncia una persona.
+#
+# A classificare e' `isRoutine` in scripts/watch-amex.ts, non questo file.
+#
+# In entrambi i casi il deploy segue da se': Cloudflare Pages pubblica al push
+# su main, che sia il commit del bot o il merge della PR.
+name: Condizioni Amex
+
+on:
+  schedule:
+    # 13:00 UTC = 15:00 in ora legale, 14:00 in ora solare. Il cron di GitHub
+    # non conosce i fusi e viene comunque servito con ritardo variabile quando
+    # la coda e' carica: "verso le 15" e' esattamente la precisione che serve.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+# Il lavoro e' idempotente ma inutile in parallelo: se un giro e' ancora in
+# corso, il nuovo aspetta invece di duplicare la PR.
+concurrency:
+  group: amex-watch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  controllo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Leggi le condizioni ufficiali
+        id: watch
+        run: npm run watch --silent -- --apply
+
+      - name: C'e' qualcosa da proporre?
+        id: diff
+        run: |
+          if git diff --quiet -- src/data/promotions.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nessuna modifica al dataset."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- src/data/promotions.json
+          fi
+
+      # Rete di sicurezza: la stessa validazione che gira in build, sui dati
+      # appena scritti. Se non passa, niente PR e il job fallisce rumorosamente.
+      - name: Valida il dataset
+        if: steps.diff.outputs.changed == 'true'
+        run: npm run validate
+
+      - name: Prepara il commit
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          HEADLINE: ${{ steps.watch.outputs.headline }}
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/promotions.json
+          git commit -m "Dati: $HEADLINE" -m "Letto dalle condizioni ufficiali da .github/workflows/amex-watch.yml."
+
+      # Caso noioso: un periodo in coda, niente di gia' pubblicato viene toccato.
+      - name: Pubblica (lettura di routine)
+        if: steps.diff.outputs.changed == 'true' && steps.watch.outputs.routine == 'true'
+        run: |
+          set -euo pipefail
+          # Il rebase copre il caso in cui main sia avanzato mentre il job girava:
+          # tocchiamo un file solo, quindi o passa pulito o e' giusto fallire.
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "Pubblicato su main: Cloudflare Pages fa il deploy da solo."
+
+      # Tutto il resto: la modifica esiste, ma aspetta un umano.
+      - name: Apri la pull request (serve una revisione)
+        if: steps.diff.outputs.changed == 'true' && steps.watch.outputs.routine != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEADLINE: ${{ steps.watch.outputs.headline }}
+          REVIEW: ${{ steps.watch.outputs.review }}
+          BRANCH: dati/amex-${{ steps.watch.outputs.period }}
+        run: |
+          set -euo pipefail
+
+          # Forzata di proposito: se il controllo di ieri aveva gia' aperto il
+          # ramo per questo periodo, quello che conta e' la lettura di oggi.
+          git push --force origin "HEAD:refs/heads/$BRANCH"
+
+          if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            echo "PR gia' aperta per $BRANCH: aggiornata con il push."
+            exit 0
+          fi
+
+          gh pr create \
+            --head "$BRANCH" \
+            --title "Dati: $HEADLINE" \
+            --body "$(cat <<EOF
+          Rilevato automaticamente dalle [condizioni ufficiali](https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/).
+
+          **$HEADLINE**
+
+          Questa lettura **non e' di routine**, quindi il controllo giornaliero non l'ha pubblicata da solo:
+
+          $REVIEW
+
+          Il dettaglio completo e' nel [riepilogo del job](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}).
+
+          Prima di fare merge:
+
+          - [ ] le date corrispondono a quelle scritte in pagina;
+          - [ ] i valori corrispondono alle due tabelle;
+          - [ ] i punti qui sopra hanno una risposta;
+          - [ ] le carte a \`null\` (Blu ha un regolamento separato) sono state completate o lasciate a \`null\` di proposito.
+          EOF
+          )"
+
+      # Se la lettura si rompe, il dataset invecchia in silenzio: e' il guasto
+      # peggiore possibile per un archivio. Un'issue aperta lo rende visibile.
+      - name: Segnala il guasto
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TITLE="Il controllo automatico delle condizioni Amex non funziona"
+
+          if [ -n "$(gh issue list --state open --search "\"$TITLE\" in:title" --json number --jq '.[].number')" ]; then
+            echo "Issue gia' aperta: non ne apro un'altra."
+            exit 0
+          fi
+
+          gh issue create --title "$TITLE" --body "$(cat <<EOF
+          Il controllo giornaliero e' fallito: [log del job](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}).
+
+          Finche' resta rotto, \`src/data/promotions.json\` non riceve piu' aggiornamenti automatici
+          e va aggiornato a mano seguendo il README.
+
+          Cause tipiche: Amex ha cambiato la struttura della pagina, ha rinominato una carta,
+          oppure ha pubblicato l'offerta senza la nota con le date. Il messaggio d'errore nel log
+          dice quale delle tre.
+          EOF
+          )"

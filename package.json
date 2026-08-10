@@ -10,7 +10,8 @@
     "check": "tsc --noEmit",
     "schema": "tsx scripts/gen-json-schema.ts",
     "validate": "tsx scripts/validate.ts",
-    "data": "tsx scripts/build-dataset.ts"
+    "data": "tsx scripts/build-dataset.ts",
+    "watch": "tsx scripts/watch-amex.ts"
   },
   "//": "Tutto cio' che serve a `npm run build` sta in dependencies e non in devDependencies: alcune piattaforme di build installano con NODE_ENV=production, e in quel caso le devDependencies vengono saltate e la build fallisce. In devDependencies restano solo i pacchetti usati da `npm run check`.",
   "dependencies": {
