@@ -155,6 +155,12 @@ L'azione lancia [`scripts/watch-amex.ts`](scripts/watch-amex.ts), che confronta 
 pagina con l'ultimo periodo del dataset. Se cambia qualcosa scrive il JSON, lo
 rivalida e poi sceglie fra due strade — pubblicare o chiedere.
 
+> **Da fare una volta sola.** In *Settings → Actions → General → Workflow
+> permissions* servono i **permessi di scrittura** e la spunta su *Allow GitHub
+> Actions to create and approve pull requests*. Senza, il job legge la pagina
+> correttamente e poi fallisce nel push. È l'unica configurazione richiesta:
+> nessuna branch protection, nessun auto-merge da attivare.
+
 ### La regola: aggiungere sì, riscrivere no
 
 > **L'automazione può aggiungere allo storico, mai riscriverlo.**
