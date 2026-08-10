@@ -1,15 +1,26 @@
 # Controllo giornaliero delle condizioni ufficiali Amex.
 #
-# Legge la pagina, la confronta con src/data/promotions.json e — quando c'e'
-# davvero qualcosa di nuovo — apre una pull request con la modifica.
+# Legge la pagina, la confronta con src/data/promotions.json e, quando c'e'
+# davvero qualcosa di nuovo, sceglie fra due strade.
 #
-# PERCHE' UNA PR E NON UN COMMIT DIRETTO SU MAIN
-# Il valore del sito e' l'accuratezza dello storico, e il parser puo' leggere
-# bene una pagina che nel frattempo e' cambiata di significato (una proroga
-# scritta in un modo nuovo, una finestra breve mai osservata, una carta con
-# regolamento separato). La PR costa dieci secondi di lettura e mette un umano
-# fra la pagina di Amex e cio' che il sito dichiara come storico. Merge della PR
-# = deploy: Cloudflare Pages pubblica da solo al push su main.
+# LA REGOLA: L'AUTOMAZIONE PUO' AGGIUNGERE ALLO STORICO, MAI RISCRIVERLO.
+#
+#   Lettura di routine — un periodo nuovo in coda, contiguo al precedente, senza
+#   anomalie: va su main da sola. E' un fatto che la pagina afferma per intero e
+#   che nessun dato gia' pubblicato contraddice, quindi la revisione umana
+#   sarebbe un timbro e basta.
+#
+#   Tutto il resto — un buco fra i periodi, uno storico da accorciare, valori
+#   cambiati dentro un periodo gia' pubblicato, le due date della pagina in
+#   disaccordo, una carta sparita dalle tabelle: PULL REQUEST, e aspetta. Sono i
+#   casi in cui il parser puo' aver letto benissimo una pagina che nel frattempo
+#   ha cambiato significato, e in cui pubblicare vuol dire dire che quanto il
+#   sito mostrava finora era sbagliato. Quella frase la pronuncia una persona.
+#
+# A classificare e' `isRoutine` in scripts/watch-amex.ts, non questo file.
+#
+# In entrambi i casi il deploy segue da se': Cloudflare Pages pubblica al push
+# su main, che sia il commit del bot o il merge della PR.
 name: Condizioni Amex
 
 on:
@@ -65,24 +76,42 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         run: npm run validate
 
-      - name: Apri la pull request
+      - name: Prepara il commit
         if: steps.diff.outputs.changed == 'true'
+        env:
+          HEADLINE: ${{ steps.watch.outputs.headline }}
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/promotions.json
+          git commit -m "Dati: $HEADLINE" -m "Letto dalle condizioni ufficiali da .github/workflows/amex-watch.yml."
+
+      # Caso noioso: un periodo in coda, niente di gia' pubblicato viene toccato.
+      - name: Pubblica (lettura di routine)
+        if: steps.diff.outputs.changed == 'true' && steps.watch.outputs.routine == 'true'
+        run: |
+          set -euo pipefail
+          # Il rebase copre il caso in cui main sia avanzato mentre il job girava:
+          # tocchiamo un file solo, quindi o passa pulito o e' giusto fallire.
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "Pubblicato su main: Cloudflare Pages fa il deploy da solo."
+
+      # Tutto il resto: la modifica esiste, ma aspetta un umano.
+      - name: Apri la pull request (serve una revisione)
+        if: steps.diff.outputs.changed == 'true' && steps.watch.outputs.routine != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEADLINE: ${{ steps.watch.outputs.headline }}
+          REVIEW: ${{ steps.watch.outputs.review }}
           BRANCH: dati/amex-${{ steps.watch.outputs.period }}
         run: |
           set -euo pipefail
 
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git checkout -b "$BRANCH"
-          git add src/data/promotions.json
-          git commit -m "Dati: $HEADLINE" -m "Rilevato da .github/workflows/amex-watch.yml leggendo le condizioni ufficiali."
           # Forzata di proposito: se il controllo di ieri aveva gia' aperto il
           # ramo per questo periodo, quello che conta e' la lettura di oggi.
-          git push --force origin "$BRANCH"
+          git push --force origin "HEAD:refs/heads/$BRANCH"
 
           if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
             echo "PR gia' aperta per $BRANCH: aggiornata con il push."
@@ -97,15 +126,18 @@ jobs:
 
           **$HEADLINE**
 
-          Il dettaglio della lettura, con gli avvisi da verificare, e' nel
-          [riepilogo del job](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}).
+          Questa lettura **non e' di routine**, quindi il controllo giornaliero non l'ha pubblicata da solo:
+
+          $REVIEW
+
+          Il dettaglio completo e' nel [riepilogo del job](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}).
 
           Prima di fare merge:
 
           - [ ] le date corrispondono a quelle scritte in pagina;
           - [ ] i valori corrispondono alle due tabelle;
-          - [ ] le carte a \`null\` (Blu ha un regolamento separato) sono state completate o lasciate a \`null\` di proposito;
-          - [ ] nessun avviso del job e' rimasto senza risposta.
+          - [ ] i punti qui sopra hanno una risposta;
+          - [ ] le carte a \`null\` (Blu ha un regolamento separato) sono state completate o lasciate a \`null\` di proposito.
           EOF
           )"
 

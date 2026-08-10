@@ -19,6 +19,10 @@
  * su un periodo nuovo significherebbe inventare un dato, che e' esattamente
  * cio' che questo archivio non deve fare.
  *
+ * Ogni esito viene classificato come di ROUTINE o DA RIVEDERE (vedi `isRoutine`):
+ * e' cio' che permette al controllo giornaliero di pubblicare da solo le letture
+ * noiose e di fermarsi, aprendo una PR, su tutte le altre.
+ *
  * Uscita: 0 se non c'e' nulla da fare o se la modifica e' stata applicata,
  * 1 se serve un umano (pagina illeggibile, anomalia, dataset che non valida).
  */
@@ -79,13 +83,28 @@ const prevDay = (isoDate: string) => {
 const sameSide = (a: OfferSide | ParsedSide | null | undefined, b: OfferSide | ParsedSide | null | undefined) =>
   JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 
+/**
+ * Carte che la pagina legittimamente non copre.
+ *
+ * Blu ha un regolamento a parte (americanexpress.it/regolamento-amicoblu) e non
+ * e' mai comparsa in queste tabelle: trovarla assente e' la normalita', non una
+ * notizia. Se invece sparisse una carta che di solito c'e', quello e' un fatto
+ * che merita un paio d'occhi — da cui la distinzione.
+ */
+const ASSENZE_ATTESE = new Set(['blu']);
+
 type Plan = {
   /** Cosa succede al dataset. */
   kind: 'nessuna-novita' | 'aggiorna-periodo' | 'nuovo-periodo' | 'pagina-vecchia';
   /** Righe del report, gia' in italiano e gia' ordinate. */
   lines: string[];
-  /** Avvisi che chi rivede la modifica deve leggere prima di approvarla. */
+  /** Tutto cio' che vale la pena leggere prima di approvare. */
   warnings: string[];
+  /**
+   * Il sottoinsieme di `warnings` che pretende un umano. Vuoto = lettura di
+   * routine, e il controllo giornaliero puo' portarla in fondo da solo.
+   */
+  review: string[];
   /** Dataset risultante. Assente quando non c'e' nulla da scrivere. */
   next?: Dataset;
   /** Titolo di una riga, per commit e PR. */
@@ -99,7 +118,21 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
   const rewardOf = new Map(next.cards.map((c) => [c.id, c.reward]));
 
   const lines: string[] = [];
-  const warnings: string[] = [...snap.notes];
+  const warnings: string[] = [];
+  const review: string[] = [];
+
+  /** Avviso informativo: si legge nel report, non ferma nulla. */
+  const nota = (msg: string) => warnings.push(msg);
+
+  /** Avviso che pretende un umano: blocca il merge automatico. */
+  const daRivedere = (msg: string) => {
+    warnings.push(msg);
+    review.push(msg);
+  };
+
+  // Il parser segnala solo cose davvero anomale (una riga per un prodotto che
+  // non seguiamo, le due date della pagina in disaccordo): tutte da rivedere.
+  for (const n of snap.notes) daRivedere(n);
 
   /** Differenze fra le offerte della pagina e quelle di un periodo del dataset. */
   function offerDiff(period: Period): string[] {
@@ -107,7 +140,7 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
     for (const [id, parsed] of Object.entries(snap.offers)) {
       const reward = rewardOf.get(id);
       if (!reward) {
-        warnings.push(`la pagina riporta "${id}", che nel dataset non esiste come carta`);
+        daRivedere(`la pagina riporta "${id}", che nel dataset non esiste come carta`);
         continue;
       }
       const current = period.offers[id] ?? null;
@@ -139,10 +172,12 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
     }
 
     if (missing.length > 0) {
-      warnings.push(
+      const inattese = missing.filter((id) => !ASSENZE_ATTESE.has(id));
+      const msg =
         `carte non presenti nella pagina, registrate come "non rilevato": ${missing.join(', ')}. ` +
-          `Vanno completate a mano prima di considerare chiuso il periodo.`,
-      );
+        `Vanno completate a mano prima di considerare chiuso il periodo.`;
+      if (inattese.length > 0) daRivedere(`${msg} Inattese: ${inattese.join(', ')}.`);
+      else nota(msg);
     }
     return offers;
   }
@@ -163,6 +198,7 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
         "Se si ripete per piu' giorni di fila, vale la pena guardare la pagina a mano.",
       ],
       warnings,
+      review,
     };
   }
 
@@ -177,21 +213,28 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
         headline: `nessuna novita': offerta dal ${snap.start} al ${snap.end} invariata`,
         lines: [],
         warnings,
+        review,
       };
     }
 
+    // Qui si riscrive un periodo GIA' PUBBLICATO, e riscrivere lo storico non e'
+    // mai di routine: che sia una proroga o una correzione di valori, la decide
+    // un umano. La regola per intero sta su `isRoutine`.
     if (endChanged) {
       lines.push(`fine periodo: ${latest.end} → ${snap.end}`);
-      warnings.push(
+      daRivedere(
         latest.end < snap.end
-          ? "l'offerta e' stata prorogata: la fine del periodo si sposta in avanti"
-          : "l'offerta chiude prima del previsto: la fine del periodo si sposta indietro",
+          ? "l'offerta e' stata prorogata: la fine di un periodo gia' pubblicato si sposta in avanti"
+          : "l'offerta chiude prima del previsto: la fine di un periodo gia' pubblicato si sposta indietro",
       );
     }
-    if (latest.datesEstimated) lines.push('date: da stimate a confermate dalla fonte');
+    if (latest.datesEstimated) {
+      lines.push('date: da stimate a confermate dalla fonte');
+      daRivedere('le date del periodo passano da stimate a confermate dalla fonte');
+    }
     lines.push(...diffs);
     if (diffs.length > 0) {
-      warnings.push(
+      daRivedere(
         "i valori sono cambiati DENTRO un periodo gia' registrato: verificare che non si tratti " +
           'invece di un periodo nuovo che la pagina non ha ancora datato.',
       );
@@ -210,6 +253,7 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
       headline: `periodo ${snap.start} → ${snap.end} aggiornato dalla fonte`,
       lines,
       warnings,
+      review,
       next,
     };
   }
@@ -218,7 +262,7 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
   if (snap.start <= latest.end) {
     // La nuova offerta parte prima della fine che avevamo registrato: quella
     // fine era una previsione presa dalla pagina di allora, questa e' un'osservazione.
-    warnings.push(
+    daRivedere(
       `l'offerta corrente parte il ${snap.start}, prima della fine registrata per il periodo ` +
         `precedente (${latest.end}): il periodo ${latest.start} → ${latest.end} viene accorciato ` +
         `al ${prevDay(snap.start)}. Controllare che sia davvero andata cosi'.`,
@@ -226,7 +270,7 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
     lines.push(`periodo precedente: fine ${latest.end} → ${prevDay(snap.start)}`);
     latest.end = prevDay(snap.start);
   } else if (snap.start !== nextDay(latest.end)) {
-    warnings.push(
+    daRivedere(
       `fra il ${latest.end} e il ${snap.start} resta scoperto un intervallo: un'offerta c'e' ` +
         `sempre, quindi in mezzo e' esistito un periodo che non abbiamo mai osservato. ` +
         `Va ricostruito a mano (di solito e' una finestra breve di raccordo).`,
@@ -250,9 +294,25 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
     headline: `nuova offerta dal ${created.start} al ${created.end}`,
     lines,
     warnings,
+    review,
     next,
   };
 }
+
+/**
+ * Una lettura e' di ROUTINE — e allora il controllo giornaliero la porta in
+ * fondo da solo — solo se aggiunge un periodo in coda senza toccare nulla di
+ * gia' pubblicato e senza nessuna anomalia.
+ *
+ * La regola, in una riga: l'automazione puo' AGGIUNGERE allo storico, mai
+ * RISCRIVERLO. Un periodo nuovo in coda e' un fatto che la pagina afferma per
+ * intero e che nessun dato precedente contraddice; accorciare un periodo,
+ * prorogarlo o correggerne i valori significa invece dire che cio' che il sito
+ * ha pubblicato finora era sbagliato — ed e' una frase che deve pronunciare una
+ * persona, non un cron.
+ */
+const isRoutine = (result: Plan) =>
+  result.next !== undefined && result.kind === 'nuovo-periodo' && result.review.length === 0;
 
 /* -------------------------------------------------------------------------- */
 /* Report                                                                      */
@@ -269,14 +329,21 @@ function report(result: Plan, snap: Snapshot, applied: boolean) {
     out.push('');
     out.push(...result.lines.map((l) => `  ${l}`));
   }
+  const routine = isRoutine(result);
+
   if (result.warnings.length > 0) {
     out.push('');
     out.push('Da verificare:');
-    out.push(...result.warnings.map((w) => `  ⚠︎ ${w}`));
+    out.push(...result.warnings.map((w) => `  ${result.review.includes(w) ? '⚠︎' : '·'} ${w}`));
   }
   if (result.next) {
     out.push('');
     out.push(applied ? 'src/data/promotions.json aggiornato.' : 'Nessuna scrittura: rilancia con --apply.');
+    out.push(
+      routine
+        ? 'Lettura di routine: aggiunge un periodo in coda senza toccare lo storico.'
+        : `Serve una revisione umana (${result.review.length} ${result.review.length === 1 ? 'motivo' : 'motivi'}).`,
+    );
   }
 
   console.log(out.join('\n'));
@@ -286,8 +353,11 @@ function report(result: Plan, snap: Snapshot, applied: boolean) {
     appendFileSync(
       summary,
       `## Condizioni Amex — ${snap.fetchedAt}\n\n${result.headline}\n\n` +
+        (result.next ? `**${routine ? 'Lettura di routine' : 'Serve una revisione umana'}**\n\n` : '') +
         (result.lines.length ? '```\n' + result.lines.join('\n') + '\n```\n\n' : '') +
-        (result.warnings.length ? result.warnings.map((w) => `> ⚠︎ ${w}`).join('\n>\n') + '\n' : ''),
+        (result.warnings.length
+          ? result.warnings.map((w) => `> ${result.review.includes(w) ? '⚠︎' : '·'} ${w}`).join('\n>\n') + '\n'
+          : ''),
     );
   }
 
@@ -298,8 +368,13 @@ function report(result: Plan, snap: Snapshot, applied: boolean) {
       [
         `changed=${applied ? 'true' : 'false'}`,
         `kind=${result.kind}`,
+        `routine=${routine ? 'true' : 'false'}`,
         `headline=${result.headline}`,
         `period=${snap.start}_${snap.end}`,
+        // Multilinea: delimitatore esplicito, come vuole il protocollo di Actions.
+        `review<<FINE_REVIEW`,
+        ...result.review.map((r) => `- ${r}`),
+        `FINE_REVIEW`,
       ].join('\n') + '\n',
     );
   }

@@ -22,9 +22,10 @@ marchio: le carte sono identificate solo da nome e colore.
   versionato nel repo.
 - **Validazione a build time con zod.** Dati incoerenti fanno fallire la build,
   quindi non possono arrivare online.
-- **Aggiornamento semiautomatico.** Un'azione legge ogni giorno le condizioni
-  ufficiali Amex e apre una PR quando cambiano
-  ([come funziona](#aggiornamento-automatico)). Il merge resta a un umano.
+- **Aggiornamento automatico, con un freno.** Un'azione legge ogni giorno le
+  condizioni ufficiali Amex: pubblica da sola i periodi nuovi, apre una PR e
+  aspetta quando dovrebbe *riscrivere* qualcosa di già pubblicato
+  ([come funziona](#aggiornamento-automatico)).
 
 ---
 
@@ -152,30 +153,43 @@ coda è carica: per una pagina che cambia ogni sei settimane è più che suffici
 
 L'azione lancia [`scripts/watch-amex.ts`](scripts/watch-amex.ts), che confronta la
 pagina con l'ultimo periodo del dataset. Se cambia qualcosa scrive il JSON, lo
-rivalida e **apre una pull request**; il merge fa il deploy come qualsiasi altro
-push su `main`.
+rivalida e poi sceglie fra due strade — pubblicare o chiedere.
 
-### Perché una PR e non un commit diretto
+### La regola: aggiungere sì, riscrivere no
 
-Perché il parser può leggere benissimo una pagina che nel frattempo ha cambiato
-significato: una proroga scritta in un modo nuovo, una finestra breve di raccordo
-mai osservata, una carta spostata su un regolamento separato. La PR costa dieci
-secondi di lettura e tiene un umano fra la pagina di Amex e ciò che il sito
-dichiara come storico — che è poi l'unica cosa che questo sito vende.
+> **L'automazione può aggiungere allo storico, mai riscriverlo.**
 
-Il corpo della PR è una checklist e il riepilogo del job contiene il dettaglio
-della lettura, avvisi compresi.
+Un **periodo nuovo in coda**, contiguo al precedente e senza anomalie, va su
+`main` da solo. È un fatto che la pagina afferma per intero e che nessun dato già
+pubblicato contraddice: farlo passare da una review umana sarebbe solo un timbro.
+
+**Tutto il resto apre una pull request e aspetta.** Accorciare un periodo,
+prorogarlo, correggerne i valori significa dire che ciò che il sito ha mostrato
+finora era sbagliato — ed è una frase che deve pronunciare una persona, non un
+cron. Vale lo stesso per le anomalie: un buco fra i periodi, le due date della
+pagina in disaccordo fra loro, una carta sparita dalle tabelle. Sono esattamente
+i casi in cui il parser può aver letto benissimo una pagina che nel frattempo ha
+cambiato *significato*.
+
+A classificare è `isRoutine` in [`scripts/watch-amex.ts`](scripts/watch-amex.ts),
+non il workflow. Il corpo della PR elenca i motivi per cui quella lettura si è
+fermata, e il riepilogo del job ha il dettaglio completo.
+
+In entrambi i casi il deploy segue da sé: Cloudflare Pages pubblica al push su
+`main`, che sia il commit del bot o il merge della PR.
 
 ### Cosa fa lo script, in concreto
 
-| Situazione in pagina | Cosa propone |
-|---|---|
-| Stesse date, stessi valori | Niente, esce in silenzio |
-| Stesse date, valori diversi | Corregge il periodo corrente e avvisa che il cambio è avvenuto *dentro* un periodo già registrato |
-| Date nuove, contigue alle nostre | Aggiunge un periodo |
-| Date nuove, con un buco prima | Aggiunge il periodo **e segnala l'intervallo scoperto**: in mezzo è esistita un'offerta che nessuno ha osservato |
-| Offerta iniziata prima della fine che avevamo registrato | Accorcia il periodo precedente e lo dichiara: quella fine era una previsione, la pagina è un'osservazione |
-| Pagina più vecchia dell'ultimo periodo noto | Niente: quasi sempre è una copia in cache del CDN |
+| Situazione in pagina | Cosa fa | Chi decide |
+|---|---|---|
+| Stesse date, stessi valori | Niente, esce in silenzio | — |
+| Date nuove, contigue alle nostre | Aggiunge un periodo | **Pubblica da solo** |
+| Stesse date, valori diversi | Corregge il periodo corrente | Umano: il cambio è avvenuto *dentro* un periodo già registrato |
+| Stesse date, fine diversa | Sposta la fine del periodo | Umano: tocca un periodo già pubblicato |
+| Date nuove, con un buco prima | Aggiunge il periodo | Umano: in mezzo è esistita un'offerta che nessuno ha osservato |
+| Offerta iniziata prima della fine che avevamo registrato | Accorcia il periodo precedente | Umano: quella fine era una previsione, la pagina è un'osservazione |
+| Sparisce una carta che di solito c'è | La registra come `null` | Umano |
+| Pagina più vecchia dell'ultimo periodo noto | Niente: quasi sempre è una copia in cache del CDN | — |
 
 Due regole che valgono più di tutto il resto:
 
@@ -187,8 +201,14 @@ Due regole che valgono più di tutto il resto:
   guasto peggiore possibile per un archivio.
 - **Ciò che la pagina non copre resta `null`.** Blu ha un regolamento separato
   (`americanexpress.it/regolamento-amicoblu`) e non compare nelle tabelle:
-  finisce a `null`, cioè "non rilevato", e la PR lo dice. Trascinare il valore
-  del periodo precedente su un periodo nuovo sarebbe inventare un dato.
+  finisce a `null`, cioè "non rilevato", e il report lo dice. Trascinare il
+  valore del periodo precedente su un periodo nuovo sarebbe inventare un dato.
+
+  Conseguenza da tenere a mente: **ogni periodo nuovo nasce con `blu: null`** e
+  viene pubblicato così, perché l'assenza di Blu è la normalità e non blocca il
+  merge automatico. La linea di Blu nei grafici resta interrotta finché non la
+  completi a mano. Se un giorno sparisse invece una carta che di solito c'è,
+  quella è un'anomalia e la PR ti aspetta (`ASSENZE_ATTESE` fa la distinzione).
 
 L'asterisco delle tabelle (le date valgono per Oro, Platino e le due Business;
 le altre carte hanno un'offerta base senza scadenza dichiarata) viene letto ma
