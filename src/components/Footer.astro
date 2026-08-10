@@ -1,5 +1,5 @@
 ---
-import { lastUpdated } from '../lib/promotions.ts';
+import { latestPeriodStart } from '../lib/promotions.ts';
 import { formatDate } from '../lib/format.ts';
 import { SITE_NAME } from '../lib/site.ts';
 ---
@@ -24,7 +24,8 @@ import { SITE_NAME } from '../lib/site.ts';
       </p>
     </div>
     <p class="colophon-line">
-      {SITE_NAME} — dati aggiornati al <time datetime={lastUpdated}>{formatDate(lastUpdated)}</time>
+      {SITE_NAME} — ultima promozione avviata il
+      <time datetime={latestPeriodStart}>{formatDate(latestPeriodStart)}</time>
     </p>
   </div>
 </footer>

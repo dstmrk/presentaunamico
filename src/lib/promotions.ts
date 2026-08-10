@@ -110,3 +110,6 @@ export function lastKnownOffer(cardId: string) {
 /** Data dell'ultimo aggiornamento dei dati, per JSON-LD e per la pagina. */
 export const lastUpdated =
   periods.map((p) => p.source.capturedAt).sort().at(-1) ?? today;
+
+/** Data di inizio della promozione piu' recente registrata, per il footer. */
+export const latestPeriodStart = periods[periods.length - 1]!.start;
