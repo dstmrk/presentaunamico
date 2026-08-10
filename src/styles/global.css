@@ -595,25 +595,6 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
    sulla cifra ("150 €") e la descrizione del cashback finisce su cinque righe. */
 .cell-note { white-space: normal; min-width: 30ch; }
 
-/* La provenienza e' la credibilita' di un archivio: va vista, non solo salvata.
-   Sta pero' in una riga sola sotto il titolo di sezione, non in una colonna
-   ripetuta su ogni riga di ogni tavola: e' un dato del periodo, uguale per tutte
-   le carte, e cambia tre volte in tutto l'archivio. */
-.table-sources {
-  margin: -10px 0 26px;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--ink-faint);
-}
-
-.table-sources a {
-  color: var(--ink-soft);
-  text-decoration: underline;
-  text-decoration-color: var(--rule-bold);
-}
-
-.table-sources a:hover { color: var(--accent); text-decoration-color: currentColor; }
-
 .est {
   margin-left: 7px;
   padding: 1px 4px;

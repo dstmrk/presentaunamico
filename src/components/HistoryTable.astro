@@ -25,8 +25,8 @@ const toggleId = `mostra-tutto-${card.id}`;
 // Ordine decrescente: chi arriva dalla ricerca vuole prima il dato piu' recente.
 const rows = [...periods].reverse();
 
-// La provenienza non e' piu' una colonna: `source` e' del periodo e non della
-// carta, quindi vive una volta sola per pagina in <SourceNote />.
+// La provenienza non e' una colonna: `source` e' del periodo e non della carta,
+// e il dettaglio periodo per periodo resta in promotions.json.
 ---
 
 <!--
@@ -112,7 +112,7 @@ const rows = [...periods].reverse();
 </div>
 {collapseAfter !== undefined && rows.length > collapseAfter && (
   <label for={toggleId} class="expand-label">
-    <span class="expand-more">Mostra tutti i {rows.length} periodi</span>
+    <span class="expand-more">Mostra tutti i periodi</span>
     <span class="expand-less">Mostra solo i più recenti</span>
   </label>
 )}
