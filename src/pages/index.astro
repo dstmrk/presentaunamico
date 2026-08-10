@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import CurrentOffers from '../components/CurrentOffers.astro';
 import CardPanel from '../components/CardPanel.astro';
 import HistoryTable from '../components/HistoryTable.astro';
-import SourceNote from '../components/SourceNote.astro';
 import Legend from '../components/Legend.astro';
 import { cards, groups, lastUpdated, periods } from '../lib/promotions.ts';
 import { buildSeries } from '../lib/series.ts';
@@ -60,7 +59,6 @@ const COLLAPSE_AFTER = 6;
     <section class="tables" aria-labelledby="storico">
       <h2 id="storico">Storico completo</h2>
       <p class="group-note">Dal periodo più recente al più vecchio.</p>
-      <SourceNote />
       {ordered.map((card) => (
         <div class="table-entry">
           <HistoryTable card={card} collapseAfter={COLLAPSE_AFTER} />

@@ -3,7 +3,6 @@ import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import CardPanel from '../../components/CardPanel.astro';
 import HistoryTable from '../../components/HistoryTable.astro';
-import SourceNote from '../../components/SourceNote.astro';
 import CardChip from '../../components/CardChip.astro';
 import { cards, groups, periods, lastUpdated, GROUP_LABELS } from '../../lib/promotions.ts';
 import { buildSeries } from '../../lib/series.ts';
@@ -57,7 +56,6 @@ const last = periods[periods.length - 1]!;
     <section class="tables" aria-labelledby="storico">
       <h2 id="storico">Storico completo delle offerte</h2>
       <p class="group-note">Tutti i periodi registrati, dal più recente al più vecchio.</p>
-      <SourceNote />
       <!-- Nessun troncamento qui: e' la pagina che compete sulla query di questa
            carta, quindi ogni riga dev'essere visibile senza interazione. -->
       <HistoryTable card={card} />
