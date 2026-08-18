@@ -1,7 +1,7 @@
 ---
 import { latestPeriodStart } from '../lib/promotions.ts';
 import { formatDate } from '../lib/format.ts';
-import { SITE_NAME } from '../lib/site.ts';
+import { hasReferral, SITE_NAME } from '../lib/site.ts';
 ---
 
 <footer class="site-foot">
@@ -13,8 +13,16 @@ import { SITE_NAME } from '../lib/site.ts';
       <p>
         <strong>Sito indipendente, non affiliato ad American Express.</strong>
         "American Express", "Membership Rewards", "Payback" e i nomi delle carte sono
-        marchi dei rispettivi titolari, citati a solo scopo descrittivo. Nessun link
-        di affiliazione ne' codice referral.
+        marchi dei rispettivi titolari, citati a solo scopo descrittivo.
+        {hasReferral ? (
+          <Fragment>
+            Nessun link di affiliazione: l'unico link da cui il sito ricavi
+            qualcosa e' il link di presentazione personale in fondo alla home,
+            dichiarato come tale. Non compare mai nelle tavole ne' nei grafici.
+          </Fragment>
+        ) : (
+          <Fragment>Nessun link di affiliazione ne' codice referral.</Fragment>
+        )}
       </p>
       <p>
         I dati sono raccolti manualmente e possono contenere errori o ritardi:

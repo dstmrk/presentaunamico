@@ -23,3 +23,29 @@ export const SITE_DESCRIPTION =
   'Quanti punti Membership Rewards da il Presenta un Amico Amex? Offerte aggiornate per Platino, Oro, Verde, Italo, Explora, Business, Payback e Blu, con requisiti di spesa e storico completo.';
 
 export const SITE_LOCALE = 'it_IT';
+
+/**
+ * Link di presentazione personale ("Presenta un Amico") di chi tiene
+ * l'archivio, usato dalla sezione "Sostieni l'archivio".
+ *
+ * REGOLA. Finche' questa costante e' una stringa vuota il sito non mostra la
+ * sezione e il colophon continua a dichiarare che non esiste nessun link di
+ * presentazione: le due cose devono restare vere insieme, sempre. E' l'unico
+ * punto da cambiare per accendere o spegnere tutto.
+ *
+ * Il link si prende dall'Area Riservata American Express (App o sito) ed e'
+ * personale: cambiarlo qui e' l'unica manutenzione che richiede.
+ *
+ * REFERRAL_CARD e' il nome della carta su cui il link e' generato, perche' la
+ * pagina di destinazione propone quella e il lettore ha diritto di sapere in
+ * anticipo che puo' cambiarla in fase di richiesta.
+ */
+export const REFERRAL_URL: string = '';
+
+export const REFERRAL_CARD = 'Platino';
+
+export const hasReferral = REFERRAL_URL.trim().length > 0;
+
+/** Regolamento ufficiale del programma: la fonte da citare accanto al link. */
+export const REFERRAL_TERMS_URL =
+  'https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/';

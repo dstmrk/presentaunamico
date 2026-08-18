@@ -726,6 +726,75 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
 .faq-item p::before { content: 'R.'; color: var(--ink-faint); }
 
 /* --------------------------------------------------------------------------
+   Sostieni l'archivio — un richiamo, non una chiamata all'azione. Nessun
+   bottone: un bottone qui direbbe "richiedi adesso", che e' esattamente
+   l'unica cosa che questo sito non ha interesse a dire. Un filetto forte, il
+   link in monospaziato e le note numerate come le avvertenze di una tavola.
+   -------------------------------------------------------------------------- */
+
+.support { padding: 44px 0 0; }
+
+.support-lede {
+  margin: 0 0 14px;
+  max-width: var(--measure);
+  color: var(--ink-soft);
+}
+
+.support-call {
+  margin: 22px 0 26px;
+  padding: 16px 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule-bold);
+}
+
+.support-call a {
+  font-family: var(--mono);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.support-host {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Numerate da un contatore, come tutto il resto del sito: una nota resta
+   citabile ("nota 3") senza che nessuno tenga il conto a mano. */
+.support-notes {
+  counter-reset: nota;
+  margin: 0;
+  padding: 0;
+  max-width: var(--measure);
+  list-style: none;
+}
+
+.support-notes li {
+  border-top: 1px solid var(--rule);
+  padding: 12px 0 12px 2.2rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.support-notes li::before {
+  counter-increment: nota;
+  content: counter(nota) '.';
+  display: inline-block;
+  width: 2.2rem;
+  margin-left: -2.2rem;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
    Colophon
    -------------------------------------------------------------------------- */
 

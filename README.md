@@ -609,8 +609,47 @@ La build lo segnala a ogni esecuzione:
 - Il nome del progetto e il dominio non contengono "amex" né "american
   express"; nei contenuti il nome compare come uso descrittivo, per identificare
   i prodotti di cui si parla.
-- Nessun link di affiliazione, nessun codice referral. Il sito è informativo:
-  ospitare link referral cambierebbe la natura dell'uso del marchio da
-  descrittiva a commerciale.
+- **Nessun link di affiliazione, nessuna pubblicità, nessun contenuto
+  sponsorizzato.** L'unica eccezione ammessa è il link di presentazione
+  personale descritto qui sotto.
 - Disclaimer nel footer: sito indipendente, dati raccolti manualmente, nessuna
   garanzia di accuratezza, verificare sempre sul sito ufficiale.
+
+### Il link di presentazione
+
+Il sito può ospitare **un solo** link di presentazione ("Presenta un Amico"),
+quello personale di chi tiene l'archivio, nella sezione *Sostieni l'archivio*.
+Si accende riempiendo `REFERRAL_URL` in
+[`src/lib/site.ts`](src/lib/site.ts); finché è una stringa vuota la sezione non
+viene emessa, il colophon continua a dichiarare che non esiste alcun link
+referral e la FAQ sulla trasparenza non compare. **Le tre cose sono legate a
+quella costante apposta: non devono poter divergere.**
+
+Il motivo per cui questo sito è più esposto di un blog che fa la stessa cosa è
+il suo nome: `presentaunamico` *è* il nome del programma. Un archivio
+informativo che si chiama come il prodotto sta dentro l'uso descrittivo del
+marchio; un sito che si chiama come il prodotto e monetizza le adesioni al
+prodotto ci sta molto meno. Da qui i vincoli, che non sono estetici:
+
+- **Il link non entra mai nei dati.** Niente richiami nelle tavole, nei
+  grafici, nelle chip delle carte, in `CurrentOffers` o nelle pagine per carta.
+  Si deve poter leggere l'intero archivio senza incontrare un invito a
+  richiedere una carta.
+- **Niente bottoni e niente urgenza.** Un solo richiamo testuale, in fondo alla
+  home, dopo le domande frequenti.
+- **Le valutazioni sui periodi non si toccano.** Il link guadagna solo se
+  qualcuno richiede *adesso*, mentre metà del valore del sito è poter dire che
+  il periodo in corso è scarso rispetto allo storico. Se le due cose entrano in
+  conflitto, vince l'archivio.
+- **Il conflitto si dichiara dove nasce.** La sezione spiega che il bonus del
+  presentatore dipende dalla carta che possiede *lui* e non da quella scelta
+  dal lettore (vedi il
+  [regolamento ufficiale](https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/)):
+  è la ragione per cui i confronti restano non falsabili, ed è verificabile.
+- **Il link è `rel="nofollow sponsored"`.**
+
+Dal regolamento Amex, due cose da tenere a mente: il link «può essere condiviso
+solo con soggetti che abbiano manifestato il proprio consenso a ricevere la
+presentazione», e American Express si riserva di limitare il numero di
+richieste effettuabili dallo stesso link in 30 giorni. Il tetto di accumulo è
+di 300.000 punti Membership Rewards per anno solare.
