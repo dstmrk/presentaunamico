@@ -1,6 +1,7 @@
 import { cards, currentPeriod, periods, periodsLastYear } from './promotions.ts';
 import { formatDate, formatValue } from './format.ts';
 import { maxValueOf } from './schema.ts';
+import { hasReferral } from './site.ts';
 
 /**
  * Sorgente unica per le FAQ visibili e per il JSON-LD FAQPage.
@@ -108,6 +109,17 @@ export function buildFaq(): FaqEntry[] {
     answer:
       'No. Questo e\' un sito indipendente, non affiliato ad American Express: i dati sono raccolti manualmente e possono contenere errori o ritardi. Prima di aderire a una promozione verifica sempre le condizioni sul sito ufficiale American Express o nella tua area riservata.',
   });
+
+  // La domanda sul conflitto d'interessi compare solo quando il conflitto
+  // esiste davvero: e' la stessa regola del colophon, in modo che pagina e
+  // JSON-LD non possano dichiarare due cose diverse.
+  if (hasReferral) {
+    entries.push({
+      question: 'Questo sito guadagna qualcosa se richiedo una carta?',
+      answer:
+        'Solo se parti dal link di presentazione in fondo alla home, dichiarato come tale: in quel caso American Express accredita dei punti a chi tiene l\'archivio. Il bonus del presentatore dipende dalla carta che possiede lui e non da quella che scegli tu, quindi le tavole e i confronti non cambiano. Non ci sono link di affiliazione, pubblicita\' o contenuti sponsorizzati.',
+    });
+  }
 
   return entries;
 }

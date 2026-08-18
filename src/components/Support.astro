@@ -1,0 +1,71 @@
+---
+import { REFERRAL_CARD, REFERRAL_TERMS_URL, REFERRAL_URL } from '../lib/site.ts';
+
+// L'host mostrato sotto il link non e' decorativo: dice dove si finisce prima
+// di cliccare, ed e' l'unico modo perche' un link di presentazione non sembri
+// un rimando mascherato. Se l'URL fosse malformato la build deve fermarsi qui,
+// non servire una pagina con un richiamo rotto.
+const host = new URL(REFERRAL_URL).host;
+---
+
+<!--
+  Sezione di sostegno. Sta in fondo, dopo le domande frequenti, e non compare
+  mai dentro i dati: nessun richiamo nelle tavole, nei grafici o nelle chip
+  delle carte. La regola e' che si possa leggere tutto l'archivio senza mai
+  incontrare un invito a richiedere una carta.
+-->
+<section class="support" aria-labelledby="sostieni">
+  <h2 id="sostieni">Sostieni l'archivio</h2>
+
+  <p class="support-lede">
+    Questo sito non ha pubblicità, non vende spazi e non traccia chi lo legge.
+    Se hai deciso di richiedere una carta American Express e nessuno ti ha già
+    presentato, puoi partire dal link qui sotto: è il link di presentazione
+    personale di chi tiene l'archivio, e i punti che American Express accredita
+    al presentatore sono il modo in cui questo lavoro si ripaga.
+  </p>
+
+  <!--
+    Il conflitto d'interessi va dichiarato dove si crea, non nel colophon. Ed e'
+    piu' piccolo di quanto sembri: il bonus del presentatore dipende dalla carta
+    che possiede lui, quindi le tavole non hanno nulla da guadagnare a spingere
+    una carta invece di un'altra. Vale la pena scriverlo, e' verificabile.
+  -->
+  <p class="support-lede">
+    Il regolamento assegna al presentatore un bonus che dipende dalla carta che
+    possiede lui, non da quella che scegli tu: i confronti e le cifre di questa
+    pagina non hanno quindi alcun motivo di pendere verso una carta piuttosto
+    che un'altra. Quando il periodo in corso è basso rispetto allo storico,
+    l'archivio continua a dirlo.
+  </p>
+
+  <p class="support-call">
+    <a href={REFERRAL_URL} rel="nofollow sponsored noopener" target="_blank">
+      Usa il link di presentazione
+      <span class="sr-only">(si apre in una nuova scheda su {host})</span>
+    </a>
+    <span class="support-host" aria-hidden="true">porta su {host}</span>
+  </p>
+
+  <ol class="support-notes">
+    <li>
+      L'uso è anonimo. Chi presenta riceve dei punti e nient'altro: American
+      Express non gli comunica chi ha usato il link, né lo stato della richiesta.
+    </li>
+    <li>
+      Il link si apre sulla richiesta di una Carta {REFERRAL_CARD}, ma puoi
+      sceglierne un'altra durante la procedura: il bonus che ricevi è quello
+      della carta che richiedi davvero.
+    </li>
+    <li>
+      Da lì in poi il rapporto è solo tuo con American Express. Approvazione,
+      condizioni economiche ed erogazione dei bonus sono decise da loro: questo
+      sito non è parte del contratto e non garantisce nulla.
+    </li>
+    <li>
+      Prima di richiedere, leggi il <a href={REFERRAL_TERMS_URL} rel="nofollow noopener" target="_blank">regolamento
+      ufficiale del programma</a>: è la sola fonte che fa fede, e cambia più
+      spesso di quanto sembri.
+    </li>
+  </ol>
+</section>

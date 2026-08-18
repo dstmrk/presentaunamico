@@ -4,12 +4,13 @@ import CurrentOffers from '../components/CurrentOffers.astro';
 import CardPanel from '../components/CardPanel.astro';
 import HistoryTable from '../components/HistoryTable.astro';
 import Legend from '../components/Legend.astro';
+import Support from '../components/Support.astro';
 import { cards, groups, lastUpdated, periods } from '../lib/promotions.ts';
 import { buildSeries } from '../lib/series.ts';
 import { formatDate } from '../lib/format.ts';
 import { faq } from '../lib/faq.ts';
 import { cardPath, indexJsonLd } from '../lib/seo.ts';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../lib/site.ts';
+import { hasReferral, SITE_DESCRIPTION, SITE_TITLE } from '../lib/site.ts';
 
 const series = new Map(cards.map((c) => [c.id, buildSeries(c)]));
 const ordered = groups.flatMap((g) => g.cards);
@@ -78,5 +79,7 @@ const COLLAPSE_AFTER = 6;
         </div>
       ))}
     </section>
+
+    {hasReferral && <Support />}
   </main>
 </Base>
