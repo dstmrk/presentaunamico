@@ -619,11 +619,34 @@ La build lo segnala a ogni esecuzione:
 
 Il sito può ospitare **un solo** link di presentazione ("Presenta un Amico"),
 quello personale di chi tiene l'archivio, nella sezione *Sostieni l'archivio*.
-Si accende riempiendo `REFERRAL_URL` in
-[`src/lib/site.ts`](src/lib/site.ts); finché è una stringa vuota la sezione non
-viene emessa, il colophon continua a dichiarare che non esiste alcun link
-referral e la FAQ sulla trasparenza non compare. **Le tre cose sono legate a
-quella costante apposta: non devono poter divergere.**
+
+**Il link non sta nel repo:** arriva dalla variabile d'ambiente `REFERRAL_URL`,
+letta a build time da [`src/lib/site.ts`](src/lib/site.ts). Finché la variabile
+non c'è, la sezione non viene emessa, il colophon continua a dichiarare che non
+esiste alcun link referral e la FAQ sulla trasparenza non compare. **Le tre cose
+pendono dalla stessa variabile apposta: non devono poter divergere.** Una build
+senza variabile è legittima e produce esattamente il sito di prima — è quello
+che succede a chi clona il repo.
+
+Su **Cloudflare Pages**: *Settings → Environment variables → Add*, nome
+`REFERRAL_URL`, valore il link preso dall'Area Riservata American Express. Va
+aggiunta all'ambiente **Production**, e anche a **Preview** se la si vuole
+vedere nei deploy di anteprima. Serve un nuovo deploy perché venga letta: le
+variabili valgono dal build successivo, non retroattivamente.
+
+In locale:
+
+```sh
+REFERRAL_URL='https://...' npm run build
+```
+
+oppure in un file `.env`, che è già fuori dal versionamento.
+
+Se il link è generato su una carta diversa dalla Platino serve anche
+`REFERRAL_CARD` (`Oro`, `Verde`, …): è il nome che compare nella nota "il link
+si apre sulla richiesta di una Carta X". Quando lo slug dell'URL è riconoscibile
+e non corrisponde, **la build fallisce**, invece di servire una nota che mente.
+Falliscono anche un URL malformato e un URL non https.
 
 Il motivo per cui questo sito è più esposto di un blog che fa la stessa cosa è
 il suo nome: `presentaunamico` *è* il nome del programma. Un archivio
