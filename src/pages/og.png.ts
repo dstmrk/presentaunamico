@@ -4,7 +4,7 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 
 import { groups, currentPeriod, lastKnownOffer, periods } from '../lib/promotions.ts';
-import { formatDate, formatValue } from '../lib/format.ts';
+import { formatDate, formatEnd, formatValue } from '../lib/format.ts';
 import { maxValueOf } from '../lib/schema.ts';
 import { palette } from '../lib/chart.ts';
 import { SITE_NAME } from '../lib/site.ts';
@@ -72,8 +72,8 @@ const ledgerRow = (c: { name: string; color: string; value: string }) =>
 export async function GET() {
   const last = periods[periods.length - 1]!;
   const subtitle = currentPeriod
-    ? `Periodo ${formatDate(currentPeriod.start)} – ${formatDate(currentPeriod.end)}`
-    : `Ultimo periodo rilevato: fino al ${formatDate(last.end)}`;
+    ? `Periodo ${formatDate(currentPeriod.start)} – ${formatEnd(currentPeriod.end)}`
+    : `Ultimo periodo rilevato: fino al ${formatEnd(last.end)}`;
 
   const svg = await satori(
     h('div', {

@@ -188,69 +188,70 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
     note: 'Condizioni ufficiali American Express, lette automaticamente da scripts/watch-amex.ts.',
   });
 
-  /* --- La pagina precede l'ultimo periodo noto ---------------------------- */
-  if (snap.start < latest.start) {
-    return {
-      kind: 'pagina-vecchia',
-      headline: `la pagina mostra un'offerta (dal ${snap.start}) precedente all'ultimo periodo noto (dal ${latest.start})`,
-      lines: [
-        "Nessuna azione: quasi sempre e' una copia in cache servita dal CDN.",
-        "Se si ripete per piu' giorni di fila, vale la pena guardare la pagina a mano.",
-      ],
-      warnings,
-      review,
-    };
-  }
-
-  /* --- Stesso periodo: eventuale correzione in corsa ---------------------- */
-  if (snap.start === latest.start) {
-    const diffs = offerDiff(latest);
-    const endChanged = latest.end !== snap.end;
-
-    if (diffs.length === 0 && !endChanged && !latest.datesEstimated) {
+  /* --- La pagina non porta date: offerta "base", senza finestra promozionale --
+   *
+   * Non e' un errore: e' lo stato che la pagina mostra fra una promozione datata
+   * e la successiva. Cosa farne dipende da com'e' fatto l'ultimo periodo noto.
+   */
+  if (snap.start === null) {
+    if (latest.end === null) {
+      // Il periodo aperto in coda prosegue: stesso trattamento di "stesso
+      // periodo" per un periodo chiuso, ma senza una fine da confrontare.
+      const diffs = offerDiff(latest);
+      if (diffs.length === 0) {
+        return {
+          kind: 'nessuna-novita',
+          headline: `nessuna novita': periodo aperto dal ${latest.start} invariato`,
+          lines: [],
+          warnings,
+          review,
+        };
+      }
+      daRivedere(
+        "i valori sono cambiati DENTRO il periodo aperto in coda: verificare che non si tratti " +
+          'invece di una promozione nuova che la pagina non ha ancora datato.',
+      );
+      lines.push(...diffs);
+      latest.source = source();
+      for (const [id, parsed] of Object.entries(snap.offers)) {
+        if (!rewardOf.has(id)) continue;
+        latest.offers[id] = { referred: parsed.referred as OfferSide, referrer: parsed.referrer as OfferSide | null };
+      }
       return {
-        kind: 'nessuna-novita',
-        headline: `nessuna novita': offerta dal ${snap.start} al ${snap.end} invariata`,
-        lines: [],
+        kind: 'aggiorna-periodo',
+        headline: `periodo aperto dal ${latest.start}: valori aggiornati dalla fonte`,
+        lines,
         warnings,
         review,
+        next,
       };
     }
 
-    // Qui si riscrive un periodo GIA' PUBBLICATO, e riscrivere lo storico non e'
-    // mai di routine: che sia una proroga o una correzione di valori, la decide
-    // un umano. La regola per intero sta su `isRoutine`.
-    if (endChanged) {
-      lines.push(`fine periodo: ${latest.end} → ${snap.end}`);
-      daRivedere(
-        latest.end < snap.end
-          ? "l'offerta e' stata prorogata: la fine di un periodo gia' pubblicato si sposta in avanti"
-          : "l'offerta chiude prima del previsto: la fine di un periodo gia' pubblicato si sposta indietro",
-      );
-    }
-    if (latest.datesEstimated) {
-      lines.push('date: da stimate a confermate dalla fonte');
-      daRivedere('le date del periodo passano da stimate a confermate dalla fonte');
-    }
-    lines.push(...diffs);
-    if (diffs.length > 0) {
-      daRivedere(
-        "i valori sono cambiati DENTRO un periodo gia' registrato: verificare che non si tratti " +
-          'invece di un periodo nuovo che la pagina non ha ancora datato.',
-      );
-    }
+    // L'ultimo periodo noto ha una fine dichiarata, ma oggi la pagina non porta
+    // piu' la nota con le date: si apre un nuovo periodo, contiguo al precedente,
+    // SENZA fine. E' sempre da rivedere: non sappiamo quando finira', e non lo
+    // inventiamo.
+    daRivedere(
+      `la pagina non riporta piu' la nota con le date della promozione: probabile ritorno ` +
+        `all'offerta base. Si apre un nuovo periodo dal ${nextDay(latest.end)}, senza data di ` +
+        `fine: andra' chiuso quando la pagina tornera' a datare l'offerta.`,
+    );
 
-    latest.end = snap.end;
-    latest.datesEstimated = false;
-    latest.source = source();
-    for (const [id, parsed] of Object.entries(snap.offers)) {
-      if (!rewardOf.has(id)) continue;
-      latest.offers[id] = { referred: parsed.referred as OfferSide, referrer: parsed.referrer as OfferSide | null };
-    }
+    const created: Period = {
+      start: nextDay(latest.end),
+      end: null,
+      datesEstimated: false,
+      source: source(),
+      offers: offersFromPage(),
+    };
+
+    lines.push(`nuovo periodo (senza fine) dal ${created.start}`);
+    lines.push(...offerDiff(latest).map((l) => `  ${l}`));
+    periods.push(created);
 
     return {
-      kind: 'aggiorna-periodo',
-      headline: `periodo ${snap.start} → ${snap.end} aggiornato dalla fonte`,
+      kind: 'nuovo-periodo',
+      headline: `nuova offerta, senza data di fine, dal ${created.start}`,
       lines,
       warnings,
       review,
@@ -258,28 +259,134 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
     };
   }
 
-  /* --- Periodo nuovo ------------------------------------------------------ */
-  if (snap.start <= latest.end) {
+  // Da qui in poi la pagina porta date esplicite: `snap.start`/`snap.end` non
+  // sono null (`parseValidity` li restituisce sempre insieme).
+  const snapStart = snap.start;
+  const snapEnd = snap.end!;
+
+  if (latest.end === null) {
+    // Il periodo aperto in coda si chiude qui: la pagina ha finalmente datato
+    // una promozione. E' sempre da rivedere: la data di chiusura non e' stata
+    // osservata direttamente, si deduce dall'inizio della promozione nuova.
+    if (snapStart < latest.start) {
+      daRivedere(
+        `la nuova offerta datata parte il ${snapStart}, prima dell'inizio del periodo aperto ` +
+          `(${latest.start}): incoerente, va controllato a mano.`,
+      );
+      return {
+        kind: 'pagina-vecchia',
+        headline: `date incoerenti con il periodo aperto dal ${latest.start}`,
+        lines: [],
+        warnings,
+        review,
+      };
+    }
+    daRivedere(
+      `il periodo aperto dal ${latest.start} si chiude al ${prevDay(snapStart)}: la pagina ha ` +
+        `datato una nuova promozione a partire dal ${snapStart}.`,
+    );
+    lines.push(`periodo precedente: fine (nessuna, in corso) → ${prevDay(snapStart)}`);
+    latest.end = prevDay(snapStart);
+    // Prosegue sotto con la creazione del periodo nuovo, ora contiguo per
+    // costruzione al periodo appena chiuso.
+  } else {
+    /* --- La pagina precede l'ultimo periodo noto -------------------------- */
+    if (snapStart < latest.start) {
+      return {
+        kind: 'pagina-vecchia',
+        headline: `la pagina mostra un'offerta (dal ${snapStart}) precedente all'ultimo periodo noto (dal ${latest.start})`,
+        lines: [
+          "Nessuna azione: quasi sempre e' una copia in cache servita dal CDN.",
+          "Se si ripete per piu' giorni di fila, vale la pena guardare la pagina a mano.",
+        ],
+        warnings,
+        review,
+      };
+    }
+
+    /* --- Stesso periodo: eventuale correzione in corsa --------------------- */
+    if (snapStart === latest.start) {
+      const diffs = offerDiff(latest);
+      const endChanged = latest.end !== snapEnd;
+
+      if (diffs.length === 0 && !endChanged && !latest.datesEstimated) {
+        return {
+          kind: 'nessuna-novita',
+          headline: `nessuna novita': offerta dal ${snapStart} al ${snapEnd} invariata`,
+          lines: [],
+          warnings,
+          review,
+        };
+      }
+
+      // Qui si riscrive un periodo GIA' PUBBLICATO, e riscrivere lo storico non e'
+      // mai di routine: che sia una proroga o una correzione di valori, la decide
+      // un umano. La regola per intero sta su `isRoutine`.
+      if (endChanged) {
+        lines.push(`fine periodo: ${latest.end} → ${snapEnd}`);
+        daRivedere(
+          latest.end! < snapEnd
+            ? "l'offerta e' stata prorogata: la fine di un periodo gia' pubblicato si sposta in avanti"
+            : "l'offerta chiude prima del previsto: la fine di un periodo gia' pubblicato si sposta indietro",
+        );
+      }
+      if (latest.datesEstimated) {
+        lines.push('date: da stimate a confermate dalla fonte');
+        daRivedere('le date del periodo passano da stimate a confermate dalla fonte');
+      }
+      lines.push(...diffs);
+      if (diffs.length > 0) {
+        daRivedere(
+          "i valori sono cambiati DENTRO un periodo gia' registrato: verificare che non si tratti " +
+            'invece di un periodo nuovo che la pagina non ha ancora datato.',
+        );
+      }
+
+      latest.end = snapEnd;
+      latest.datesEstimated = false;
+      latest.source = source();
+      for (const [id, parsed] of Object.entries(snap.offers)) {
+        if (!rewardOf.has(id)) continue;
+        latest.offers[id] = { referred: parsed.referred as OfferSide, referrer: parsed.referrer as OfferSide | null };
+      }
+
+      return {
+        kind: 'aggiorna-periodo',
+        headline: `periodo ${snapStart} → ${snapEnd} aggiornato dalla fonte`,
+        lines,
+        warnings,
+        review,
+        next,
+      };
+    }
+  }
+
+  /* --- Periodo nuovo ------------------------------------------------------
+   * Da qui `latest.end` non e' mai null: o lo era gia' all'ingresso e questa
+   * pagina non l'ha toccato (ramo `else`), oppure e' stato appena chiuso pochi
+   * righe sopra.
+   */
+  if (snapStart <= latest.end!) {
     // La nuova offerta parte prima della fine che avevamo registrato: quella
     // fine era una previsione presa dalla pagina di allora, questa e' un'osservazione.
     daRivedere(
-      `l'offerta corrente parte il ${snap.start}, prima della fine registrata per il periodo ` +
+      `l'offerta corrente parte il ${snapStart}, prima della fine registrata per il periodo ` +
         `precedente (${latest.end}): il periodo ${latest.start} → ${latest.end} viene accorciato ` +
-        `al ${prevDay(snap.start)}. Controllare che sia davvero andata cosi'.`,
+        `al ${prevDay(snapStart)}. Controllare che sia davvero andata cosi'.`,
     );
-    lines.push(`periodo precedente: fine ${latest.end} → ${prevDay(snap.start)}`);
-    latest.end = prevDay(snap.start);
-  } else if (snap.start !== nextDay(latest.end)) {
+    lines.push(`periodo precedente: fine ${latest.end} → ${prevDay(snapStart)}`);
+    latest.end = prevDay(snapStart);
+  } else if (snapStart !== nextDay(latest.end!)) {
     daRivedere(
-      `fra il ${latest.end} e il ${snap.start} resta scoperto un intervallo: un'offerta c'e' ` +
+      `fra il ${latest.end} e il ${snapStart} resta scoperto un intervallo: un'offerta c'e' ` +
         `sempre, quindi in mezzo e' esistito un periodo che non abbiamo mai osservato. ` +
         `Va ricostruito a mano (di solito e' una finestra breve di raccordo).`,
     );
   }
 
   const created: Period = {
-    start: snap.start,
-    end: snap.end,
+    start: snapStart,
+    end: snapEnd,
     datesEstimated: false,
     source: source(),
     offers: offersFromPage(),
@@ -291,7 +398,7 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
 
   return {
     kind: 'nuovo-periodo',
-    headline: `nuova offerta dal ${created.start} al ${created.end}`,
+    headline: `nuova offerta dal ${created.start} al ${created.end}`, // created.end qui non e' mai null
     lines,
     warnings,
     review,
@@ -321,7 +428,11 @@ const isRoutine = (result: Plan) =>
 /** Riga per riga su stdout e, quando gira in Actions, nel riepilogo del job. */
 function report(result: Plan, snap: Snapshot, applied: boolean) {
   const out: string[] = [];
-  out.push(`Fonte letta il ${snap.fetchedAt}: offerta dal ${snap.start} al ${snap.end}`);
+  out.push(
+    snap.start
+      ? `Fonte letta il ${snap.fetchedAt}: offerta dal ${snap.start} al ${snap.end}`
+      : `Fonte letta il ${snap.fetchedAt}: offerta senza date esplicite (nessuna nota di validita' in pagina)`,
+  );
   if (snap.tableUpdatedAt) out.push(`Tabella dichiarata aggiornata al ${snap.tableUpdatedAt}`);
   out.push('');
   out.push(result.headline);
@@ -370,7 +481,7 @@ function report(result: Plan, snap: Snapshot, applied: boolean) {
         `kind=${result.kind}`,
         `routine=${routine ? 'true' : 'false'}`,
         `headline=${result.headline}`,
-        `period=${snap.start}_${snap.end}`,
+        `period=${snap.start ?? 'base'}_${snap.end ?? 'aperto'}`,
         // Multilinea: delimitatore esplicito, come vuole il protocollo di Actions.
         `review<<FINE_REVIEW`,
         ...result.review.map((r) => `- ${r}`),

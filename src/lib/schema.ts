@@ -103,8 +103,13 @@ const source = z.object({
  */
 const period = z.object({
   start: isoDate,
-  /** Sempre presente: un'offerta pubblicata ha sempre una data di fine. */
-  end: isoDate,
+  /**
+   * `null` = periodo ancora in corso, SENZA una data di fine dichiarata dalla
+   * fonte. Succede quando la pagina ufficiale mostra l'offerta "base" fra due
+   * promozioni datate, senza la nota "valida dal ... al ...". Solo l'ULTIMO
+   * periodo del dataset puo' averla: un periodo chiuso ha sempre una fine.
+   */
+  end: isoDate.nullable(),
   /** true quando le date sono una ricostruzione, non una lettura diretta della fonte. */
   datesEstimated: z.boolean().default(false),
   source,
@@ -178,11 +183,14 @@ export function crossValidate(data: Dataset): ValidationResult {
   const sorted = [...data.periods].sort((a, b) => toUTC(a.start) - toUTC(b.start));
   const today = new Date().toISOString().slice(0, 10);
 
-  for (const p of sorted) {
-    const label = `periodo ${p.start} → ${p.end}`;
+  for (const [i, p] of sorted.entries()) {
+    const label = `periodo ${p.start} → ${p.end ?? 'in corso'}`;
 
-    if (toUTC(p.start) > toUTC(p.end)) {
+    if (p.end !== null && toUTC(p.start) > toUTC(p.end)) {
       errors.push(`${label}: start successivo a end`);
+    }
+    if (p.end === null && i !== sorted.length - 1) {
+      errors.push(`${label}: end null (periodo "in corso") ma non e' l'ultimo periodo del dataset`);
     }
     if (toUTC(p.source.capturedAt) > toUTC(today)) {
       errors.push(`${label}: source.capturedAt e' nel futuro (${p.source.capturedAt})`);
@@ -218,13 +226,16 @@ export function crossValidate(data: Dataset): ValidationResult {
     }
   }
 
-  // Sovrapposizioni e continuita' fra periodi consecutivi.
+  // Sovrapposizioni e continuita' fra periodi consecutivi. Un `prev` con
+  // end null e' gia' segnalato sopra (deve essere l'ultimo): qui si salta,
+  // per non produrre un secondo errore fuorviante sullo stesso dato.
   for (let i = 1; i < sorted.length; i++) {
     const prev = sorted[i - 1]!;
     const cur = sorted[i]!;
+    if (prev.end === null) continue;
     if (toUTC(cur.start) <= toUTC(prev.end)) {
       errors.push(
-        `periodi sovrapposti: ${prev.start} → ${prev.end} e ${cur.start} → ${cur.end}`,
+        `periodi sovrapposti: ${prev.start} → ${prev.end} e ${cur.start} → ${cur.end ?? 'in corso'}`,
       );
     } else if (cur.start !== nextDay(prev.end)) {
       // Un'offerta c'e' sempre: un buco fra periodi e' un dato mancante, non un vuoto reale.

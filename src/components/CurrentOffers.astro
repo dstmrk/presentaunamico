@@ -1,6 +1,6 @@
 ---
 import { groups, currentPeriod, lastKnownOffer } from '../lib/promotions.ts';
-import { formatDate, formatSpendProse, formatValue, spendOf } from '../lib/format.ts';
+import { formatDate, formatEnd, formatSpendProse, formatValue, spendOf } from '../lib/format.ts';
 import { maxValueOf } from '../lib/schema.ts';
 import CardChip from './CardChip.astro';
 import { cardPath } from '../lib/seo.ts';
@@ -16,7 +16,11 @@ const ordered = groups.flatMap((g) => g.cards);
   {currentPeriod ? (
     <p class="now-period">
       Periodo in corso: <time datetime={currentPeriod.start}>{formatDate(currentPeriod.start)}</time>
-      – <time datetime={currentPeriod.end}>{formatDate(currentPeriod.end)}</time>.
+      – {currentPeriod.end ? (
+        <time datetime={currentPeriod.end}>{formatDate(currentPeriod.end)}</time>
+      ) : (
+        formatEnd(currentPeriod.end)
+      )}.
     </p>
   ) : (
     <p class="now-period now-stale">
@@ -55,7 +59,7 @@ const ordered = groups.flatMap((g) => g.cards);
                 {!offer && fallback && (
                   <span class="ledger-flag">
                     <span aria-hidden="true"> · </span>
-                    scaduta il {formatDate(fallback.period.end)}
+                    {fallback.period.end ? `scaduta il ${formatDate(fallback.period.end)}` : 'periodo ancora in corso'}
                   </span>
                 )}
               </span>

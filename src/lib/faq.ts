@@ -1,5 +1,5 @@
 import { cards, currentPeriod, periods, periodsLastYear } from './promotions.ts';
-import { formatDate, formatValue } from './format.ts';
+import { formatDate, formatEnd, formatValue } from './format.ts';
 import { maxValueOf } from './schema.ts';
 import { hasReferral } from './site.ts';
 
@@ -59,8 +59,8 @@ export function buildFaq(): FaqEntry[] {
   entries.push({
     question: 'Quanti punti da il Presenta un Amico American Express?',
     answer: period
-      ? `Dipende dalla carta e dal periodo: American Express rivede le offerte di frequente e ${cadence()}. Gli importi del periodo in corso (${formatDate(period.start)} – ${formatDate(period.end)}) sono elencati carta per carta in cima a questa pagina; quelli dei periodi precedenti nelle tavole storiche.`
-      : `Dipende dalla carta e dal periodo: ${cadence()}. Il periodo attualmente in corso non e' ancora stato rilevato su questo sito: l'ultimo registrato si e' chiuso il ${formatDate(periods[periods.length - 1]!.end)}.`,
+      ? `Dipende dalla carta e dal periodo: American Express rivede le offerte di frequente e ${cadence()}. Gli importi del periodo in corso (${formatDate(period.start)} – ${formatEnd(period.end)}) sono elencati carta per carta in cima a questa pagina; quelli dei periodi precedenti nelle tavole storiche.`
+      : `Dipende dalla carta e dal periodo: ${cadence()}. Il periodo attualmente in corso non e' ancora stato rilevato su questo sito: l'ultimo registrato si e' chiuso il ${formatEnd(periods[periods.length - 1]!.end)}.`,
   });
 
   const topMr = topOffer('mr');

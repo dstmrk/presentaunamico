@@ -37,8 +37,12 @@ const COLLAPSE_AFTER = 6;
       </p>
       <p class="updated">
         {cards.length} carte · {periods.length} periodi dal
-        <time datetime={first.start}>{formatDate(first.start)}</time> al
-        <time datetime={last.end}>{formatDate(last.end)}</time> ·
+        <time datetime={first.start}>{formatDate(first.start)}</time>
+        {last.end ? (
+          <> al <time datetime={last.end}>{formatDate(last.end)}</time></>
+        ) : (
+          <> a oggi</>
+        )} ·
         aggiornato al <time datetime={lastUpdated}>{formatDate(lastUpdated)}</time>
       </p>
     </div>

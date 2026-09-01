@@ -64,10 +64,17 @@ export const groups = GROUP_ORDER.map((group) => ({
   cards: cards.filter((c) => c.group === group),
 })).filter((g) => g.cards.length > 0);
 
-/** Estremi dell'asse X, condivisi da tutti i grafici del sito. */
+export const today = new Date().toISOString().slice(0, 10);
+
+/**
+ * Estremi dell'asse X, condivisi da tutti i grafici del sito.
+ *
+ * `end` usa "oggi" quando l'ultimo periodo e' ancora in corso (nessuna data
+ * di fine dichiarata): e' un limite di disegno, non un'affermazione sui dati.
+ */
 export const domain = {
   start: periods[0]!.start,
-  end: periods[periods.length - 1]!.end,
+  end: periods[periods.length - 1]!.end ?? today,
 };
 
 /**
@@ -77,12 +84,14 @@ export const domain = {
  * deve dire "periodo non ancora rilevato" invece di spacciare per corrente
  * l'ultima offerta registrata. E' l'errore che brucerebbe la credibilita' del
  * sito in un colpo solo, quindi la distinzione vive qui e non nei componenti.
+ *
+ * Un periodo con `end` null (in corso, senza data di fine dichiarata) copre
+ * ogni data futura: e' esattamente il senso di "ancora in corso".
  */
 export function periodAt(date: string) {
-  return periods.find((p) => p.start <= date && date <= p.end) ?? null;
+  return periods.find((p) => p.start <= date && (p.end === null || date <= p.end)) ?? null;
 }
 
-export const today = new Date().toISOString().slice(0, 10);
 export const currentPeriod = periodAt(today);
 
 /**
@@ -95,7 +104,7 @@ export function periodsLastYear(at: string = today): number {
   const from = new Date(`${at}T00:00:00Z`);
   from.setUTCFullYear(from.getUTCFullYear() - 1);
   const since = from.toISOString().slice(0, 10);
-  return periods.filter((p) => p.end >= since && p.start <= at).length;
+  return periods.filter((p) => (p.end === null || p.end >= since) && p.start <= at).length;
 }
 
 /** Ultimo periodo per cui esiste un dato su quella carta. */

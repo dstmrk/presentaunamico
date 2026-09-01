@@ -1,4 +1,4 @@
-import { periods, domain } from './promotions.ts';
+import { periods, domain, today } from './promotions.ts';
 import { maxValueOf, type Card, type OfferSide, type Period } from './schema.ts';
 import { spendOf } from './format.ts';
 
@@ -46,7 +46,9 @@ function segmentsFor(cardId: string, which: 'referred' | 'referrer'): Segment[] 
     return {
       period,
       x0: toTime(period.start),
-      x1: toTime(addDay(period.end)),
+      // Il periodo aperto (end null) non ha ancora una fine: il tratto si ferma
+      // a oggi, come il resto del grafico.
+      x1: toTime(addDay(period.end ?? today)),
       side,
       value: side ? maxValueOf(side) : null,
       capped: side?.type === 'rate',

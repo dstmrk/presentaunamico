@@ -45,9 +45,14 @@ export type ParsedSide = {
 export type Snapshot = {
   /** Giorno in cui la pagina e' stata letta (UTC). */
   fetchedAt: string;
-  /** Inizio e fine dell'offerta, dalla nota "valida per le richieste effettuate dal … al …". */
-  start: string;
-  end: string;
+  /**
+   * Inizio e fine dell'offerta, dalla nota "valida per le richieste effettuate
+   * dal … al …". `null` quando la pagina non porta quella nota: capita quando
+   * l'offerta e' quella "base" fra due promozioni datate, e in quel caso non
+   * si inventano ne' l'inizio ne' la fine (vedi `parseValidity`).
+   */
+  start: string | null;
+  end: string | null;
   /** Data della tabella ("aggiornata al …"), quando presente. Serve da riscontro su `start`. */
   tableUpdatedAt: string | null;
   /** "Data di decorrenza" del regolamento: cambia raramente, non e' il periodo dell'offerta. */
@@ -274,8 +279,16 @@ function parseNumericDate(raw: string, where: string): string {
  * agosto 2026". Piu' raramente compare in forma numerica. Sono coperte entrambe,
  * ed entrambe le forme ammettono il mese sottinteso sull'estremo iniziale
  * ("dal 3 al 17 marzo 2026").
+ *
+ * QUANDO LA NOTA NON C'E'. Non e' un errore di per se': e' lo stato in cui la
+ * pagina mostra l'offerta "base", quella che resta attiva fra una promozione
+ * datata e la successiva. Inventare una data qui violerebbe il principio del
+ * modulo (vedi l'intestazione del file), quindi si restituisce `{ start: null,
+ * end: null }` e la decisione — aprire un periodo senza fine, aspettare, o
+ * altro — spetta a chi chiama (`watch-amex.ts`), che ha anche il contesto del
+ * dataset per prenderla.
  */
-function parseValidity(all: string): { start: string; end: string } {
+function parseValidity(all: string): { start: string | null; end: string | null } {
   const where = 'periodo di validita\'';
 
   // Forma discorsiva: dal [g] [mese?] [anno?] al [g] [mese] [anno]
@@ -320,10 +333,7 @@ function parseValidity(all: string): { start: string; end: string } {
     };
   }
 
-  throw new AmexParseError(
-    `${where}: non trovo la nota "Offerta valida per le richieste effettuate dal … al …". ` +
-      `O la pagina e' cambiata, o l'offerta corrente e' pubblicata senza date.`,
-  );
+  return { start: null, end: null };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -456,7 +466,12 @@ export function parseTerms(html: string, fetchedAt = new Date().toISOString().sl
   }
 
   const { start, end } = parseValidity(all);
-  if (start > end) {
+  if (start === null) {
+    notes.push(
+      `nessuna nota "Offerta valida per le richieste effettuate dal … al …" in pagina: ` +
+        `probabile offerta base, senza una finestra promozionale datata.`,
+    );
+  } else if (start > end!) {
     throw new AmexParseError(`periodo incoerente: inizio ${start} successivo alla fine ${end}`);
   }
 
@@ -465,8 +480,9 @@ export function parseTerms(html: string, fetchedAt = new Date().toISOString().sl
 
   // Riscontro incrociato: le due date dicono la stessa cosa in due punti diversi
   // della pagina. Quando divergono di solito e' Amex ad aver aggiornato una
-  // tabella senza toccare la nota — chi rivede il diff deve saperlo.
-  if (tableUpdatedAt && tableUpdatedAt !== start) {
+  // tabella senza toccare la nota — chi rivede il diff deve saperlo. Senza una
+  // nota di validita' (start null) non c'e' niente con cui confrontare.
+  if (tableUpdatedAt && start !== null && tableUpdatedAt !== start) {
     notes.push(
       `la tabella si dichiara "aggiornata al ${tableUpdatedAt}" ma la nota data l'offerta ` +
         `dal ${start}: verificare quale delle due e' la data buona`,
