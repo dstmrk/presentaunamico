@@ -80,8 +80,14 @@ const rows = [...periods].reverse();
             <!-- Spazio unificatore prima del trattino: su mobile la riga va a capo
                  fra le due date, e il trattino deve restare appeso alla prima. -->
             <span aria-hidden="true">&nbsp;– </span>
-            <span class="sr-only">fino al</span>
-            <time datetime={period.end}>{formatDate(period.end)}</time>
+            {period.end ? (
+              <>
+                <span class="sr-only">fino al</span>
+                <time datetime={period.end}>{formatDate(period.end)}</time>
+              </>
+            ) : (
+              <span class="cell-note">in corso</span>
+            )}
             {period.datesEstimated && (
               <abbr class="est" title="Date ricostruite dalla fonte, non lette direttamente">stimate</abbr>
             )}

@@ -41,8 +41,12 @@ const last = periods[periods.length - 1]!;
       <p class="lede">{cardDescription(card)}</p>
       <p class="updated">
         {periods.length} periodi dal
-        <time datetime={first.start}>{formatDate(first.start)}</time> al
-        <time datetime={last.end}>{formatDate(last.end)}</time> ·
+        <time datetime={first.start}>{formatDate(first.start)}</time>
+        {last.end ? (
+          <> al <time datetime={last.end}>{formatDate(last.end)}</time></>
+        ) : (
+          <> a oggi</>
+        )} ·
         aggiornato al <time datetime={lastUpdated}>{formatDate(lastUpdated)}</time>
       </p>
     </div>

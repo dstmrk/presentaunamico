@@ -17,6 +17,16 @@ export function formatShortDate(iso: string): string {
   return shortDateFmt.format(new Date(`${iso}T00:00:00Z`));
 }
 
+/**
+ * Come `formatDate`, ma per la fine di un periodo che puo' essere ancora in
+ * corso (`end` null). Pensata per il trattino "DATA – in corso": nelle frasi
+ * discorsive ("dal ... al ...") va invece scritta a mano, "al in corso" non
+ * si dice.
+ */
+export function formatEnd(iso: string | null): string {
+  return iso === null ? 'in corso' : formatDate(iso);
+}
+
 /** Unita' del premio, per intestazioni e assi. */
 export const REWARD_UNIT: Record<RewardKind, string> = {
   mr: 'punti Membership Rewards',

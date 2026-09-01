@@ -1,7 +1,7 @@
 import type { Card } from './schema.ts';
 import { maxValueOf } from './schema.ts';
 import { cards, currentPeriod, domain, lastKnownOffer, lastUpdated, periods } from './promotions.ts';
-import { describeOffer, formatDate, formatSpendProse, formatValue, spendOf } from './format.ts';
+import { describeOffer, formatDate, formatEnd, formatSpendProse, formatValue, spendOf } from './format.ts';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from './site.ts';
 import { faq, type FaqEntry } from './faq.ts';
 
@@ -80,18 +80,25 @@ export function cardFaq(card: Card): FaqEntry[] {
 
   const entries: FaqEntry[] = [];
 
+  const fallbackClause = fallback
+    ? (fallback.period.end
+        ? ` si e' chiusa il ${formatDate(fallback.period.end)}`
+        : " e' ancora in corso") +
+      ` e prevedeva ${describeOffer(fallback.offer.referred, card.reward)} per l'amico presentato`
+    : '';
+
   entries.push({
     question: `Quanti punti da il Presenta un Amico con la ${card.fullName}?`,
     answer: offer
-      ? `Nel periodo in corso (${formatDate(currentPeriod!.start)} – ${formatDate(currentPeriod!.end)}) l'amico presentato riceve ${describeOffer(offer.referred, card.reward)}${offer.referrer ? `, mentre il presentatore riceve ${describeOffer(offer.referrer, card.reward)}` : ''}.`
-      : `Il periodo attualmente in corso non e' ancora stato rilevato. L'ultima offerta registrata${fallback ? ` si e' chiusa il ${formatDate(fallback.period.end)} e prevedeva ${describeOffer(fallback.offer.referred, card.reward)} per l'amico presentato` : ''}.`,
+      ? `Nel periodo in corso (${formatDate(currentPeriod!.start)} – ${formatEnd(currentPeriod!.end)}) l'amico presentato riceve ${describeOffer(offer.referred, card.reward)}${offer.referrer ? `, mentre il presentatore riceve ${describeOffer(offer.referrer, card.reward)}` : ''}.`
+      : `Il periodo attualmente in corso non e' ancora stato rilevato. L'ultima offerta registrata${fallbackClause}.`,
   });
 
   if (best) {
     const bestSpend = formatSpendProse(spendOf(best.period.offers[card.id]!.referred));
     entries.push({
       question: `Qual e' stata l'offerta migliore della ${card.fullName}?`,
-      answer: `Nel periodo coperto da questo archivio il massimo per l'amico presentato e' stato ${formatValue(best.value, card.reward)}, dal ${formatDate(best.period.start)} al ${formatDate(best.period.end)}${bestSpend ? `, spendendo ${bestSpend}` : ''}.`,
+      answer: `Nel periodo coperto da questo archivio il massimo per l'amico presentato e' stato ${formatValue(best.value, card.reward)}, dal ${formatDate(best.period.start)}${best.period.end ? ` al ${formatDate(best.period.end)}` : ' a oggi'}${bestSpend ? `, spendendo ${bestSpend}` : ''}.`,
     });
   }
 
