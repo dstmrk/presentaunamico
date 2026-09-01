@@ -463,6 +463,11 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
 .serie-referred { stroke: var(--line); stroke-linejoin: round; stroke-linecap: butt; }
 .serie-referred-area { fill: var(--line); opacity: 0.11; }
 .serie-referrer { stroke: var(--referrer); stroke-dasharray: 5 3.5; stroke-linejoin: round; }
+
+/* Tratto finale di un periodo senza data di fine: arriva a oggi, non alla fine
+   di un'offerta, quindi si distingue dal resto del gradino invece di sembrare
+   un dato letto identico agli altri. */
+.serie-open { stroke-dasharray: 3 2.5; opacity: 0.6; }
 .marker-current { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
 .marker-capped { fill: var(--paper); stroke: var(--line); stroke-width: 1.5; }
 .spend-bar { fill: var(--line); opacity: 0.28; }

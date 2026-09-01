@@ -2,7 +2,7 @@
 import type { CardSeries } from '../lib/series.ts';
 import { quarterTicks } from '../lib/series.ts';
 import {
-  scales, runsOf, stepPath, stepArea, annotations, spendChanges,
+  scales, runsOf, stepPathSplit, stepArea, annotations, spendChanges,
   yearLines, type Layout,
 } from '../lib/chart.ts';
 import { annotateOffer, formatCompact, formatSpendCompact } from '../lib/format.ts';
@@ -99,17 +99,33 @@ const yTicks = [0, s.yMax / 2, s.yMax];
   )}
 
   <!-- presentatore: subordinato, tratteggiato, senza area -->
-  {referrerRuns.map((run) => (
-    <path d={stepPath(run, s)} class="serie-referrer" fill="none" stroke-width={l.width > 500 ? 1.75 : 1.5} />
-  ))}
+  {referrerRuns.map((run) => {
+    const { solid, openTail } = stepPathSplit(run, s);
+    return (
+      <>
+        <path d={solid} class="serie-referrer" fill="none" stroke-width={l.width > 500 ? 1.75 : 1.5} />
+        {openTail && (
+          <path d={openTail} class="serie-referrer serie-open" fill="none" stroke-width={l.width > 500 ? 1.75 : 1.5} />
+        )}
+      </>
+    );
+  })}
 
   <!-- amico presentato: pieno, con area -->
   {referredRuns.map((run) => (
     <path d={stepArea(run, s)} class="serie-referred-area" stroke="none" />
   ))}
-  {referredRuns.map((run) => (
-    <path d={stepPath(run, s)} class="serie-referred" fill="none" stroke-width={l.width > 500 ? 2.25 : 1.9} />
-  ))}
+  {referredRuns.map((run) => {
+    const { solid, openTail } = stepPathSplit(run, s);
+    return (
+      <>
+        <path d={solid} class="serie-referred" fill="none" stroke-width={l.width > 500 ? 2.25 : 1.9} />
+        {openTail && (
+          <path d={openTail} class="serie-referred serie-open" fill="none" stroke-width={l.width > 500 ? 2.25 : 1.9} />
+        )}
+      </>
+    );
+  })}
 
   <!-- il cashback percentuale e' un massimo, non un importo certo: marcatore vuoto -->
   {series.referred.filter((x) => x.capped).map((seg) => (

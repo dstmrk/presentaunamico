@@ -160,6 +160,36 @@ export function stepPath(run: Segment[], s: Scales): string {
   return parts.join('');
 }
 
+/**
+ * Come `stepPath`, ma isola l'ultimo tratto in un percorso a parte quando il
+ * suo periodo non ha ancora una data di fine: quel tratto arriva fino a oggi,
+ * non fino alla fine dichiarata di un'offerta, e va disegnato diverso (vedi
+ * `.serie-*-open` in global.css) perche' e' una previsione, non un dato letto.
+ * Senza questa distinzione un'offerta "standard" senza fine appare come un
+ * gradino piatto indistinguibile dal resto, invece che come un tratto ancora
+ * in corso.
+ */
+export function stepPathSplit(run: Segment[], s: Scales): { solid: string; openTail: string | null } {
+  const last = run[run.length - 1];
+  if (!last || last.period.end !== null) return { solid: stepPath(run, s), openTail: null };
+
+  const closed = run.slice(0, -1);
+  const openY = r(s.y(last.value!));
+  const parts: string[] = [];
+  closed.forEach((seg, i) => {
+    const y = s.y(seg.value!);
+    if (i === 0) parts.push(`M${r(s.x(seg.x0))},${r(y)}`);
+    else parts.push(`V${r(y)}`);
+    parts.push(`H${r(s.x(seg.x1))}`);
+  });
+  parts.push(closed.length > 0 ? `V${openY}` : `M${r(s.x(last.x0))},${openY}`);
+
+  return {
+    solid: parts.join(''),
+    openTail: `M${r(s.x(last.x0))},${openY}H${r(s.x(last.x1))}`,
+  };
+}
+
 /** Stessa spezzata, chiusa sulla base: da' peso visivo al riquadro anche a 86px. */
 export function stepArea(run: Segment[], s: Scales): string {
   const first = run[0]!;
