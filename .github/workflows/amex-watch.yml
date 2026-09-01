@@ -21,6 +21,14 @@
 #
 # In entrambi i casi il deploy segue da se': Cloudflare Pages pubblica al push
 # su main, che sia il commit del bot o il merge della PR.
+#
+# Le offerte "standard" senza data di fine si disegnano nel grafico fino a
+# oggi (src/lib/promotions.ts, `today`), ma quella data e' calcolata in fase
+# di build: se il dataset non cambia per giorni, il sito non si ricompila e
+# la linea resta ferma al giorno dell'ultima build. L'ultimo passo del job
+# chiama percio' un deploy hook di Cloudflare Pages quando main NON e' stato
+# toccato oggi, solo per rinfrescare la build - vedi README per come
+# configurare CLOUDFLARE_DEPLOY_HOOK_URL.
 name: Condizioni Amex
 
 on:
@@ -140,6 +148,22 @@ jobs:
           - [ ] le carte a \`null\` (Blu ha un regolamento separato) sono state completate o lasciate a \`null\` di proposito.
           EOF
           )"
+
+      # Il push di sopra fa gia' ricompilare il sito da solo: questo passo
+      # serve solo quando main NON e' stato toccato oggi, per far avanzare
+      # comunque "oggi" nei grafici dei periodi senza data di fine.
+      - name: Rinfresca il deploy (nessun push a main oggi)
+        if: steps.diff.outputs.changed != 'true' || steps.watch.outputs.routine != 'true'
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${HOOK:-}" ]; then
+            echo "CLOUDFLARE_DEPLOY_HOOK_URL non configurato: salto il rebuild giornaliero."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK"
+          echo "Deploy hook chiamato: Cloudflare Pages ricompila il sito con la data di oggi."
 
       # Se la lettura si rompe, il dataset invecchia in silenzio: e' il guasto
       # peggiore possibile per un archivio. Un'issue aperta lo rende visibile.

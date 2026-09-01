@@ -333,6 +333,29 @@ indica.
 Il sito è puramente statico: nessuna Pages Function, quindi zero invocazioni
 Functions e zero cold start.
 
+### Rebuild giornaliero (periodi senza data di fine)
+
+Le offerte "standard" senza data di fine si disegnano nel grafico fino a
+oggi (`today` in `src/lib/promotions.ts`), ma quella data è calcolata in
+fase di build. Se il dataset non cambia per giorni, il sito non si
+ricompila da solo e la linea resta ferma al giorno dell'ultima build.
+
+`.github/workflows/amex-watch.yml` chiama ogni giorno, quando non ha
+appena pubblicato un push su `main`, un **deploy hook** di Cloudflare
+Pages per forzare comunque una ricompilazione. Per attivarlo:
+
+1. **Pages → progetto `presentaunamico` → Settings → Builds & deployments
+   → Deploy hooks → Add deploy hook**, rama `main`.
+2. Copia l'URL generato.
+3. Nel repo GitHub: **Settings → Secrets and variables → Actions → New
+   repository secret**, nome `CLOUDFLARE_DEPLOY_HOOK_URL`, valore l'URL
+   copiato.
+
+Senza questo secret il passo del workflow si limita a segnalarlo nel log e
+non fallisce: la lettura giornaliera delle condizioni continua a
+funzionare normalmente, semplicemente il sito non si aggiorna nei giorni
+senza nuovi dati.
+
 ### Deploy manuale, senza Git
 
 ```bash
