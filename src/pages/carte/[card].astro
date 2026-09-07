@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import CardPanel from '../../components/CardPanel.astro';
 import HistoryTable from '../../components/HistoryTable.astro';
 import CardChip from '../../components/CardChip.astro';
-import { cards, groups, periods, lastUpdated, GROUP_LABELS } from '../../lib/promotions.ts';
+import { cards, groups, periods, today, GROUP_LABELS } from '../../lib/promotions.ts';
 import { buildSeries } from '../../lib/series.ts';
 import { formatDate } from '../../lib/format.ts';
 import {
@@ -47,7 +47,7 @@ const last = periods[periods.length - 1]!;
         ) : (
           <> a oggi</>
         )} ·
-        aggiornato al <time datetime={lastUpdated}>{formatDate(lastUpdated)}</time>
+        aggiornato al <time datetime={today}>{formatDate(today)}</time>
       </p>
     </div>
   </header>
