@@ -3231,36 +3231,32 @@
       "datesEstimated": false,
       "source": {
         "url": "https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/",
-        "capturedAt": "2026-09-01",
+        "capturedAt": "2026-09-08",
         "note": "Condizioni ufficiali American Express, lette automaticamente da scripts/watch-amex.ts."
       },
       "offers": {
         "platino": {
           "referred": {
             "type": "bonus",
-            "amount": 50000,
-            "spend": {
-              "amount": 6000,
-              "months": 6
-            }
+            "amount": 31250
           },
           "referrer": {
             "type": "bonus",
-            "amount": 25000
+            "amount": 125000
           }
         },
         "oro": {
           "referred": {
             "type": "bonus",
-            "amount": 15000,
+            "amount": 31250,
             "spend": {
-              "amount": 2000,
+              "amount": 4000,
               "months": 6
             }
           },
           "referrer": {
             "type": "bonus",
-            "amount": 10000
+            "amount": 20000
           }
         },
         "verde": {
@@ -3308,21 +3304,17 @@
         "platino-business": {
           "referred": {
             "type": "bonus",
-            "amount": 60000,
-            "spend": {
-              "amount": 8000,
-              "months": 6
-            }
+            "amount": 31250
           },
           "referrer": {
             "type": "bonus",
-            "amount": 25000
+            "amount": 125000
           }
         },
         "oro-business": {
           "referred": {
             "type": "bonus",
-            "amount": 20000,
+            "amount": 31250,
             "spend": {
               "amount": 4000,
               "months": 6
@@ -3330,7 +3322,7 @@
           },
           "referrer": {
             "type": "bonus",
-            "amount": 10000
+            "amount": 20000
           }
         },
         "business": {
