@@ -4,8 +4,10 @@ import { DESKTOP, MOBILE, palette } from '../lib/chart.ts';
 import { REWARD_UNIT, describeOffer, formatValue, formatDate } from '../lib/format.ts';
 import { maxValueOf } from '../lib/schema.ts';
 import { currentPeriod, lastKnownOffer } from '../lib/promotions.ts';
+import { qualityOf } from '../lib/quality.ts';
 import CardChartSvg from './CardChartSvg.astro';
 import CardChip from './CardChip.astro';
+import QualityBadge from './QualityBadge.astro';
 import { cardPath } from '../lib/seo.ts';
 
 interface Props {
@@ -24,6 +26,13 @@ const p = palette(card.color);
 // come se fosse in vigore sarebbe l'unica bugia capace di bruciare il sito.
 const currentOffer = currentPeriod ? currentPeriod.offers[card.id] ?? null : null;
 const fallback = currentOffer ? null : lastKnownOffer(card.id);
+
+const referredQuality = currentOffer
+  ? qualityOf(card.id, 'referred', maxValueOf(currentOffer.referred))
+  : null;
+const referrerQuality = currentOffer?.referrer
+  ? qualityOf(card.id, 'referrer', maxValueOf(currentOffer.referrer))
+  : null;
 ---
 
 <section class="panel" id={`carta-${card.id}`} data-card={card.id} style={`--line: ${p.line}; --referrer: ${p.referrer};`}>
@@ -43,10 +52,14 @@ const fallback = currentOffer ? null : lastKnownOffer(card.id);
       {currentOffer ? (
         <>
           <p class="now-label">Amico presentato, oggi</p>
-          <p class="now-value">{formatValue(maxValueOf(currentOffer.referred), card.reward)}</p>
+          <p class="now-value">
+            {formatValue(maxValueOf(currentOffer.referred), card.reward)}
+            {referredQuality && <QualityBadge quality={referredQuality} />}
+          </p>
           <p class="now-detail">
             {currentOffer.referrer
-              ? <>presentatore: <strong>{formatValue(maxValueOf(currentOffer.referrer), card.reward)}</strong></>
+              ? <>presentatore: <strong>{formatValue(maxValueOf(currentOffer.referrer), card.reward)}</strong>
+                  {referrerQuality && <QualityBadge quality={referrerQuality} />}</>
               : 'presentatore: non rilevato'}
           </p>
         </>

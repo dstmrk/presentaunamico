@@ -402,6 +402,41 @@ a:hover .card-chip-name { text-decoration: underline; text-underline-offset: 3px
   color: var(--ink-faint);
 }
 
+/* Fascia di qualita' dell'offerta corrente rispetto al proprio storico. Niente
+   semaforo rosso/giallo/verde: e' un sito a un solo accento, e la fascia si
+   legge per intensita' del segno (chiaro → scuro → accento), non per tinta,
+   cosi' resta coerente con "il colore identifica, non quantifica" di chart.ts. */
+.quality {
+  margin-left: 5px;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.quality--molto-bassa { color: var(--ink-faint); font-weight: 400; }
+.quality--bassa { color: var(--ink-soft); font-weight: 400; }
+.quality--media { color: var(--ink-soft); }
+.quality--alta { color: var(--ink); border-bottom: 1px solid var(--ink); }
+.quality--molto-alta { color: var(--accent); border-bottom: 1px solid var(--accent); }
+
+/* Indicatore aggregato in cima alla home: stessa cornice a doppia riga di
+   .updated, cosi' legge come un'altra riga di metadati e non come un widget
+   a se stante. */
+.quality-global {
+  margin: 22px 0 0;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.quality-global .quality { font-size: 0.68rem; }
+
 @media (min-width: 720px) {
   .panel { padding: 20px 0 14px; }
   .panel-head { align-items: flex-start; }
