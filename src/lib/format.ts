@@ -96,7 +96,8 @@ export function describeOffer(side: OfferSide, reward: RewardKind): string {
   if (side.type === 'bonus') {
     const base = formatValue(side.amount, reward);
     const spend = formatSpendProse(side.spend);
-    return spend ? `${base} spendendo ${spend}` : base;
+    const main = spend ? `${base} spendendo ${spend}` : base;
+    return side.note ? `${main} — ${side.note}` : main;
   }
   const pct = `${Number((side.rate * 100).toFixed(2))}%`.replace('.', ',');
   const max = formatValue(maxValueOf(side), reward);

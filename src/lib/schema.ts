@@ -48,6 +48,14 @@ const bonusOffer = z.object({
   type: z.literal('bonus'),
   amount: z.number().int().min(0, 'i punti non possono essere negativi'),
   spend: spendRequirement.optional(),
+  /**
+   * Meccanica che `amount`/`spend` da soli non bastano a descrivere — per
+   * esempio un bonus che matura a tranche ("31.250 punti ogni 2.000 € di
+   * spesa, fino a un massimo di 125.000 punti") invece che tutto o niente al
+   * raggiungimento di un'unica soglia. `amount` resta il massimo ottenibile,
+   * `spend` la spesa totale che lo sblocca; la nota spiega il resto.
+   */
+  note: z.string().min(1).optional(),
 });
 
 const rateOffer = z.object({

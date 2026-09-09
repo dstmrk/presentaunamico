@@ -3227,7 +3227,7 @@
     },
     {
       "start": "2026-09-01",
-      "end": null,
+      "end": "2026-09-07",
       "datesEstimated": false,
       "source": {
         "url": "https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/",
@@ -3331,6 +3331,161 @@
           "referrer": {
             "type": "bonus",
             "amount": 10000
+          }
+        },
+        "business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 2000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3500
+          }
+        },
+        "payback": {
+          "referred": {
+            "type": "bonus",
+            "amount": 1000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "payback-plus": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "blu": null
+      }
+    },
+    {
+      "start": "2026-09-08",
+      "end": "2026-10-06",
+      "datesEstimated": false,
+      "source": {
+        "url": "https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/",
+        "capturedAt": "2026-09-09",
+        "note": "Condizioni ufficiali American Express, lette automaticamente da scripts/watch-amex.ts."
+      },
+      "offers": {
+        "platino": {
+          "referred": {
+            "type": "bonus",
+            "amount": 125000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            },
+            "note": "31.250 punti ogni 2.000 € di spesa, fino al massimo indicato"
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 125000
+          }
+        },
+        "oro": {
+          "referred": {
+            "type": "bonus",
+            "amount": 31250,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
+        },
+        "verde": {
+          "referred": {
+            "type": "bonus",
+            "amount": 5000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 3500
+          }
+        },
+        "italo": {
+          "referred": {
+            "type": "bonus",
+            "amount": 4000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 2500
+          }
+        },
+        "explora": {
+          "referred": {
+            "type": "bonus",
+            "amount": 2000,
+            "spend": {
+              "amount": 1000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
+        },
+        "platino-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 125000,
+            "spend": {
+              "amount": 8000,
+              "months": 6
+            },
+            "note": "31.250 punti ogni 2.000 € di spesa, fino al massimo indicato"
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 125000
+          }
+        },
+        "oro-business": {
+          "referred": {
+            "type": "bonus",
+            "amount": 31250,
+            "spend": {
+              "amount": 4000,
+              "months": 6
+            }
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
           }
         },
         "business": {

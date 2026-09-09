@@ -40,6 +40,7 @@ export type ParsedSide = {
   type: 'bonus';
   amount: number;
   spend?: { amount: number; months: number };
+  note?: string;
 };
 
 export type Snapshot = {
@@ -214,10 +215,40 @@ const POINTS = /([\d.]+)\s*punti/i;
 const SPEND = /spendendo\s*€?\s*([\d.]+)\s*(?:€\s*)?entro\s*(\d+)\s*mes/i;
 
 /**
+ * "31.250 punti bonus ogni 2.000€ di spesa entro 6 mesi dall'emissione, fino a
+ * un massimo di 125.000 punti*" — un bonus che matura A TRANCHE, non su
+ * un'unica soglia. `amount` diventa il massimo dichiarato (cio' che si mostra
+ * come cifra portante), `spend` la spesa totale che lo sblocca, e il resto
+ * della meccanica finisce in `note` perche' lo schema non ha un campo per
+ * "importo per tranche".
+ */
+const TIERED = /([\d.]+)\s*punti\s*bonus\s*ogni\s*€?\s*([\d.]+)\s*€?\s*di\s*spesa\s*entro\s*(\d+)\s*mes\w*[^,]*,\s*fino\s*a\s*un\s*massimo\s*di\s*([\d.]+)\s*punti/i;
+
+/**
  * "17.500 punti spendendo €2.000 entro 6 mesi dall'emissione*" →
  * `{ type: 'bonus', amount: 17500, spend: { amount: 2000, months: 6 } }`.
  */
 function parseSide(cell: string, where: string): ParsedSide {
+  const tiered = TIERED.exec(cell);
+  if (tiered) {
+    const perTranche = italianInt(tiered[1]!);
+    const tranche = italianInt(tiered[2]!);
+    const months = Number(tiered[3]);
+    const max = italianInt(tiered[4]!);
+    if (perTranche <= 0 || max % perTranche !== 0) {
+      throw new AmexParseError(
+        `${where}: massimo dichiarato (${max}) non e' un multiplo intero del bonus per tranche ` +
+          `(${perTranche}) in "${cell}": la meccanica non e' quella attesa, va guardata a mano.`,
+      );
+    }
+    return {
+      type: 'bonus',
+      amount: max,
+      spend: { amount: tranche * (max / perTranche), months },
+      note: `${tiered[1]} punti ogni ${tiered[2]} € di spesa, fino al massimo indicato`,
+    };
+  }
+
   const points = POINTS.exec(cell);
   if (!points) {
     throw new AmexParseError(
@@ -232,7 +263,7 @@ function parseSide(cell: string, where: string): ParsedSide {
   const spend = SPEND.exec(cell);
   if (spend) {
     side.spend = { amount: italianInt(spend[1]!), months: Number(spend[2]) };
-  } else if (/spend|soglia/i.test(cell)) {
+  } else if (/spend|soglia|\bogni\b/i.test(cell)) {
     // C'e' un requisito di spesa scritto in un modo che non riconosciamo:
     // registrarlo come "nessun requisito" falserebbe il confronto fra periodi.
     throw new AmexParseError(
@@ -291,9 +322,13 @@ function parseNumericDate(raw: string, where: string): string {
 function parseValidity(all: string): { start: string | null; end: string | null } {
   const where = 'periodo di validita\'';
 
-  // Forma discorsiva: dal [g] [mese?] [anno?] al [g] [mese] [anno]
+  // Forma discorsiva: dal [g] [mese?] [anno?] al [g] [mese] [anno].
+  // "per le richieste effettuate" puo' precedere "dal" (forma storica) o
+  // seguire la seconda data (forma vista da settembre 2026: "valida dall'8
+  // settembre 2026 al 6 ottobre 2026 per richieste effettuate tramite..."):
+  // e' per questo che qui e' opzionale invece che parte fissa del prefisso.
   const prose =
-    /richieste\s+effettuate\s+dal\s+(\d{1,2})\s*°?\s*([a-zàèéìòù]+)?\s*(\d{4})?\s*al\s+(\d{1,2})\s*°?\s*([a-zàèéìòù]+)\s*(\d{4})/i.exec(
+    /valid[ao]\s+(?:per\s+le\s+richieste\s+effettuate\s+)?dall?['’]?\s*(\d{1,2})\s*°?\s*([a-zàèéìòù]+)?\s*(\d{4})?\s*al\s+(\d{1,2})\s*°?\s*([a-zàèéìòù]+)\s*(\d{4})/i.exec(
       all,
     );
 
