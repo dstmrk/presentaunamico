@@ -99,6 +99,9 @@ const rows = [...periods].reverse();
                 {offer.referred.type === 'rate' && (
                   <span class="cell-note">{describeOffer(offer.referred, card.reward)}</span>
                 )}
+                {offer.referred.type === 'bonus' && offer.referred.note && (
+                  <span class="cell-note">{offer.referred.note}</span>
+                )}
               </td>
               <td>{formatSpend(spend) ?? <span class="cell-empty">nessuna</span>}</td>
               <td>

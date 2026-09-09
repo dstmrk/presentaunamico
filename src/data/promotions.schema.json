@@ -151,6 +151,10 @@
                                     "amount"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "note": {
+                                  "type": "string",
+                                  "minLength": 1
                                 }
                               },
                               "required": [
@@ -223,6 +227,10 @@
                                         "amount"
                                       ],
                                       "additionalProperties": false
+                                    },
+                                    "note": {
+                                      "type": "string",
+                                      "minLength": 1
                                     }
                                   },
                                   "required": [
