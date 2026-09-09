@@ -1,0 +1,11 @@
+---
+import type { Quality } from '../lib/quality.ts';
+
+interface Props {
+  quality: Quality;
+}
+
+const { quality } = Astro.props;
+---
+
+<span class={`quality quality--${quality.level}`}>{quality.label}</span>

@@ -159,7 +159,10 @@
               "amount": 1000
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 20000
+          }
         },
         "explora": {
           "referred": {
@@ -169,7 +172,10 @@
               "amount": 300
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -231,7 +237,10 @@
               "amount": 1500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 6000
+          }
         },
         "blu": {
           "referred": {
@@ -317,7 +326,10 @@
               "amount": 300
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -379,7 +391,10 @@
               "amount": 500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 6000
+          }
         },
         "blu": {
           "referred": {
@@ -465,7 +480,10 @@
               "amount": 1500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -527,7 +545,10 @@
               "amount": 500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 24000
+          }
         },
         "blu": {
           "referred": {
@@ -612,7 +633,10 @@
               "amount": 1500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -674,7 +698,10 @@
               "amount": 500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 18000
+          }
         },
         "blu": {
           "referred": {
@@ -759,7 +786,10 @@
               "amount": 1500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -821,7 +851,10 @@
               "amount": 500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 6000
+          }
         },
         "blu": {
           "referred": {
@@ -906,7 +939,10 @@
               "amount": 1500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -968,7 +1004,10 @@
               "amount": 500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 6000
+          }
         },
         "blu": {
           "referred": {
@@ -1053,7 +1092,10 @@
               "amount": 1500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -1115,7 +1157,10 @@
               "amount": 500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 6000
+          }
         },
         "blu": {
           "referred": {
@@ -1200,7 +1245,10 @@
               "amount": 1500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -1262,7 +1310,10 @@
               "amount": 500
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 6000
+          }
         },
         "blu": {
           "referred": {
@@ -1352,7 +1403,10 @@
               "months": 3
             }
           },
-          "referrer": null
+          "referrer": {
+            "type": "bonus",
+            "amount": 1000
+          }
         },
         "platino-business": {
           "referred": {
@@ -3375,7 +3429,16 @@
             "amount": 1000
           }
         },
-        "blu": null
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
       }
     },
     {
@@ -3530,7 +3593,16 @@
             "amount": 1000
           }
         },
-        "blu": null
+        "blu": {
+          "referred": {
+            "type": "bonus",
+            "amount": 0
+          },
+          "referrer": {
+            "type": "bonus",
+            "amount": 0
+          }
+        }
       }
     }
   ]
