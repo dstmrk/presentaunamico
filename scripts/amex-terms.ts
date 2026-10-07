@@ -225,6 +225,20 @@ const SPEND = /spendendo\s*€?\s*([\d.]+)\s*(?:€\s*)?entro\s*(\d+)\s*mes/i;
 const TIERED = /([\d.]+)\s*punti\s*bonus\s*ogni\s*€?\s*([\d.]+)\s*€?\s*di\s*spesa\s*entro\s*(\d+)\s*mes\w*[^,]*,\s*fino\s*a\s*un\s*massimo\s*di\s*([\d.]+)\s*punti/i;
 
 /**
+ * "60.000 punti bonus ogni 8.000€ di spesa entro 6 mesi dall'emissione." — la
+ * stessa meccanica a tranche di `TIERED`, ma senza "fino a un massimo di":
+ * dall'ottobre 2026 Platino Business e' scritto cosi'.
+ *
+ * Il tetto non e' dichiarato, quindi non si deduce. Si registra l'unica cosa
+ * che la pagina garantisce, una tranche (`amount` per `spend`), e si dice in
+ * `note` che il resto non e' specificato. L'ancora `$` e' voluta: se dopo i mesi
+ * comparisse altro testo (un tetto, una condizione) la regola non scatta e
+ * `parseSide` lancia come prima.
+ */
+const UNCAPPED_TRANCHE =
+  /^([\d.]+)\s*punti\s*bonus\s*ogni\s*€?\s*([\d.]+)\s*€?\s*di\s*spesa\s*entro\s*(\d+)\s*mes\w*(?:\s+dall['’]emissione)?\s*\.?\s*$/i;
+
+/**
  * "17.500 punti spendendo €2.000 entro 6 mesi dall'emissione*" →
  * `{ type: 'bonus', amount: 17500, spend: { amount: 2000, months: 6 } }`.
  */
@@ -246,6 +260,16 @@ function parseSide(cell: string, where: string): ParsedSide {
       amount: max,
       spend: { amount: tranche * (max / perTranche), months },
       note: `${tiered[1]} punti ogni ${tiered[2]} € di spesa, fino al massimo indicato`,
+    };
+  }
+
+  const uncapped = UNCAPPED_TRANCHE.exec(cell.trim());
+  if (uncapped) {
+    return {
+      type: 'bonus',
+      amount: italianInt(uncapped[1]!),
+      spend: { amount: italianInt(uncapped[2]!), months: Number(uncapped[3]) },
+      note: `${uncapped[1]} punti ogni ${uncapped[2]} € di spesa, nessun massimo dichiarato`,
     };
   }
 
