@@ -112,7 +112,18 @@ export async function fetchTerms(url = SOURCE_URL, attempts = 3): Promise<string
   throw new Error(`impossibile scaricare ${url}: ${describe(last)}`);
 }
 
-const describe = (err: unknown) => (err instanceof Error ? err.message : String(err));
+/**
+ * `fetch` di Node lancia un generico "fetch failed" e mette il motivo vero
+ * (ECONNRESET, timeout di connessione, errore TLS...) in `err.cause`: senza
+ * seguirla non si distingue un blocco di rete da un guasto della pagina.
+ */
+const describe = (err: unknown): string => {
+  if (!(err instanceof Error)) return String(err);
+  const cause = (err as { cause?: unknown }).cause;
+  if (cause === undefined) return err.message;
+  const code = (cause as { code?: unknown }).code;
+  return `${err.message} <- ${describe(cause)}${typeof code === 'string' ? ` [${code}]` : ''}`;
+};
 
 /* -------------------------------------------------------------------------- */
 /* Normalizzazione del testo                                                   */
