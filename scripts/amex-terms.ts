@@ -3,8 +3,8 @@
  *
  * PERCHE' SI PUO' FARE COSI'
  * La pagina e' HTML servito dal server: tabelle vere, testo vero, nessun
- * rendering lato client. Basta `fetch` e qualche espressione regolare, senza
- * browser headless e senza dipendenze nuove.
+ * rendering lato client. Bastano `fetch` (quello di undici, vedi `agent`) e
+ * qualche espressione regolare, senza browser headless.
  *
  * PRINCIPIO DI FONDO: MEGLIO ROMPERSI CHE INDOVINARE.
  * Il valore del sito e' l'accuratezza dello storico. Un parser che di fronte a
@@ -18,6 +18,8 @@
  * Questo modulo NON tocca il dataset: legge la pagina e restituisce cio' che
  * c'e' scritto. Il confronto con `promotions.json` sta in `watch-amex.ts`.
  */
+
+import { Agent, fetch } from 'undici';
 
 export const SOURCE_URL =
   'https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/';
@@ -71,6 +73,14 @@ export type Snapshot = {
 /* -------------------------------------------------------------------------- */
 
 /**
+ * Amex risponde con header molto grandi (cookie e simili): oltre i 16 KB di
+ * default di undici, `fetch` fallisce con UND_ERR_HEADERS_OVERFLOW prima di
+ * leggere il corpo. Il limite si alza solo con un dispatcher dedicato, e per
+ * questo si usa il `fetch` del pacchetto undici invece di quello globale.
+ */
+const agent = new Agent({ maxHeaderSize: 128 * 1024 });
+
+/**
  * Scarica la pagina. Gli User-Agent "da script" vengono serviti male da parecchi
  * CDN, quindi ci si presenta come un browser: e' una lettura pubblica di una
  * pagina pubblica, non un aggiramento di controlli.
@@ -81,6 +91,7 @@ export async function fetchTerms(url = SOURCE_URL, attempts = 3): Promise<string
   for (let i = 1; i <= attempts; i++) {
     try {
       const res = await fetch(url, {
+        dispatcher: agent,
         redirect: 'follow',
         signal: AbortSignal.timeout(30_000),
         headers: {
@@ -112,7 +123,18 @@ export async function fetchTerms(url = SOURCE_URL, attempts = 3): Promise<string
   throw new Error(`impossibile scaricare ${url}: ${describe(last)}`);
 }
 
-const describe = (err: unknown) => (err instanceof Error ? err.message : String(err));
+/**
+ * `fetch` di Node lancia un generico "fetch failed" e mette il motivo vero
+ * (ECONNRESET, timeout di connessione, errore TLS...) in `err.cause`: senza
+ * seguirla non si distingue un blocco di rete da un guasto della pagina.
+ */
+const describe = (err: unknown): string => {
+  if (!(err instanceof Error)) return String(err);
+  const cause = (err as { cause?: unknown }).cause;
+  if (cause === undefined) return err.message;
+  const code = (cause as { code?: unknown }).code;
+  return `${err.message} <- ${describe(cause)}${typeof code === 'string' ? ` [${code}]` : ''}`;
+};
 
 /* -------------------------------------------------------------------------- */
 /* Normalizzazione del testo                                                   */
