@@ -3765,7 +3765,7 @@
       "datesEstimated": false,
       "source": {
         "url": "https://www.americanexpress.com/it-it/chi-siamo/legal/termes-et-conditions/presenta-un-amico/",
-        "capturedAt": "2026-10-13",
+        "capturedAt": "2026-11-07",
         "note": "Condizioni ufficiali American Express, lette automaticamente da scripts/watch-amex.ts."
       },
       "offers": {
@@ -3846,8 +3846,7 @@
             "spend": {
               "amount": 15000,
               "months": 6
-            },
-            "note": "210.000 punti ogni 15.000 € di spesa, nessun massimo dichiarato"
+            }
           },
           "referrer": {
             "type": "bonus",
