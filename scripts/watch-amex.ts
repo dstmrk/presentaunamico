@@ -264,9 +264,12 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
   const snapStart = snap.start;
   const snapEnd = snap.end!;
 
-  if (latest.end === null) {
+  if (latest.end === null && snapStart !== latest.start) {
     // Il periodo aperto in coda si chiude qui: la pagina ha finalmente datato
-    // una promozione. E' sempre da rivedere: la data di chiusura non e' stata
+    // una promozione. Se invece la promozione datata parte lo stesso giorno del
+    // periodo aperto, e' quel periodo a ricevere la sua fine: lo gestisce il
+    // ramo "stesso periodo" qui sotto (chiuderlo al giorno prima darebbe un
+    // periodo con la fine prima dell'inizio). E' sempre da rivedere: la data di chiusura non e' stata
     // osservata direttamente, si deduce dall'inizio della promozione nuova.
     if (snapStart < latest.start) {
       daRivedere(
@@ -323,9 +326,11 @@ function plan(dataset: Dataset, snap: Snapshot): Plan {
       // mai di routine: che sia una proroga o una correzione di valori, la decide
       // un umano. La regola per intero sta su `isRoutine`.
       if (endChanged) {
-        lines.push(`fine periodo: ${latest.end} → ${snapEnd}`);
+        lines.push(`fine periodo: ${latest.end ?? '(nessuna, in corso)'} → ${snapEnd}`);
         daRivedere(
-          latest.end! < snapEnd
+          latest.end === null
+            ? `la pagina ora data il periodo aperto dal ${latest.start}: fine al ${snapEnd}`
+            : latest.end < snapEnd
             ? "l'offerta e' stata prorogata: la fine di un periodo gia' pubblicato si sposta in avanti"
             : "l'offerta chiude prima del previsto: la fine di un periodo gia' pubblicato si sposta indietro",
         );

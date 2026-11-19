@@ -373,8 +373,11 @@ function parseValidity(all: string): { start: string | null; end: string | null 
   // seguire la seconda data (forma vista da settembre 2026: "valida dall'8
   // settembre 2026 al 6 ottobre 2026 per richieste effettuate tramite..."):
   // e' per questo che qui e' opzionale invece che parte fissa del prefisso.
+  // L'elisione vale su entrambi gli estremi: "dall'8 …" e "all'11 gennaio
+  // 2027" (nota del 17 novembre 2026). Con `al\s+` fisso sul secondo estremo
+  // la regex non trovava nulla e la promozione passava per offerta base.
   const prose =
-    /valid[ao]\s+(?:per\s+le\s+richieste\s+effettuate\s+)?dall?['’]?\s*(\d{1,2})\s*°?\s*([a-zàèéìòù]+)?\s*(\d{4})?\s*al\s+(\d{1,2})\s*°?\s*([a-zàèéìòù]+)\s*(\d{4})/i.exec(
+    /valid[ao]\s+(?:per\s+le\s+richieste\s+effettuate\s+)?dall?['’]?\s*(\d{1,2})\s*°?\s*([a-zàèéìòù]+)?\s*(\d{4})?\s*all?['’]?\s*(\d{1,2})\s*°?\s*([a-zàèéìòù]+)\s*(\d{4})/i.exec(
       all,
     );
 
